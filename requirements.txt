@@ -1,0 +1,45 @@
+# 问学知库 —— Python 依赖（版本与开发环境实测一致，Python 3.10）
+# 安装：pip install -r requirements.txt
+
+# ---------- Web 服务 ----------
+fastapi==0.141.1
+uvicorn==0.52.4
+starlette==1.6.0
+python-multipart==0.0.32        # FastAPI 解析表单/文件上传所必需
+pydantic==2.13.5
+
+# ---------- 前端界面 ----------
+gradio==6.26.0
+
+# ---------- 大模型与 Agent ----------
+openai==3.19.0
+langchain==1.4.2
+langchain-core==1.6.4
+langchain-classic==1.0.8
+langchain-community==0.4.2
+langchain-openai==1.6.6
+langchain-text-splitters==1.1.2
+
+# ---------- 向量检索与重排序 ----------
+faiss-cpu==1.15.1
+sentence-transformers==6.1.0
+transformers==5.17.0
+# CPU 版 torch（体积更小、无需显卡）。如需 GPU 版请按官方指引单独安装：
+#   pip install torch --index-url https://download.pytorch.org/whl/cu121
+torch==2.14.0
+rank-bm25==0.2.2                # 混合检索中 BM25Retriever 的底层实现
+jieba==0.42.1                   # 中文分词（BM25 预处理）
+numpy==2.2.6
+
+# ---------- 数据库 ----------
+SQLAlchemy==2.0.54
+
+# ---------- 工具与网络 ----------
+requests==2.34.2
+beautifulsoup4==4.15.0          # web_search 回退通道解析必应结果页
+python-dotenv==1.2.3            # 从 .env 读取 API Key（避免硬编码密钥）
+
+# ---------- 文档解析 ----------
+# PyPDFLoader 依赖。原环境未安装 pypdf，导致上传 PDF 时在 load() 阶段抛
+# ModuleNotFoundError（loader 里的 import 是延迟执行的，所以启动时不报错、上传才失败）。
+pypdf>=5.0

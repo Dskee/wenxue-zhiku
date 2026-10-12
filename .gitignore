@@ -1,0 +1,48 @@
+# ==================== 密钥与本地配置（务必忽略） ====================
+# .env 保存真实 API Key，一旦提交到 GitHub 就等于公开泄露
+.env
+.env.local
+*.local.env
+secrets.json
+
+# ==================== Python ====================
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+.eggs/
+build/
+dist/
+.venv/
+venv/
+env/
+.python-version
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# ==================== 运行时数据与生成物 ====================
+# 注意：这些模式必须以 / 开头锚定到仓库根目录。
+# 否则 `data/` 会连同 db_server/data/（核心源码目录）一起被忽略，导致源码漏提交。
+# 向量索引：由上传的文档在本地生成，无需提交
+/knowledgebases/
+# 知识库文档与个人笔记（个人学习资料，按需自行决定是否公开）
+/data/
+# 对话中上传文件的临时目录
+/temp/
+# SQLite 元数据库（根目录）
+/*.db
+/*.sqlite
+/*.sqlite3
+# 本地模型权重（体积大，本项目中 models/ 为指向宿主机的软链接）
+/models/
+
+# ==================== IDE / 操作系统 ====================
+.vscode/*
+!.vscode/settings.json
+!.vscode/extensions.json
+.idea/
+*.swp
+.DS_Store
+Thumbs.db
+desktop.ini
