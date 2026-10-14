@@ -100,9 +100,16 @@ SERPAPI_KEY=                          # 选填；不填则联网搜索自动走�
 
 > `.env` 已在 `.gitignore` 中，不会被提交到 GitHub。
 
-### 3. 重排序模型
+### 3. 重排序模型（**可选** —— 不下载也能先跑起来）
 
-`bge-reranker-v2-m3` 需放在 `models/models/bge-reranker-v2-m3`（可通过 `RERANK_MODEL_PATH` 改路径）。
+`bge-reranker-v2-m3` 用于对混合检索的候选做精排，建议放在 `models/models/bge-reranker-v2-m3`
+（可通过环境变量 `RERANK_MODEL_PATH` 改路径）。
+
+> **它是懒加载的**：服务启动、知识库管理、上传、对话、设置页都**不需要**它。
+> 只有真正调用检索（`/knowledge/search_kb`）时才第一次加载。
+> 如果没下载，检索**不会报错**，而是降级为"仅混合检索、不重排"，并在返回里带
+> `"reranked": false` 和一条 `warning` 提示——所以你可以先跑通全流程，之后再补模型。
+
 从 ModelScope 下载（`--repo-type model` 与 `--local-dir` 为实测可用的参数写法）：
 
 ```bash
@@ -113,6 +120,8 @@ modelscope download --repo-type model \
 ```
 
 > 若该路径已存在（例如指向别处的软链接），请先删除再下载，否则会写入失败。
+
+**怎么确认它就绪了**：访问 `GET /knowledge/status`，看 `rerank.rerank_loaded` 是否为 `true`。
 
 ### 4. 启动
 

@@ -258,8 +258,52 @@ async def upload_docs(
     return {"message": f"File '{updated_file}' added to database '{kb_name}' successfully."}
 
 
-# 在tools/knowledge_search.py文件中调用（模型路径来自配置，避免部署换目录时改代码）
-rerank_model = CrossEncoder(RERANK_MODEL_PATH)
+# ---------------- 重排序模型：按需懒加载 ----------------
+# ⚠️ 不要把 CrossEncoder(...) 放在模块导入时执行：
+# 初始化要读取几千 MB 的权重，一旦写成模块级调用，**整个服务在模型就绪前都起不来**
+# （连设置页、知识库管理页都打不开），对刚 clone 下来的人是硬门槛。
+# 改为首次真正检索时才加载；加载失败也不让服务崩，而是降级为"只用混合检索结果"。
+_rerank_lock = threading.RLock()
+_rerank_state: dict = {"model": None, "error": None, "loaded": False}
+
+
+def get_rerank_model():
+    """获取重排序模型；不可用时返回 None（调用方据此降级）。
+
+    返回 None 的两种情况：
+    ① 模型文件不存在 / 加载报错（例如还没按 README 下载）；
+    ② 加载成功过一次之后被缓存。
+    """
+    with _rerank_lock:
+        if _rerank_state["loaded"]:
+            return _rerank_state["model"]
+        _rerank_state["loaded"] = True
+        try:
+            print(f"[rerank] 首次加载重排序模型: {RERANK_MODEL_PATH}")
+            _rerank_state["model"] = CrossEncoder(RERANK_MODEL_PATH)
+            _rerank_state["error"] = None
+            print("[rerank] 加载完成")
+        except Exception as e:
+            _rerank_state["model"] = None
+            _rerank_state["error"] = f"{type(e).__name__}: {e}"
+            print(
+                f"[rerank] ⚠️ 重排序模型加载失败，本次降级为仅用混合检索结果（不重排）: "
+                f"{_rerank_state['error']}\n"
+                f"         如需启用重排，请按 README「3. 重排序模型」下载到 {RERANK_MODEL_PATH}，"
+                f"或用环境变量 RERANK_MODEL_PATH 指向已有目录。"
+            )
+        return _rerank_state["model"]
+
+
+def rerank_status() -> dict:
+    """当前重排序模型的状态（供 /knowledge/status 与排障使用）。"""
+    with _rerank_lock:
+        return {
+            "rerank_model_path": RERANK_MODEL_PATH,
+            "rerank_loaded": _rerank_state["model"] is not None,
+            "rerank_error": _rerank_state["error"],
+            "note": "首次检索时才会加载模型；加载失败不影响服务启动，检索会降级为不重排",
+        }
 
 # ---------------- search_kb 检索器缓存 ----------------
 # 每次查询都重新 FAISS.load_local + BM25Retriever.from_documents 是大库慢/超时的根因。
@@ -310,24 +354,55 @@ def search_kb(
     print('============ensemble_retriever=======', ensemble_retriever)
     raw_docs = ensemble_retriever.invoke(query)
 
-    # ----------------Rerank重排序核心逻辑----------------
-    pairs = [[query, doc.page_content] for doc in raw_docs]
-    scores = rerank_model.predict(pairs)
-    doc_score_pairs = list(zip(raw_docs, scores))
-    doc_score_pairs.sort(key=lambda x: x[1], reverse=True)
+    # ----------------Rerank重排序（模型缺失时降级为不重排）----------------
+    # 懒加载：模型在这里才第一次被读取；拿不到就只用检索结果，保证"能查得到东西"
+    # 而不是整个接口报错——刚 clone 下来还没下载模型的人也能先把功能跑起来。
+    reranker = get_rerank_model()
+    reranked = reranker is not None
+    warning = None
+
+    if reranked:
+        pairs = [[query, doc.page_content] for doc in raw_docs]
+        scores = reranker.predict(pairs)
+        doc_score_pairs = list(zip(raw_docs, scores))
+        doc_score_pairs.sort(key=lambda x: x[1], reverse=True)
+    else:
+        # 未重排：保持混合检索的原始顺序，分数置空
+        doc_score_pairs = [(doc, None) for doc in raw_docs]
+        warning = (
+            "重排序模型未就绪，本次结果未经过 rerank（仅混合检索）。"
+            f"原因：{_rerank_state['error']}。"
+            f"请按 README 下载模型到 {RERANK_MODEL_PATH}，或设置环境变量 RERANK_MODEL_PATH。"
+        )
+        print(f"[search_kb] ⚠️ 降级返回（未重排）: {_rerank_state['error']}")
 
     contexts = {
         "results": [
             {
                 "sources": doc.metadata.get("source", ""),
                 "page_contents": doc.page_content,
-                "rerank_score": float(score)
+                "rerank_score": (float(score) if score is not None else None),
             }
             for doc, score in doc_score_pairs
-        ]
+        ],
+        "reranked": reranked,
     }
-    print('=========contexts======',contexts)
+    if warning:
+        contexts["warning"] = warning
+    print('=========contexts======', contexts)
     return contexts
+
+
+@kb_router.get("/status")
+def knowledge_status():
+    """服务与依赖的就绪状态，便于部署后自检（也可用于 CI 冒烟测试）。"""
+    return {
+        "ok": True,
+        "routes": "see /docs",
+        "rerank": rerank_status(),
+        "kb_dir": os.path.abspath(KB_DIR),
+        "file_storage_dir": os.path.abspath(FILE_STORAGE_DIR),
+    }
 
 
 class DeleteFileReq(BaseModel):

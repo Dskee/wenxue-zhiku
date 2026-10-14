@@ -33,6 +33,9 @@ class KnowledgeBaseSearch:
             data = response.json()
 
             res = "".join([f"source:\n{d['sources']} \ncontext:\n{d['page_contents']}\n" for d in data['results']])
+            # 若后端因重排序模型未就绪而降级，一并带上提示，避免"悄悄变差"没人发现
+            if data.get("warning"):
+                res = f"[提示] {data['warning']}\n\n{res}"
             return res
         else:
             return f"无法获取{query}的信息"
