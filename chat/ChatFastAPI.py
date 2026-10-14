@@ -11,13 +11,12 @@ from langchain_classic.agents import create_react_agent, AgentExecutor
 from langchain_core.prompts import SystemMessagePromptTemplate, HumanMessagePromptTemplate, ChatPromptTemplate
 from configs.prompt import PROMPT_TEMPLATES
 from configs.setting import (
-    chat_model_name,
     base_url,
-    require_api_key,
     TIME_OUT,
     TEMP_FILE_STORAGE_DIR,
     MAX_UPLOAD_MB,
 )
+from configs import runtime_config
 from utils.callback import CustomAsyncIteratorCallbackHandler
 from db_server.data.KnowledgeBase import session
 from db_server.data.KnowledgeDB import queryall
@@ -107,9 +106,11 @@ async def chatai(
 
         # 定义聊天模型
         chat_model = ChatOpenAI(
-            model=chat_model_name,
-            api_key=require_api_key(),
-            base_url=base_url,
+            # 模型 / Key / 地址都在**调用时**从 runtime_config 读取：
+            # 在「设置」页改完立刻生效，无需重启服务；本地模型不需要 Key
+            model=runtime_config.get("chat_model"),
+            api_key=runtime_config.require_api_key("chat"),
+            base_url=runtime_config.base_url_for("chat") or base_url,
             temperature=temperature,
             max_tokens=max_tokens,
             streaming=True,
@@ -242,9 +243,9 @@ async def summarize_conversation(req: SummarizeReq):
 
     # 非流式调用模型完成总结，temperature 调低保证准确还原；request_timeout 兜底防卡死
     chat_model = ChatOpenAI(
-        model=chat_model_name,
-        api_key=require_api_key(),
-        base_url=base_url,
+        model=runtime_config.get("chat_model"),
+        api_key=runtime_config.require_api_key("chat"),
+        base_url=runtime_config.base_url_for("chat") or base_url,
         temperature=0.2,
         max_tokens=4096,
         streaming=False,

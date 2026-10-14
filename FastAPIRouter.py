@@ -9,6 +9,7 @@ from fastapi.responses import JSONResponse
 
 from chat.ChatFastAPI import ChatAIapp
 from knowledgebase_server.loader.KnowledgeFastAPI import knowledgeapp, kb_router
+from settings_server.SettingsFastAPI import settingsapp
 from configs.setting import API_TOKEN, CORS_ORIGINS
 
 app = FastAPI(title="问学知库 API", version="1.0.0")
@@ -46,6 +47,9 @@ app.include_router(kb_router)
 
 # 聊天与总结路由（/chat/*）
 app.include_router(ChatAIapp)
+
+# 设置路由（/settings/*）：模型与 API Key 的读取 / 保存 / 模型列表
+app.include_router(settingsapp)
 
 
 @app.get("/")

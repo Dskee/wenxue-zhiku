@@ -19,13 +19,10 @@ from configs.setting import (
     KB_DIR,
     FILE_STORAGE_DIR,
     RERANK_MODEL_PATH,
-    api_key,
     base_url,
-    chat_model_name,
-    embedding_model_name,
     MAX_UPLOAD_MB,
-    require_api_key,
 )
+from configs import runtime_config
 from utils.paths import (
     UnsafePathError,
     resolve_within,
@@ -36,6 +33,7 @@ import os
 import shutil
 import math
 import re
+import threading
 import time
 from pydantic import BaseModel
 from sentence_transformers import CrossEncoder
@@ -64,12 +62,48 @@ class CustomEmbeddingModel(Embeddings):
         return self.model.client.create(model=self.model_name, input=text).data[0].embedding
 
 
-# 密钥来自环境变量 / .env（原为写死的明文 Key，已移除）
-embedding = OpenAIEmbeddings(
-    api_key=api_key or "MISSING-API-KEY",
-    base_url=base_url,
-)
-embedding_model = CustomEmbeddingModel(embedding, embedding_model_name)
+# 密钥 / 地址 / 向量模型都来自运行时可改配置（「设置」页可改，改完立刻生效并写回 .env）。
+# 这里用一个**可重建的代理对象**代替原来一次性构造的客户端：
+#   - 对外仍然是 Embeddings 实例（FAISS.load_local 的 isinstance 校验能通过），
+#     所以所有调用点（embed_query / embed_documents）写法完全不用改；
+#   - 内部按 runtime_config.version() 判断配置是否变过，变了就重建底层客户端，
+#     这样在页面上换了 API Key 之后，向量化立刻用新 Key，无需重启服务。
+_embedding_lock = threading.RLock()
+_embedding_cache: dict = {"version": -1, "model": None}
+
+
+def _build_embedding_model() -> "CustomEmbeddingModel":
+    """按当前设置构造一个向量化客户端（可使用向量化专属的地址与 Key）。"""
+    client = OpenAIEmbeddings(
+        api_key=runtime_config.api_key_for("embedding") or runtime_config.PLACEHOLDER_KEY,
+        base_url=runtime_config.base_url_for("embedding") or base_url,
+    )
+    name = runtime_config.get("embedding_model") or "BAAI/bge-large-zh-v1.5"
+    return CustomEmbeddingModel(client, name)
+
+
+def get_embedding_model() -> "CustomEmbeddingModel":
+    """取当前生效的向量化模型；配置变过则自动重建。"""
+    with _embedding_lock:
+        current = runtime_config.version()
+        if _embedding_cache["model"] is None or _embedding_cache["version"] != current:
+            _embedding_cache["model"] = _build_embedding_model()
+            _embedding_cache["version"] = current
+            print(f"[embedding] 已按最新设置初始化向量化模型 (version={current})")
+        return _embedding_cache["model"]
+
+
+class _EmbeddingProxy(Embeddings):
+    """把调用转发给"当前生效"的向量化模型，使配置改动无需重启即可生效。"""
+
+    def embed_documents(self, texts):
+        return get_embedding_model().embed_documents(texts)
+
+    def embed_query(self, text):
+        return get_embedding_model().embed_query(text)
+
+
+embedding_model = _EmbeddingProxy()
 
 
 # ==================== 路径安全收敛点 ====================
@@ -676,12 +710,12 @@ async def quiz(req: QuizReq):
         content = content[:8000] + "\n…（内容过长，已截断前 8000 字符）"
 
     # ---------- 2. LLM 出题 ----------
-    # chat_model_name / base_url / api_key 均来自顶部 configs.setting 导入与 .env，不再写死
+    # 模型与 Key 在调用时从 runtime_config 读，页面改完立刻生效
     from langchain_openai import ChatOpenAI
     llm = ChatOpenAI(
-        model=chat_model_name,
-        api_key=require_api_key(),
-        base_url=base_url,
+        model=runtime_config.get("chat_model"),
+        api_key=runtime_config.require_api_key("chat"),
+        base_url=runtime_config.base_url_for("chat") or base_url,
         temperature=0.7,
         max_tokens=700,
         streaming=False,

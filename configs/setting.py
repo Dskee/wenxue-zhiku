@@ -91,12 +91,19 @@ TEMP_FILE_STORAGE_DIR = _get('TEMP_FILE_STORAGE_DIR', './temp/data')
 # 媒体文件保存路径
 MEDIA_DIR = _get('MEDIA_DIR', './temp/medias')
 
-# ==================== 大模型（SiliconFlow） ====================
+# ==================== 大模型（云端或本地 OpenAI 兼容服务） ====================
 # ⚠️ 密钥只能来自环境变量 / .env，源码中不出现
+# 模型来源：siliconflow（硅基流动云端）/ local（本地 Ollama、LM Studio、vLLM）/ custom（自定义）
+PROFILE = _get('PROFILE', 'siliconflow')
 api_key = _get('SILICONFLOW_API_KEY')
 base_url = _get('SILICONFLOW_BASE_URL', 'https://api.siliconflow.cn/v1')
 chat_model_name = _get('CHAT_MODEL_NAME', 'Qwen/Qwen3-8B')
 embedding_model_name = _get('EMBEDDING_MODEL_NAME', 'BAAI/bge-large-zh-v1.5')
+
+# 向量化可选独立配置：留空表示"跟随对话的地址与 Key"
+# （常见需求：对话用本地模型、向量化仍用云端，避免本地缺少 embedding 模型）
+EMBEDDING_BASE_URL = _get('EMBEDDING_BASE_URL')
+EMBEDDING_API_KEY = _get('EMBEDDING_API_KEY')
 
 # ==================== 联网搜索（SerpAPI） ====================
 # 未配置时 web_search 工具会自动跳过 SerpAPI，直接走必应抓取回退通道

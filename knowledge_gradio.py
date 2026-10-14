@@ -5,7 +5,18 @@ from webui.Knowledge_UI import add, delete, query_list, update, upload_docs, del
 from webui.Chat_UI import chatai_to_backend
 from webui.Summary_UI import summarize_conversation, export_note, AUTO_OPTION, NEW_OPTION
 from webui.Quiz_UI import generate_quiz, save_quiz_notes
+from webui.Settings_UI import (
+    load_settings,
+    profile_choices,
+    on_profile_change,
+    fetch_chat_models,
+    fetch_embedding_models,
+    save_settings,
+    save_api_key,
+    test_connection,
+)
 from configs.setting import BACKEND_URL
+
 
 def on_app_load():
     # 生成一个唯一的ID
@@ -13,12 +24,12 @@ def on_app_load():
 
 
 def _on_load():
-    """页面加载钩子：为**每个浏览器会话**注入独立的 session_id，并刷新知识库下拉框。
+    """页面加载钩子：为**每个浏览器会话**注入独立的 session_id、刷新知识库下拉框、读取模型设置。
 
     注意：不能用 `gr.State(value=on_app_load())`——那样 uuid 只在模块导入时求值一次，
     Gradio 会把同一个字符串拷贝给所有会话，导致不同用户共用 temp/data/<session_id>/ 目录。
     """
-    return (on_app_load(),) + _refresh_kb_dropdowns()
+    return (on_app_load(),) + _refresh_kb_dropdowns() + load_settings()
 
 
 def _refresh_kb_dropdowns():
@@ -55,6 +66,15 @@ with gr.Blocks(fill_width=True, fill_height=False) as demo:  # 将 fill_height �
             gr.Markdown("#" "聊天机器人")
             with gr.Row():
                 with gr.Column(scale=1, variant="panel") as sidebar_left:
+                    with gr.Accordion("🔑 API Key", open=False):
+                        sidebar_api_key = gr.Textbox(
+                            label="API Key",
+                            type="password",
+                            placeholder="sk-...（留空表示不修改）",
+                            info="保存在项目根目录 .env，不会提交到 Git",
+                        )
+                        sidebar_save_key_btn = gr.Button("保存 API Key", size="sm", variant="primary")
+                        sidebar_key_status = gr.Markdown("")
                     sys_prompt = gr.Textbox(label="系统提示词", value="You are a helpful assistant")
                     history_len = gr.Slider(minimum=1, maximum=10, value=1, label="保留历史消息的数量")
                     temperature = gr.Slider(minimum=0.01, maximum=2.0, value=0.5, step=0.01, label="temperature")
@@ -179,10 +199,133 @@ with gr.Blocks(fill_width=True, fill_height=False) as demo:  # 将 fill_height �
                     export_btn = gr.Button("导出并保存到知识库", variant="primary")
                 export_status = gr.Markdown(value="", visible=True)
 
+        with gr.Tab("⚙️ 设置"):
+            gr.Markdown("### 模型与密钥设置")
+            gr.Markdown(
+                "可以选**硅基流动（云端）**或**本地模型**（Ollama / LM Studio / vLLM）。"
+                "切换来源会自动填好默认地址，**模型名和地址都能自己粘贴覆盖**。"
+                "保存后**立刻生效**（无需重启），并写回 `.env`，重启后依然有效。"
+            )
+            with gr.Row():
+                with gr.Column(scale=3):
+                    set_profile = gr.Dropdown(
+                        label="模型来源",
+                        choices=profile_choices(),
+                        value=None,
+                        interactive=True,
+                        info="选云端或本地；切换后下方地址会自动填好，仍可手动改",
+                    )
+                    profile_hint = gr.Markdown("")
+                    set_base_url = gr.Textbox(
+                        label="接口地址（base_url）",
+                        placeholder="https://api.siliconflow.cn/v1",
+                        info="任何 OpenAI 兼容地址都可以，直接粘贴即可",
+                    )
+                    with gr.Row():
+                        set_chat_model = gr.Dropdown(
+                            label="对话模型",
+                            choices=[],
+                            value=None,
+                            allow_custom_value=True,
+                            filterable=True,
+                            interactive=True,
+                            scale=4,
+                            info="点「刷新对话模型」实时拉取；也可以直接粘贴模型名",
+                        )
+                        refresh_chat_btn = gr.Button("🔄 刷新对话模型", variant="secondary", scale=1)
+                    with gr.Row():
+                        set_embedding_model = gr.Dropdown(
+                            label="向量化（Embedding）模型",
+                            choices=[],
+                            value=None,
+                            allow_custom_value=True,
+                            filterable=True,
+                            interactive=True,
+                            scale=4,
+                            info="用于知识库向量化；也可以直接粘贴模型名",
+                        )
+                        refresh_emb_btn = gr.Button("🔄 刷新向量模型", variant="secondary", scale=1)
+                    with gr.Row():
+                        save_settings_btn = gr.Button("💾 保存设置", variant="primary")
+                        test_conn_btn = gr.Button("🔍 测试连接", variant="secondary")
+                    settings_status = gr.Markdown("")
+                with gr.Column(scale=2):
+                    gr.Markdown("#### API Key")
+                    settings_api_key = gr.Textbox(
+                        label="API Key（留空 = 不修改）",
+                        type="password",
+                        placeholder="本地模型通常不需要填",
+                        info="保存在项目根目录 .env，不会提交到 Git",
+                    )
+                    with gr.Accordion("向量化使用独立配置（可选）", open=False):
+                        gr.Markdown(
+                            "默认**跟随对话的地址与 Key**。"
+                            "如果你想「对话跑本地、向量化用云端」（很常见，因为本地往往没装 embedding 模型），"
+                            "勾选下面的选项并填独立地址。"
+                        )
+                        use_sep_embedding = gr.Checkbox(
+                            label="向量化使用独立的地址 / Key", value=False
+                        )
+                        set_emb_base_url = gr.Textbox(
+                            label="向量化接口地址",
+                            placeholder="https://api.siliconflow.cn/v1",
+                        )
+                        set_emb_api_key = gr.Textbox(
+                            label="向量化 API Key（留空 = 不修改）",
+                            type="password",
+                        )
+                    gr.Markdown("#### 当前设置")
+                    settings_overview = gr.Markdown("")
+
     demo.load(
         fn=_on_load,
-        outputs=[session_state, name_select, kb_drop, kb_choice, kb_choice_chat, quiz_kb],
+        outputs=[
+            session_state, name_select, kb_drop, kb_choice, kb_choice_chat, quiz_kb,
+            set_profile, set_chat_model, set_embedding_model, set_base_url,
+            set_emb_base_url, settings_overview,
+        ],
         queue=True
+    )
+
+    # ================= 设置页 =================
+    # 切换来源 → 自动填默认地址 + 显示提示
+    set_profile.change(
+        fn=on_profile_change,
+        inputs=[set_profile],
+        outputs=[set_base_url, profile_hint],
+    )
+    refresh_chat_btn.click(
+        fn=fetch_chat_models,
+        inputs=[set_chat_model],
+        outputs=[set_chat_model, settings_status],
+    )
+    refresh_emb_btn.click(
+        fn=fetch_embedding_models,
+        inputs=[set_embedding_model],
+        outputs=[set_embedding_model, settings_status],
+    )
+    test_conn_btn.click(fn=test_connection, outputs=[settings_status])
+    save_settings_btn.click(
+        fn=save_settings,
+        inputs=[
+            set_profile, set_chat_model, settings_api_key, set_base_url,
+            set_embedding_model, use_sep_embedding, set_emb_base_url, set_emb_api_key,
+        ],
+        outputs=[settings_status],
+    ).then(
+        fn=load_settings,
+        outputs=[set_profile, set_chat_model, set_embedding_model, set_base_url,
+                 set_emb_base_url, settings_overview],
+    )
+    # 侧边栏：只保存 API Key
+    sidebar_save_key_btn.click(
+        fn=save_api_key,
+        inputs=[sidebar_api_key],
+        outputs=[sidebar_key_status],
+    ).then(
+        fn=load_settings,
+        outputs=[set_profile, set_chat_model, set_embedding_model, set_base_url,
+                 set_emb_base_url, settings_overview],
     )
 
     create_button.click(add, [name, description], [message_box, name, description]).then(fn=_refresh_kb_dropdowns, outputs=[name_select, kb_drop, kb_choice, kb_choice_chat, quiz_kb])
