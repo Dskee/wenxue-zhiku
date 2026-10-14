@@ -73,9 +73,16 @@ _embedding_cache: dict = {"version": -1, "model": None}
 
 
 def _build_embedding_model() -> "CustomEmbeddingModel":
-    """按当前设置构造一个向量化客户端（可使用向量化专属的地址与 Key）。"""
+    """按当前设置构造一个向量化客户端（可使用向量化专属的地址与 Key）。
+
+    缺 Key 时直接抛出 MissingApiKeyError：知识库的建库 / 上传 / 检索都依赖向量化，
+    提前给出可读原因，好过让请求走到 API 再返回一堆看不懂的报错。
+    """
+    key = runtime_config.api_key_for("embedding")
+    if not key:
+        runtime_config.require_api_key("embedding")   # 抛 MissingApiKeyError
     client = OpenAIEmbeddings(
-        api_key=runtime_config.api_key_for("embedding") or runtime_config.PLACEHOLDER_KEY,
+        api_key=key,
         base_url=runtime_config.base_url_for("embedding") or base_url,
     )
     name = runtime_config.get("embedding_model") or "BAAI/bge-large-zh-v1.5"
@@ -93,14 +100,58 @@ def get_embedding_model() -> "CustomEmbeddingModel":
         return _embedding_cache["model"]
 
 
+def _translate_embedding_error(exc: Exception) -> "runtime_config.ProviderUnavailableError":
+    """把向量化调用的底层异常翻译成人能看懂的说明（并带上当前配置，便于自查）。"""
+    status = getattr(exc, "status_code", None)
+    text = str(exc)
+    lower = text.lower()
+    base = runtime_config.base_url_for("embedding")
+    model = runtime_config.get("embedding_model")
+    has_key = bool(runtime_config.api_key_for("embedding"))
+
+    if status in (401, 403):
+        reason = f"API Key 无效或无权限（HTTP {status}）"
+    elif status == 404 or "does not exist" in lower or "model not found" in lower:
+        reason = f"向量化模型「{model}」在该服务上不存在"
+    elif "connection" in type(exc).__name__.lower() or "connect" in lower:
+        reason = f"无法连接到向量化服务（{base}）"
+    elif status == 429:
+        reason = "请求过于频繁或额度不足（HTTP 429）"
+    else:
+        reason = f"{type(exc).__name__}: {text[:200]}"
+
+    return runtime_config.ProviderUnavailableError(
+        f"向量化（embedding）调用失败：{reason}。"
+        f"当前配置 —— 接口地址 {base}，向量化模型 {model}，API Key "
+        f"{'已配置' if has_key else '未配置'}。"
+        "请到「⚙️ 设置」页核对「模型来源 / 接口地址 / 向量化模型 / API Key」，"
+        "也可点「🔍 测试连接」直接验证。"
+    )
+
+
 class _EmbeddingProxy(Embeddings):
-    """把调用转发给"当前生效"的向量化模型，使配置改动无需重启即可生效。"""
+    """把调用转发给"当前生效"的向量化模型，使配置改动无需重启即可生效。
+
+    同时把底层异常统一翻译成可读错误——缺 Key、Key 失效、模型名写错、服务连不上
+    都会变成明确的 503 说明，而不是裸的 500 Internal Server Error。
+    """
 
     def embed_documents(self, texts):
-        return get_embedding_model().embed_documents(texts)
+        return self._call("embed_documents", texts)
 
     def embed_query(self, text):
-        return get_embedding_model().embed_query(text)
+        return self._call("embed_query", text)
+
+    @staticmethod
+    def _call(method: str, arg):
+        model = get_embedding_model()          # 缺 Key 时在这里就抛出可读错误
+        try:
+            return getattr(model, method)(arg)
+        except (runtime_config.MissingApiKeyError,
+                runtime_config.ProviderUnavailableError):
+            raise
+        except Exception as exc:               # noqa: BLE001 - 需要统一翻译
+            raise _translate_embedding_error(exc) from exc
 
 
 embedding_model = _EmbeddingProxy()

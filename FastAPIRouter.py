@@ -11,8 +11,25 @@ from chat.ChatFastAPI import ChatAIapp
 from knowledgebase_server.loader.KnowledgeFastAPI import knowledgeapp, kb_router
 from settings_server.SettingsFastAPI import settingsapp
 from configs.setting import API_TOKEN, CORS_ORIGINS
+from configs.runtime_config import MissingApiKeyError, ProviderUnavailableError
 
 app = FastAPI(title="问学知库 API", version="1.0.0")
+
+
+# 统一的「可读错误」处理：
+# 以前缺 API Key / Key 失效 / 模型名写错 / 服务连不上，都会变成裸的
+# 500 Internal Server Error，使用者完全不知道哪里出了问题。
+# 现在统一转成 503 + 中文说明（并附带当前配置，便于自查）。
+@app.exception_handler(MissingApiKeyError)
+async def handle_missing_api_key(request: Request, exc: MissingApiKeyError):
+    return JSONResponse(status_code=503,
+                        content={"detail": str(exc), "error": "missing_api_key"})
+
+
+@app.exception_handler(ProviderUnavailableError)
+async def handle_provider_unavailable(request: Request, exc: ProviderUnavailableError):
+    return JSONResponse(status_code=503,
+                        content={"detail": str(exc), "error": "provider_unavailable"})
 
 # 跨域：只放行配置的来源（默认本机 Gradio 前端）。
 # 原实现为 allow_origins=["*"]，任意网站都能跨域调用本后端的删除/写入接口。

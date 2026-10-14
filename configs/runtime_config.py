@@ -106,6 +106,14 @@ def profiles() -> dict:
     return {"default": DEFAULT_PROFILE, "profiles": PROFILES}
 
 
+class MissingApiKeyError(RuntimeError):
+    """未配置必需的 API Key（由 FastAPIRouter 统一转成 503 + 中文说明）。"""
+
+
+class ProviderUnavailableError(RuntimeError):
+    """模型服务不可用：Key 无效、模型不存在、网络不通等（同样统一转成 503）。"""
+
+
 def needs_key() -> bool:
     """当前来源是否必须配 Key（本地服务通常不需要）。"""
     return bool(PROFILES.get(get("profile") or DEFAULT_PROFILE, {}).get("needs_key", True))
@@ -162,11 +170,13 @@ def snapshot() -> dict:
 
 
 def require_api_key(kind: str = "chat") -> str:
-    """在真正调用模型前校验 Key，缺失时给出可操作的报错。"""
+    """在真正调用模型前校验 Key，缺失时抛出可读错误（由 FastAPIRouter 转成 503）。"""
     key = api_key_for(kind)
     if not key:
-        raise RuntimeError(
-            "未配置 API Key。请在页面左侧「API Key」输入框或「设置」页填写后保存"
+        what = "向量化（embedding）" if kind == "embedding" else "大模型"
+        raise MissingApiKeyError(
+            f"未配置 API Key，无法调用{what}服务。"
+            "请在页面左侧「🔑 API Key」输入框或「⚙️ 设置」页填写后保存"
             "（会写入项目根目录的 .env，重启后依然有效）。"
             "如果你用的是本地模型，请把「模型来源」切换为本地 —— 本地服务通常不需要 Key。"
         )

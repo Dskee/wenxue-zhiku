@@ -232,15 +232,38 @@ def test_connection(req: TestReq):
             "model": model,
         }
     except Exception as e:
-        return {
-            "ok": False,
-            "detail": f"{type(e).__name__}: {str(e)[:300]}",
-            "base_url": base_url,
-            "model": model,
-            "hint": (
-                "本地模型排查：① 服务是否已启动（Ollama: ollama serve）"
+        status = getattr(e, "status_code", None)
+        msg = str(e)
+        lower = msg.lower()
+
+        # 按错误类型给对应的排查提示，别一律甩"本地模型排查"（Key 无效时说这个会误导）
+        if status in (401, 403):
+            hint = (
+                "API Key 无效或已过期。请到「⚙️ 设置」页重新填写有效的 Key 并保存；"
+                "云端 Key 可在 https://cloud.siliconflow.cn/account/ak 重新生成。"
+                "若用的是本地模型，本地服务通常不需要 Key，请把「模型来源」切换为本地。"
+            )
+        elif status == 404 or "does not exist" in lower or "model not found" in lower:
+            hint = (
+                f"模型「{model}」在该服务上不存在。请点「🔄 刷新对话模型 / 刷新向量模型」"
+                "从当前来源拉取真实可用的模型名，而不是手输猜测的名字。"
+            )
+        elif status == 429:
+            hint = "请求过于频繁或账户额度不足，稍后重试或检查账户余额。"
+        elif "connection" in type(e).__name__.lower() or "connect" in lower:
+            hint = (
+                "连不上这个地址。本地模型排查：① 服务是否已启动（Ollama: ollama serve）"
                 "② 模型是否已下载（ollama pull 模型名）"
                 "③ 容器内地址要用 host.docker.internal 而不是 127.0.0.1"
                 "④ 端口是否对应（Ollama 11434 / LM Studio 1234 / vLLM 8000）"
-            ),
+            )
+        else:
+            hint = "请核对「模型来源 / 接口地址 / 模型名 / API Key」四项是否匹配。"
+
+        return {
+            "ok": False,
+            "detail": f"{type(e).__name__}: {msg[:300]}",
+            "base_url": base_url,
+            "model": model,
+            "hint": hint,
         }

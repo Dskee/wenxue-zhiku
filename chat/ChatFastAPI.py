@@ -86,6 +86,10 @@ async def chatai(
         session_id: str = Form(None, description="会话标识"),
         kb_name: str = Form("", description="用户指定的知识库名称，空则自动按相关性选择"),
                  ):
+    # 提前校验 Key：流式响应一旦开始返回就无法再改状态码，
+    # 所以必须在创建 StreamingResponse 之前检查，否则用户只会看到一段断掉的流。
+    runtime_config.require_api_key("chat")
+
     documents = files_rag(files, session_id)
     # 将字符串形式的 Python 数据结构（如 '{"key": "value"}' 或 '[1, 2, 3]' 或 '42'）安全地转换为实际的 Python 数据类型（例如字典、列表、整数等）
     history = [literal_eval(item) for item in history]
