@@ -92,7 +92,7 @@ TEMP_FILE_STORAGE_DIR = _get('TEMP_FILE_STORAGE_DIR', './temp/data')
 MEDIA_DIR = _get('MEDIA_DIR', './temp/medias')
 
 # ==================== 大模型（云端或本地 OpenAI 兼容服务） ====================
-# ⚠️ 密钥只能来自环境变量 / .env，源码中不出现
+# 密钥只能来自环境变量 / .env，源码中不出现
 # 模型来源：siliconflow（硅基流动云端）/ local（本地 Ollama、LM Studio、vLLM）/ custom（自定义）
 PROFILE = _get('PROFILE', 'siliconflow')
 api_key = _get('SILICONFLOW_API_KEY')

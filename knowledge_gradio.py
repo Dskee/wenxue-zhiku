@@ -288,7 +288,7 @@ with gr.Blocks(fill_width=True, fill_height=False) as demo:  # 将 fill_height �
     )
 
     # ================= 设置页 =================
-    # 切换来源 → 自动填默认地址 + 显示提示
+    # 切换来源 自动填默认地址 + 显示提示
     set_profile.change(
         fn=on_profile_change,
         inputs=[set_profile],
@@ -376,13 +376,13 @@ with gr.Blocks(fill_width=True, fill_height=False) as demo:  # 将 fill_height �
     )
 
     # ================= 对话问答整理 =================
-    # 是否导出为文档：是 → 展开保存面板；否 → 收起
+    # 是否导出为文档：是 展开保存面板；否 收起
     export_radio.change(
         fn=lambda v: gr.update(visible=(v == "是")),
         inputs=[export_radio],
         outputs=[export_panel]
     )
-    # 选择「⚡新建知识库」时显示新库名称输入框
+    # 选择「新建知识库」时显示新库名称输入框
     kb_choice.change(
         fn=lambda v: gr.update(visible=(v == NEW_OPTION)),
         inputs=[kb_choice],
@@ -406,7 +406,7 @@ with gr.Blocks(fill_width=True, fill_height=False) as demo:  # 将 fill_height �
     )
 
     # ================= 聊天机器人页「总结知识点」按钮 =================
-    # 点击后执行整理流程 → 清空当前对话（显示 + 内部历史 State）→ 跳转到「对话问答整理」标签页（索引 3）
+    # 点击后执行整理流程 清空当前对话（显示 + 内部历史 State） 跳转到「对话问答整理」标签页（索引 3）
     chat_summarize_btn.click(
         fn=summarize_conversation,
         inputs=[chatbot],

@@ -139,7 +139,7 @@ def export_note(note, note_name, kb_choice, new_kb_name):
         kb_name = kb_choice                      # 手动选择已有知识库（分类归档）
     elif kb_choice == NEW_OPTION and (new_kb_name or "").strip():
         kb_name = new_kb_name.strip()            # 手动新建知识库（指定分类）
-    # AUTO_OPTION 或 NEW 未填名称 → kb_name 留空，由后端自动匹配/自动新建
+    # AUTO_OPTION 或 NEW 未填名称 kb_name 留空，由后端自动匹配/自动新建
 
     payload = {
         "file_name": file_name,

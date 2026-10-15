@@ -3,8 +3,8 @@
 与 `configs/setting.py` 的分工：
 - `setting.py` 是**启动时的静态配置**：进程启动时从环境变量 / `.env` 读一次；
 - 本模块是**页面上随时可改的活配置**：
-  ① 改动立刻在内存生效，**不需要重启服务**（正在跑的请求也会用到新值）；
-  ② 同时写回项目根目录的 `.env`，**重启后依然是新值**。
+   改动立刻在内存生效，**不需要重启服务**（正在跑的请求也会用到新值）；
+   同时写回项目根目录的 `.env`，**重启后依然是新值**。
 
 关于「模型来源（profile）」：
 - `siliconflow`：硅基流动云端，必须配 API Key；
@@ -70,7 +70,7 @@ _state = {
     "embedding_api_key": setting.EMBEDDING_API_KEY,
 }
 
-# 状态字段 → .env 中的变量名
+# 状态字段 .env 中的变量名
 _ENV_KEYS = {
     "profile": "PROFILE",
     "chat_model": "CHAT_MODEL_NAME",
@@ -211,7 +211,7 @@ def _validate(name: str, value: str) -> str:
 
 
 def update(clear=(), **changes) -> dict:
-    """更新设置：校验 → 内存生效 → 写回 .env。
+    """更新设置：校验  内存生效  写回 .env。
 
     - `changes` 中值为 None 或空字符串表示"该项不修改"（前端密码框留空即不覆盖旧 Key）；
     - `clear` 里列出的字段会被显式清空（例如取消"向量化独立配置"）。

@@ -13,7 +13,7 @@ engine = create_engine(
 )
 SessionLocal = sessionmaker(bind=engine, autoflush=False, autocommit=False)
 
-# ⚠️ 必须是 scoped_session（按线程隔离），不能是 SessionLocal() 单例：
+# 必须是 scoped_session（按线程隔离），不能是 SessionLocal() 单例：
 # 之前用模块级 session = SessionLocal() 被多个线程池工作线程并发共享，
 # 而 SQLAlchemy Session 并非线程安全，会出现状态错乱 / InvalidRequestError。
 # scoped_session 让每个线程自动拿到自己的 Session，调用方写法（queryall(session)）保持不变。

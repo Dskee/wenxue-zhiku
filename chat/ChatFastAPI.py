@@ -226,7 +226,7 @@ class SummarizeReq(BaseModel):
 async def summarize_conversation(req: SummarizeReq):
     """
     对话问答笔记整理器（对应 TraeCode「对话问答笔记整理器」skill）：
-    将用户与模型的多次问答按「回溯分类 → 提炼最优提问模板 → 过滤保留 → 按序整页输出」整理为结构化笔记。
+    将用户与模型的多次问答按「回溯分类  提炼最优提问模板  过滤保留  按序整页输出」整理为结构化笔记。
     """
     history = req.history
     if not history:
@@ -287,7 +287,7 @@ def _rank_kbs(knowledgebases, query):
         except Exception:
             k_words = set(text)
         overlap = len(q_words & k_words)
-        # 库名被问题直接提及 → 加权，优先
+        # 库名被问题直接提及 加权，优先
         if kb["name"] in query:
             overlap += 5
         scored.append((overlap, kb))

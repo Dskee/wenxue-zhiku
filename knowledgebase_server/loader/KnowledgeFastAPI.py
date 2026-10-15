@@ -6,7 +6,7 @@ import jieba
 from langchain_openai import OpenAIEmbeddings
 from langchain.embeddings.base import Embeddings
 from langchain_community.retrievers import BM25Retriever
-# ⚠️ EnsembleRetriever不在community，在 langchain.retrievers
+# EnsembleRetriever不在community，在 langchain.retrievers
 from langchain_classic.retrievers import EnsembleRetriever
 
 from knowledgebase_server.loader.loader import data_loader
@@ -64,10 +64,10 @@ class CustomEmbeddingModel(Embeddings):
 
 # 密钥 / 地址 / 向量模型都来自运行时可改配置（「设置」页可改，改完立刻生效并写回 .env）。
 # 这里用一个**可重建的代理对象**代替原来一次性构造的客户端：
-#   - 对外仍然是 Embeddings 实例（FAISS.load_local 的 isinstance 校验能通过），
-#     所以所有调用点（embed_query / embed_documents）写法完全不用改；
-#   - 内部按 runtime_config.version() 判断配置是否变过，变了就重建底层客户端，
-#     这样在页面上换了 API Key 之后，向量化立刻用新 Key，无需重启服务。
+# - 对外仍然是 Embeddings 实例（FAISS.load_local 的 isinstance 校验能通过），
+# 所以所有调用点（embed_query / embed_documents）写法完全不用改；
+# - 内部按 runtime_config.version() 判断配置是否变过，变了就重建底层客户端，
+# 这样在页面上换了 API Key 之后，向量化立刻用新 Key，无需重启服务。
 _embedding_lock = threading.RLock()
 _embedding_cache: dict = {"version": -1, "model": None}
 
@@ -310,7 +310,7 @@ async def upload_docs(
 
 
 # ---------------- 重排序模型：按需懒加载 ----------------
-# ⚠️ 不要把 CrossEncoder(...) 放在模块导入时执行：
+# 不要把 CrossEncoder(...) 放在模块导入时执行：
 # 初始化要读取几千 MB 的权重，一旦写成模块级调用，**整个服务在模型就绪前都起不来**
 # （连设置页、知识库管理页都打不开），对刚 clone 下来的人是硬门槛。
 # 改为首次真正检索时才加载；加载失败也不让服务崩，而是降级为"只用混合检索结果"。
@@ -322,8 +322,8 @@ def get_rerank_model():
     """获取重排序模型；不可用时返回 None（调用方据此降级）。
 
     返回 None 的两种情况：
-    ① 模型文件不存在 / 加载报错（例如还没按 README 下载）；
-    ② 加载成功过一次之后被缓存。
+     模型文件不存在 / 加载报错（例如还没按 README 下载）；
+     加载成功过一次之后被缓存。
     """
     with _rerank_lock:
         if _rerank_state["loaded"]:
@@ -538,7 +538,7 @@ class UpdateFileReq(BaseModel):
 @kb_router.post("/update_file")
 async def update_file(req: UpdateFileReq):
     """
-    修改知识库内笔记文件：校验路径合法性 → 写回文件内容 → 整库重建向量索引。
+    修改知识库内笔记文件：校验路径合法性  写回文件内容  整库重建向量索引。
     文件内容变化后必须重建 FAISS，避免旧向量残留导致检索到过期内容。
     """
     file_path = _kb_file_path(req.kb_name, req.file_name)
@@ -754,7 +754,7 @@ def save_note(req: SaveNoteReq):
 
     appended = False
     if matched_files:
-        # 同名 → 合并：读最近一次的同名笔记，追加新内容并自动标注追加日期，覆盖写回原文件
+        # 同名 合并：读最近一次的同名笔记，追加新内容并自动标注追加日期，覆盖写回原文件
         # （保留原文件名与首次创建日期，便于复习对照时间线）
         latest = max(matched_files, key=lambda f: os.path.getmtime(os.path.join(storage_path, f)))
         with open(os.path.join(storage_path, latest), "r", encoding="utf-8") as f:
@@ -764,7 +764,7 @@ def save_note(req: SaveNoteReq):
         file_path = resolve_within(storage_path, latest)
         appended = True
     else:
-        # 无同名 → 新建：笔记名_库名_日期.md（同日再同名时追加时分秒，防止覆盖）
+        # 无同名 新建：笔记名_库名_日期.md（同日再同名时追加时分秒，防止覆盖）
         safe_file = f"{raw_name}_{target_kb}_{time.strftime('%Y%m%d')}.md"
         file_path = resolve_within(storage_path, safe_file)
         if os.path.exists(file_path):

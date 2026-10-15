@@ -84,7 +84,7 @@ def list_profiles():
 
 @settingsapp.post("")
 def write_settings(req: SettingsReq):
-    """保存设置：校验 → 立即生效 → 写回 .env。"""
+    """保存设置：校验  立即生效  写回 .env。"""
     try:
         result = runtime_config.update(
             clear=req.clear or (),
