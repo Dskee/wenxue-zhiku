@@ -1,0 +1,39 @@
+# 评测依赖：跑「指标单测 + 检索评测（vector_only / hybrid）」需要的全部包。
+#
+# 关于 torch：本项目用到的 langchain 组件（EnsembleRetriever、文本切分器）在导入时就会
+# 连带拉起 transformers / sentence_transformers / torch，所以即使不跑重排也装不了「没有 torch
+# 的精简版」。CI 里先装 CPU 版 torch（体积小一个数量级）：
+#   pip install torch==2.14.0 --index-url https://download.pytorch.org/whl/cpu
+#   pip install -r eval/requirements-eval.txt
+# 这里不钉 torch 的版本来源，避免覆盖上面那条 CPU 源安装。
+#
+# 只缺重排模型的权重（2.2GB），因此 hybrid_rerank 这份配置只在本地跑，CI 不跑。
+
+fastapi==0.141.1
+starlette==1.6.0
+uvicorn==0.52.4
+httpx==0.28.1
+pydantic==2.13.5
+SQLAlchemy==2.0.54
+python-dotenv==1.2.3
+requests==2.34.2
+
+langchain==1.4.2
+langchain-core==1.6.4
+langchain-classic==1.0.8
+langchain-community==0.4.2
+langchain-openai==1.6.6
+langchain-text-splitters==1.1.2
+openai==3.19.0
+
+faiss-cpu==1.15.1
+rank-bm25==0.2.2
+jieba==0.42.1
+numpy==2.2.6
+
+# langchain 组件在导入阶段就会拉起这两个包
+transformers==5.17.0
+sentence-transformers==6.1.0
+
+# Python 3.10 没有内置 tomllib，读评测配置要靠它
+tomli==2.4.1

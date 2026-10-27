@@ -46,3 +46,6 @@ env/
 .DS_Store
 Thumbs.db
 desktop.ini
+
+# CI 评测产物（GitHub Actions 里的报告与子集）
+/ci-out/

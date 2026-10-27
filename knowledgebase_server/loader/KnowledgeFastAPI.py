@@ -37,7 +37,10 @@ import re
 import threading
 import time
 from pydantic import BaseModel
-from sentence_transformers import CrossEncoder
+
+# 注意：sentence_transformers（会连带拉起 torch）不在这里导入。
+# 关掉重排的检索只需要 FAISS + BM25，没装 torch 的环境（例如 CI 里只跑评测）也应该能起来；
+# 真正用到重排时再在 get_rerank_model() 里导入，见下面的懒加载说明。
 
 
 
@@ -331,6 +334,8 @@ def get_rerank_model():
             return _rerank_state["model"]
         _rerank_state["loaded"] = True
         try:
+            from sentence_transformers import CrossEncoder
+
             print(f"[rerank] 首次加载重排序模型: {RERANK_MODEL_PATH}")
             _rerank_state["model"] = CrossEncoder(RERANK_MODEL_PATH)
             _rerank_state["error"] = None

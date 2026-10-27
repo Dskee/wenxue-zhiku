@@ -8,7 +8,11 @@ import unittest
 
 from eval.metrics import (
     aggregate,
+    evaluate_evidence_query,
     evaluate_query,
+    evidence_ndcg_at_k,
+    evidence_mrr_at_k,
+    evidence_recall_at_k,
     first_hit_rank,
     hit_at_k,
     mrr_at_k,
@@ -145,6 +149,57 @@ class AggregateTest(unittest.TestCase):
         summary = aggregate([], ["recall@5"])
         self.assertEqual(summary["all"]["count"], 0)
         self.assertEqual(summary["all"]["recall@5"], 0.0)
+
+
+class EvidenceCoverageTest(unittest.TestCase):
+    """证据覆盖口径：答案片段出现在某段正文里就算命中，与 chunk 边界无关。"""
+
+    def test_single_evidence_in_second_doc(self):
+        texts = ["无关内容", "这里提到点积的方差会随维度 d_k 线性增长", "第三段"]
+        self.assertEqual(evidence_recall_at_k(texts, ["点积的方差会随维度 d_k 线性增长"], 3), 1.0)
+        self.assertAlmostEqual(evidence_mrr_at_k(texts, ["点积的方差会随维度 d_k 线性增长"], 3), 0.5)
+
+    def test_evidence_with_whitespace_and_punctuation(self):
+        texts = ["原文：Variance grows  linearly with d_k."]
+        self.assertEqual(evidence_recall_at_k(texts, ["Variance grows linearly with d_k"], 1), 1.0)
+
+    def test_evidence_outside_cutoff(self):
+        texts = ["a", "b", "目标片段在这里"]
+        self.assertEqual(evidence_recall_at_k(texts, ["目标片段在这里"], 2), 0.0)
+
+    def test_multi_evidence_partial(self):
+        texts = ["包含片段一的内容", "无关", "包含片段二的内容"]
+        self.assertAlmostEqual(evidence_recall_at_k(texts, ["片段一", "片段二"], 2), 0.5)
+        self.assertEqual(evidence_recall_at_k(texts, ["片段一", "片段二"], 3), 1.0)
+
+    def test_duplicate_evidence_counted_once(self):
+        texts = ["同一段包含片段一"]
+        self.assertEqual(evidence_recall_at_k(texts, ["片段一", "片段一"], 1), 1.0)
+
+    def test_ndcg_perfect_when_first_doc_covers_everything(self):
+        texts = ["片段一 和 片段二 都在这里"]
+        self.assertAlmostEqual(evidence_ndcg_at_k(texts, ["片段一", "片段二"], 1), 1.0)
+
+    def test_ndcg_ordering_matters(self):
+        early = evidence_ndcg_at_k(["片段一", "片段二"], ["片段一", "片段二"], 2)
+        late = evidence_ndcg_at_k(["无关", "无关", "片段一", "片段二"], ["片段一", "片段二"], 5)
+        self.assertGreater(early, late)
+
+    def test_empty_evidence_is_error(self):
+        with self.assertRaises(ValueError):
+            evidence_recall_at_k(["a"], [], 5)
+
+    def test_invalid_k(self):
+        with self.assertRaises(ValueError):
+            evidence_recall_at_k(["a"], ["a"], 0)
+
+    def test_evaluate_evidence_query_keys(self):
+        result = evaluate_evidence_query(["含片段一"], ["片段一"], 5)
+        self.assertEqual(
+            set(result),
+            {"evidence_recall@5", "evidence_mrr@5", "evidence_ndcg@5", "evidence_first_rank"},
+        )
+        self.assertEqual(result["evidence_first_rank"], 1)
 
 
 if __name__ == "__main__":

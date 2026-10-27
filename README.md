@@ -62,6 +62,12 @@
 │   └── paths.py                     # 路径安全工具（防路径穿越）
 ├── webui/                           # 前端各页面的请求逻辑（不含 UI 组件）
 │   ├── Chat_UI.py  ├── Knowledge_UI.py  ├── Summary_UI.py  └── Quiz_UI.py
+├── eval/                            # 评测：指标纯函数、配置、数据集、消融脚本
+│   ├── configs/*.toml               # 三份检索配置（纯向量 / 混合 / 混合+重排）
+│   ├── dataset/                     # 冻结数据集（specs 里是逐字证据片段）+ CHANGELOG
+│   ├── corpus/唐诗三百首.md          # 公版语料，供 CI 复现
+│   └── run_ablation.py              # 三配置 × 40 题，出 results/YYYY-MM-DD.md
+├── results/                         # 实跑生成的评测报告（Markdown + 原始 JSON）
 ├── data/                            # 知识库文档与笔记（运行时生成，已 gitignore）
 ├── knowledgebases/                  # FAISS 向量索引（运行时生成，已 gitignore）
 └── temp/                            # 对话上传的临时文件（已 gitignore）
@@ -239,6 +245,93 @@ ollama pull bge-m3          # 向量化模型（知识库需要）
 | `GET` | `/settings/profiles` | 返回模型来源预设（默认地址、默认模型名、提示文案） |
 | `GET` | `/settings/models?kind=chat\|embedding` | 从对应来源实时拉取可用模型列表 |
 | `POST` | `/settings/test` | 真实调用一次模型，验证「地址 + Key + 模型名」是否可用 |
+
+---
+
+## 🧪 评测与检索消融
+
+这个项目原本只能靠「感觉答得还行」判断效果——改切块大小、关重排，谁也说不清是变好还是变坏。
+`eval/` 补上的就是这件事：**同一份代码 + 三份配置 + 一份冻结数据集**，跑出可复现的数字。
+
+### 三份配置（只换参数，不改代码）
+
+| 配置文件 | 纯向量 | BM25 | 重排 | top_k_vector | top_k_bm25 | top_k_final |
+| --- | --- | --- | --- | --- | --- | --- |
+| `eval/configs/vector_only.toml` | ✅ | ❌ | ❌ | 5 | 4 | 5 |
+| `eval/configs/hybrid.toml` | ✅ | ✅ | ❌ | 4 | 4 | 5 |
+| `eval/configs/hybrid_rerank.toml`（线上默认） | ✅ | ✅ | ✅ | 4 | 4 | 5 |
+
+三份配置由 `knowledgebase_server/loader/KnowledgeFastAPI.py` 里的 `RetrievalConfig` 承载，
+`search_kb` 的对外行为与改造前等价（同一问题返回同样的 5 条、同样的重排分数）。
+
+### 数据集 v1.0（冻结）
+
+- 40 条：`normal` 24 / `boundary` 8 / `no_answer` 8，逐条人工核过 gold。
+- md5 `559d14690bb7338048021235f28019f7`，变更记录见 [`eval/dataset/CHANGELOG.md`](eval/dataset/CHANGELOG.md)。
+- gold 不是手抄 UUID：`eval/dataset/specs/v1.0.json` 里逐字摘答案片段，由构建脚本归一化后反查
+  **内容寻址**的 chunk id（`sha1(文件名 + 正文)[:16]`）。语料一改，构建直接失败，标注不会悄悄漂移。
+- 语料共 874 个 chunk：Agent 面试问答（私有笔记，不入库）+ 唐诗三百首（公版，提交在 `eval/corpus/`）。
+
+### 指标口径
+
+零 LLM 裁判，全是纯函数（`eval/metrics.py`，63 个单测）：
+
+- **证据覆盖 Recall@5 / MRR@5 / nDCG@5**（主指标）：答案片段是否出现在 top-5 的某段正文里。
+  128 字的切块会把一段答案切开，只按 chunk id 判分会被切块边界噪声吃掉，所以主指标看「上下文里有没有这句话」。
+- **块级 Recall@5**（对照）：整块 chunk id 精确匹配，用来观察索引本身有没有取到同一块。
+- **误拒率 / 拒答正确率**：字符串规则判定——拒答语只在回答**开头**才算，末尾的免责声明不算拒答
+  （这个坑实测把误拒率虚高到 100%）。
+
+### 实测结果（2026-10-27，Qwen3-8B + bge-large-zh-v1.5，874 chunk）
+
+| 配置 | 证据 Recall@5 | 证据 MRR@5 | 证据 nDCG@5 | 块级 Recall@5 | 误拒率 | 拒答正确率 | 检索 p50 | 检索 p95 |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| `vector_only` | 0.719 | 0.526 | 0.575 | 0.703 | 0% | 75% | 98 ms | 108 ms |
+| `hybrid` | 0.656 | 0.490 | 0.532 | 0.641 | 3% | 75% | 104 ms | 120 ms |
+| `hybrid_rerank` | 0.719 | 0.594 | 0.625 | 0.719 | 0% | 75% | 1544 ms | 2165 ms |
+
+读数（逐题命中名次见 [`results/2026-10-27.md`](results/2026-10-27.md)）：
+
+1. **重排买的是顺序，不是覆盖率**：`hybrid_rerank` 的 Recall@5 与纯向量持平（0.719），
+   但 MRR@5 从 0.526 升到 0.594、nDCG@5 从 0.575 升到 0.625，代价是检索 p50 从 98 ms 涨到 1544 ms（约 15 倍）。
+2. **这个语料上 BM25 反而拖后腿**：`hybrid` 覆盖率比纯向量低 6.3 个百分点。128 字的小块里，
+   BM25 按字面命中「注意力」「位置编码」这类高频词，把同词不同义的块挤进 top-5。
+   这是真实结果，不做选择性汇报——它说明混合召回的权重和切块大小值得单独调，而不是「加了就一定好」。
+3. **生成层没有乱拒，但会硬答**：检索已覆盖答案片段时误拒率 0%；8 条 `no_answer` 上拒答正确率 75%，
+   即 2 条被硬答。当前更值得修的是这个短板。
+
+### 怎么跑
+
+```bash
+# 1) 先把两篇语料上传成知识库「评测基准」（走真实 /knowledge/upload_docs，chunk_size=128 / overlap=20）
+# 2) 跑三种配置，写出 results/YYYY-MM-DD.md 与同名 JSON
+python -m eval.run_ablation --kb 评测基准 --dataset eval/dataset/v1.0.jsonl \
+    --out results/2026-10-27.md --json-out results/2026-10-27.json
+# 只测检索（跳过生成层，秒级出结果）
+python -m eval.run_ablation --kb 评测基准 --no-generate --out /tmp/retrieval.md
+# 只想改报告排版、不想重跑实验：用上次的 JSON 重渲染
+python -m eval.run_ablation --from-json results/2026-10-27.json --out results/2026-10-27.md
+# 单测（不联网、不加载模型）
+python -m unittest discover -s eval -t .
+```
+
+生成层固定 `temperature=0`、`max_tokens=512`、单轮固定 prompt，并显式关闭 Qwen3 的思考模式
+（实测同一问题 107.7s → 1.0s；评测要看的是答案层，不是思维链）。
+
+### CI
+
+`.github/workflows/eval.yml`：
+
+- **unit**（push / PR 自动跑）：只跑指标与拒答规则的单测，不装任何第三方包——指标算错不会被环境问题掩盖。
+- **retrieval**（仅手动 `workflow_dispatch`）：装 CPU 版 torch + `eval/requirements-eval.txt`（**不含 2.2GB 重排权重**），
+  用提交在仓库里的公版唐诗语料重建知识库，跑 `vector_only` + `hybrid`，报告写进 Job Summary。
+  需要在仓库 Secrets 配 `SILICONFLOW_API_KEY`。`hybrid_rerank` 要下 2.2GB 本地权重，CI 不跑，也不假装跑过。
+
+### 局限
+
+- 40 条是「够用但不显著」，趋势比绝对值可靠；生成层单次运行有抖动。
+- 私有笔记语料不入库，克隆者只能复现唐诗那一半（CI 就是这么做的）。
+- 语料里的唐诗是繁体/异体字版本，标准写法（「滚滚来」「猿啸哀」）匹配不到，出题按语料原文写。
 
 ---
 

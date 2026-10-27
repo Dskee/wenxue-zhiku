@@ -1,0 +1,3899 @@
+{
+  "summary": {
+    "vector_only": {
+      "items": 40,
+      "answerable": 32,
+      "no_answer": 8,
+      "retrieval_errors": 0,
+      "generation_errors": 0,
+      "latency_ms_p50": 97.8,
+      "latency_ms_p95": 108.2,
+      "retrieved_mean": 5.0,
+      "evidence_recall@5": 0.7188,
+      "evidence_mrr@5": 0.526,
+      "evidence_ndcg@5": 0.5745,
+      "recall@5": 0.7031,
+      "mrr@5": 0.526,
+      "ndcg@5": 0.5669,
+      "by_type": {
+        "normal": {
+          "count": 24,
+          "evidence_recall@5": 0.75,
+          "evidence_mrr@5": 0.5694,
+          "evidence_ndcg@5": 0.6148
+        },
+        "boundary": {
+          "count": 8,
+          "evidence_recall@5": 0.625,
+          "evidence_mrr@5": 0.3958,
+          "evidence_ndcg@5": 0.4539
+        }
+      },
+      "refusal_rate_answerable": 0.0,
+      "refusal_accuracy_no_answer": 0.75,
+      "evidence_hit_rate": 0.4688,
+      "refusal_rate_answerable_covered": 0.0,
+      "covered_count": 23,
+      "generation_ms_p50": 3727.2
+    },
+    "hybrid": {
+      "items": 40,
+      "answerable": 32,
+      "no_answer": 8,
+      "retrieval_errors": 0,
+      "generation_errors": 0,
+      "latency_ms_p50": 103.6,
+      "latency_ms_p95": 119.6,
+      "retrieved_mean": 5.0,
+      "evidence_recall@5": 0.6562,
+      "evidence_mrr@5": 0.4896,
+      "evidence_ndcg@5": 0.5318,
+      "recall@5": 0.6406,
+      "mrr@5": 0.4896,
+      "ndcg@5": 0.5203,
+      "by_type": {
+        "normal": {
+          "count": 24,
+          "evidence_recall@5": 0.625,
+          "evidence_mrr@5": 0.4826,
+          "evidence_ndcg@5": 0.5189
+        },
+        "boundary": {
+          "count": 8,
+          "evidence_recall@5": 0.75,
+          "evidence_mrr@5": 0.5104,
+          "evidence_ndcg@5": 0.5702
+        }
+      },
+      "refusal_rate_answerable": 0.0312,
+      "refusal_accuracy_no_answer": 0.75,
+      "evidence_hit_rate": 0.4516,
+      "refusal_rate_answerable_covered": 0.0,
+      "covered_count": 21,
+      "generation_ms_p50": 3014.5
+    },
+    "hybrid_rerank": {
+      "items": 40,
+      "answerable": 32,
+      "no_answer": 8,
+      "retrieval_errors": 0,
+      "generation_errors": 0,
+      "latency_ms_p50": 1544.0,
+      "latency_ms_p95": 2165.1,
+      "retrieved_mean": 5.0,
+      "evidence_recall@5": 0.7188,
+      "evidence_mrr@5": 0.5938,
+      "evidence_ndcg@5": 0.6248,
+      "recall@5": 0.7188,
+      "mrr@5": 0.5938,
+      "ndcg@5": 0.6248,
+      "by_type": {
+        "normal": {
+          "count": 24,
+          "evidence_recall@5": 0.75,
+          "evidence_mrr@5": 0.6424,
+          "evidence_ndcg@5": 0.6692
+        },
+        "boundary": {
+          "count": 8,
+          "evidence_recall@5": 0.625,
+          "evidence_mrr@5": 0.4479,
+          "evidence_ndcg@5": 0.4913
+        }
+      },
+      "refusal_rate_answerable": 0.0,
+      "refusal_accuracy_no_answer": 0.75,
+      "evidence_hit_rate": 0.375,
+      "refusal_rate_answerable_covered": 0.0,
+      "covered_count": 23,
+      "generation_ms_p50": 5498.9
+    }
+  },
+  "per_item": {
+    "hybrid": {
+      "n01": {
+        "id": "n01",
+        "type": "normal",
+        "question": "注意力打分时为什么要除以维度的平方根，不除会出现什么后果？",
+        "retrieved_ids": [
+          "b05f8874ec59c027",
+          "8e1e05302777731b",
+          "2bb9e92baf8d2e3d",
+          "706627629a490f51",
+          "e95dcab71c4d4247"
+        ],
+        "gold_ids": [
+          "e49fb4e6eecc4262"
+        ],
+        "retrieved_count": 5,
+        "latency_ms": 110.5,
+        "error": "",
+        "recall@5": 0.0,
+        "mrr@5": 0.0,
+        "ndcg@5": 0.0,
+        "evidence_recall@5": 0.0,
+        "evidence_mrr@5": 0.0,
+        "evidence_ndcg@5": 0.0,
+        "evidence_first_rank": 0,
+        "answer": "注意力打分时除以维度的平方根是为了防止点积结果过大，导致softmax函数的梯度消失问题。不除的话，点积的值可能会变得非常大，使得softmax的输出接近于0或1，从而影响模型的训练效果。",
+        "answer_chars": 94,
+        "refused": false,
+        "generation_ms": 2248.6,
+        "generation_error": "",
+        "evidence_in_answer": false
+      },
+      "n02": {
+        "id": "n02",
+        "type": "normal",
+        "question": "Transformer 靠什么机制知道句子里词的先后顺序？",
+        "retrieved_ids": [
+          "7f6d8f3eec326e66",
+          "5ef78101435f2b3e",
+          "9b7a439883e3271c",
+          "1bf493a541448664",
+          "32856fb8fc4def5a"
+        ],
+        "gold_ids": [
+          "88fd3fbdbbd7d9fd"
+        ],
+        "retrieved_count": 5,
+        "latency_ms": 98.8,
+        "error": "",
+        "recall@5": 0.0,
+        "mrr@5": 0.0,
+        "ndcg@5": 0.0,
+        "evidence_recall@5": 0.0,
+        "evidence_mrr@5": 0.0,
+        "evidence_ndcg@5": 0.0,
+        "evidence_first_rank": 0,
+        "answer": "Transformer 依靠位置编码（Positional Encoding）机制来知道句子里词的先后顺序。位置编码被加到输入的嵌入向量上，以提供词在序列中的位置信息。原始 Transformer 只在输入层加一次位置编码；现在有些做法每层都加，或者用 RoPE 直接在每层注意力里旋转 [5]。",
+        "answer_chars": 148,
+        "refused": false,
+        "generation_ms": 2786.8,
+        "generation_error": "",
+        "evidence_in_answer": false
+      },
+      "n03": {
+        "id": "n03",
+        "type": "normal",
+        "question": "处理变长序列时，为什么更倾向用 LayerNorm 而不是 BatchNorm？",
+        "retrieved_ids": [
+          "dd730a5b3c1b3d32",
+          "dbb179a5408b4d21",
+          "d1ede942e52c65ff",
+          "32856fb8fc4def5a",
+          "1fe1b5b0eabe9a29"
+        ],
+        "gold_ids": [
+          "dbb179a5408b4d21"
+        ],
+        "retrieved_count": 5,
+        "latency_ms": 108.1,
+        "error": "",
+        "recall@5": 1.0,
+        "mrr@5": 0.5,
+        "ndcg@5": 0.6309297535714575,
+        "evidence_recall@5": 1.0,
+        "evidence_mrr@5": 0.5,
+        "evidence_ndcg@5": 0.6309297535714575,
+        "evidence_first_rank": 2,
+        "answer": "处理变长序列时，更倾向用 LayerNorm 而不是 BatchNorm，因为 LayerNorm 在特征维度上对单个样本自己的所有特征求均值和方差，与 batch 完全无关，因此不受序列长度变化的影响 [2]。",
+        "answer_chars": 106,
+        "refused": false,
+        "generation_ms": 16552.9,
+        "generation_error": "",
+        "evidence_in_answer": false
+      },
+      "n04": {
+        "id": "n04",
+        "type": "normal",
+        "question": "Claude Code 的执行环境大致可以拆成哪几块职责？",
+        "retrieved_ids": [
+          "9fd25ebd8f53445f",
+          "2936d6cf6eb9308d",
+          "a1d17c5b2eee51ef",
+          "bf3c347e011704ba",
+          "b436c85e768af43b"
+        ],
+        "gold_ids": [
+          "9fd25ebd8f53445f"
+        ],
+        "retrieved_count": 5,
+        "latency_ms": 113.3,
+        "error": "",
+        "recall@5": 1.0,
+        "mrr@5": 1.0,
+        "ndcg@5": 1.0,
+        "evidence_recall@5": 1.0,
+        "evidence_mrr@5": 1.0,
+        "evidence_ndcg@5": 1.0,
+        "evidence_first_rank": 1,
+        "answer": "Claude Code 的执行环境大致可以拆成七块职责：驱动 while(true) 循环，管理 Turn 之间的状态，也就是 Agent；System Prompt 大约 54.3；Git Worktree 做工作区隔离；子 Agent 类型分 general-purpose、Explore（只读）、Plan（只读）[1]。",
+        "answer_chars": 164,
+        "refused": false,
+        "generation_ms": 20102.7,
+        "generation_error": "",
+        "evidence_in_answer": false
+      },
+      "n05": {
+        "id": "n05",
+        "type": "normal",
+        "question": "Claude Code 的系统提示词为什么要把不变的内容放最前面？",
+        "retrieved_ids": [
+          "3fb5ada00713610d",
+          "4306ec992b721c9f",
+          "7f6d8f3eec326e66",
+          "d4178215750ea72c",
+          "e966acbd23cc09a9"
+        ],
+        "gold_ids": [
+          "cf27a80685ae6c6f"
+        ],
+        "retrieved_count": 5,
+        "latency_ms": 101.0,
+        "error": "",
+        "recall@5": 0.0,
+        "mrr@5": 0.0,
+        "ndcg@5": 0.0,
+        "evidence_recall@5": 0.0,
+        "evidence_mrr@5": 0.0,
+        "evidence_ndcg@5": 0.0,
+        "evidence_first_rank": 0,
+        "answer": "Claude Code 的系统提示词把不变的内容放最前面，是因为 prompt caching 靠前缀匹配，顺序一乱缓存就全失效。这是从 Claude Code 那套 54KB 提示词的设计里学来的。[3]",
+        "answer_chars": 103,
+        "refused": false,
+        "generation_ms": 1623.0,
+        "generation_error": "",
+        "evidence_in_answer": false
+      },
+      "n06": {
+        "id": "n06",
+        "type": "normal",
+        "question": "OpenClaw 怎么发现 Agent 在同一个工具上反复打转？阈值分几级？",
+        "retrieved_ids": [
+          "6c429a7ed7e42434",
+          "e511169958447271",
+          "382fb12bd7ced3e0",
+          "b390cafae18c9f58",
+          "31b7b6a5c6a7630e"
+        ],
+        "gold_ids": [
+          "52e3f6532c82912e"
+        ],
+        "retrieved_count": 5,
+        "latency_ms": 119.6,
+        "error": "",
+        "recall@5": 0.0,
+        "mrr@5": 0.0,
+        "ndcg@5": 0.0,
+        "evidence_recall@5": 0.0,
+        "evidence_mrr@5": 0.0,
+        "evidence_ndcg@5": 0.0,
+        "evidence_first_rank": 0,
+        "answer": "OpenClaw 通过向量索引来发现 Agent 在同一个工具上反复打转。阈值分为两级：10 次提示换策略、20 次直接熔断 [3]。",
+        "answer_chars": 67,
+        "refused": false,
+        "generation_ms": 1506.3,
+        "generation_error": "",
+        "evidence_in_answer": false
+      },
+      "n07": {
+        "id": "n07",
+        "type": "normal",
+        "question": "长期记忆为什么不能只存向量库，还要保留明文层？",
+        "retrieved_ids": [
+          "80f1df8fccd13dbc",
+          "47601ed7a44c637a",
+          "2a015b48c5696d36",
+          "f7b7d96bb40ad999",
+          "7f0d014a736cbff6"
+        ],
+        "gold_ids": [
+          "ba11dd01aea8ee66"
+        ],
+        "retrieved_count": 5,
+        "latency_ms": 119.7,
+        "error": "",
+        "recall@5": 0.0,
+        "mrr@5": 0.0,
+        "ndcg@5": 0.0,
+        "evidence_recall@5": 0.0,
+        "evidence_mrr@5": 0.0,
+        "evidence_ndcg@5": 0.0,
+        "evidence_first_rank": 0,
+        "answer": "长期记忆不能只存向量库，还要保留明文层，是因为明文层可以作为「真相来源」，便于回溯和验证，而向量库仅用于检索相关片段，无法提供完整的上下文或确保内容的准确性。如果只有向量库，记忆会变成黑盒，无法确定其内容是否准确或是否存在幻觉。[2]",
+        "answer_chars": 117,
+        "refused": false,
+        "generation_ms": 3179.3,
+        "generation_error": "",
+        "evidence_in_answer": false
+      },
+      "n08": {
+        "id": "n08",
+        "type": "normal",
+        "question": "ExecTool 拦截危险命令为什么选择黑名单而不是白名单？",
+        "retrieved_ids": [
+          "f0d2f2527fd30dff",
+          "d8e1c710e8a3905c",
+          "411b11045db88de1",
+          "38ec9e37f0253375",
+          "f500666e70275a90"
+        ],
+        "gold_ids": [
+          "411b11045db88de1"
+        ],
+        "retrieved_count": 5,
+        "latency_ms": 116.0,
+        "error": "",
+        "recall@5": 1.0,
+        "mrr@5": 0.3333333333333333,
+        "ndcg@5": 0.5,
+        "evidence_recall@5": 1.0,
+        "evidence_mrr@5": 0.3333333333333333,
+        "evidence_ndcg@5": 0.5,
+        "evidence_first_rank": 3,
+        "answer": "ExecTool 拦截危险命令选择黑名单而不是白名单，是因为白名单会严重限制 Agent 的能力，无法预知用户未来会需要什么命令，写白名单等于把 Agent 的能力锁死 [3]。而黑名单的哲学是默认信任，但拦住已知的致命操作，这样可以在保留灵活性的同时防住最危险的操作 [5]。此外，黑名单是工程上的折衷方案，虽然有天然缺陷（如防不了变种），但可以通过其他补强手段来弥补 [5]。",
+        "answer_chars": 190,
+        "refused": false,
+        "generation_ms": 30989.5,
+        "generation_error": "",
+        "evidence_in_answer": true
+      },
+      "n09": {
+        "id": "n09",
+        "type": "normal",
+        "question": "技能正文不在启动时全量加载，那它是什么时候被读进来的？",
+        "retrieved_ids": [
+          "0811ecd42da2f34d",
+          "abb09c6982ddeba3",
+          "a2ea8250245a8566",
+          "079ac4c8de666972",
+          "329484b3e4715fc3"
+        ],
+        "gold_ids": [
+          "1e321c318a1a413a"
+        ],
+        "retrieved_count": 5,
+        "latency_ms": 98.7,
+        "error": "",
+        "recall@5": 0.0,
+        "mrr@5": 0.0,
+        "ndcg@5": 0.0,
+        "evidence_recall@5": 0.0,
+        "evidence_mrr@5": 0.0,
+        "evidence_ndcg@5": 0.0,
+        "evidence_first_rank": 0,
+        "answer": "技能正文是在模型判断某个技能对当前任务有用时被读进来的。具体来说，模型在启动时只加载技能的摘要，当需要使用某个技能时，才会调用工具去读取该技能对应的 SKILL.md 正文内容 [5]。",
+        "answer_chars": 93,
+        "refused": false,
+        "generation_ms": 2139.7,
+        "generation_error": "",
+        "evidence_in_answer": false
+      },
+      "n10": {
+        "id": "n10",
+        "type": "normal",
+        "question": "MCP 从 demo 走到生产会碰到哪几类工程问题？",
+        "retrieved_ids": [
+          "d17bbc26b136bc7d",
+          "aa05c1f23a5acb9e",
+          "45d0d8c89749e740",
+          "36366b98db9adb56",
+          "fb8276067e34d390"
+        ],
+        "gold_ids": [
+          "9edd9a864331d48c"
+        ],
+        "retrieved_count": 5,
+        "latency_ms": 109.0,
+        "error": "",
+        "recall@5": 0.0,
+        "mrr@5": 0.0,
+        "ndcg@5": 0.0,
+        "evidence_recall@5": 0.0,
+        "evidence_mrr@5": 0.0,
+        "evidence_ndcg@5": 0.0,
+        "evidence_first_rank": 0,
+        "answer": "MCP 从 demo 走到生产会碰到的工程问题包括：联合认证、凭证必须存进操作系统的 Keychain、以及防爆问题。这些是「能跑」到「能上线」的分水岭。  \n依据：联合认证，而且凭证必须存进操作系统的 Keychain，不能明文写在配置文件里 [3]。",
+        "answer_chars": 127,
+        "refused": false,
+        "generation_ms": 2149.4,
+        "generation_error": "",
+        "evidence_in_answer": false
+      },
+      "n11": {
+        "id": "n11",
+        "type": "normal",
+        "question": "多个 Agent 协作时，怎么避免费用被互相传话放大？",
+        "retrieved_ids": [
+          "68ec6efe48087a66",
+          "6e11cf3788770c49",
+          "d43bd075d623308b",
+          "2cbd72981909105b",
+          "b4a2e059dcc39a07"
+        ],
+        "gold_ids": [
+          "2d66433820157c84"
+        ],
+        "retrieved_count": 5,
+        "latency_ms": 103.8,
+        "error": "",
+        "recall@5": 0.0,
+        "mrr@5": 0.0,
+        "ndcg@5": 0.0,
+        "evidence_recall@5": 0.0,
+        "evidence_mrr@5": 0.0,
+        "evidence_ndcg@5": 0.0,
+        "evidence_first_rank": 0,
+        "answer": "- 预算要按 Agent 分配，避免因「互相传话」而放大成本 [1]。\n\n- 多智能体的成本优势来自隔离和分层，通过上下文隔离可以节省费用 [2]。\n\n- 子 Agent 的上下文是独立的，这有助于控制成本 [5]。",
+        "answer_chars": 108,
+        "refused": false,
+        "generation_ms": 2433.4,
+        "generation_error": "",
+        "evidence_in_answer": false
+      },
+      "n12": {
+        "id": "n12",
+        "type": "normal",
+        "question": "检索链路里同时用向量、关键词和交叉编码器，这三种各自解决什么问题？",
+        "retrieved_ids": [
+          "0bb9a151e5734a44",
+          "d29b7716ac92357e",
+          "3b59a5f1a18442a0",
+          "940e30686032d9cc",
+          "1bf493a541448664"
+        ],
+        "gold_ids": [
+          "d29b7716ac92357e"
+        ],
+        "retrieved_count": 5,
+        "latency_ms": 100.3,
+        "error": "",
+        "recall@5": 1.0,
+        "mrr@5": 0.5,
+        "ndcg@5": 0.6309297535714575,
+        "evidence_recall@5": 1.0,
+        "evidence_mrr@5": 0.5,
+        "evidence_ndcg@5": 0.6309297535714575,
+        "evidence_first_rank": 2,
+        "answer": "向量检索解决语义匹配问题，关键词检索解决词面匹配问题，交叉编码器解决多模态或跨文档的语义关联问题。  \n依据：向量检索抓语义，BM25抓词面，交叉编码器用于处理不同来源或类型的数据之间的关联 [2]。",
+        "answer_chars": 100,
+        "refused": false,
+        "generation_ms": 2955.7,
+        "generation_error": "",
+        "evidence_in_answer": false
+      },
+      "n13": {
+        "id": "n13",
+        "type": "normal",
+        "question": "只有一张 24G 显存的卡，LLM、Embedding、重排怎么分配资源？",
+        "retrieved_ids": [
+          "d922ea770b205f16",
+          "c1273f1da895560e",
+          "de749dc6b15a9a46",
+          "95c7be312198cb8e",
+          "4d889a2ad8ee5f60"
+        ],
+        "gold_ids": [
+          "c1273f1da895560e"
+        ],
+        "retrieved_count": 5,
+        "latency_ms": 109.0,
+        "error": "",
+        "recall@5": 1.0,
+        "mrr@5": 0.5,
+        "ndcg@5": 0.6309297535714575,
+        "evidence_recall@5": 1.0,
+        "evidence_mrr@5": 0.5,
+        "evidence_ndcg@5": 0.6309297535714575,
+        "evidence_first_rank": 2,
+        "answer": "- 分层部署：GPU 给 LLM，CPU 给 Embedding / Rerank [2]；\n- 量化：INT8 / INT4 / NF4，例如 14B 模型 FP16 需要 28G 显存，通过量化可挤进 24G [3]；\n- 推理框架：vLLM + PagedAttention，必要时使用 cpu-offload 参数将部分权重卸载到内存 [4]。",
+        "answer_chars": 176,
+        "refused": false,
+        "generation_ms": 15352.5,
+        "generation_error": "",
+        "evidence_in_answer": false
+      },
+      "n14": {
+        "id": "n14",
+        "type": "normal",
+        "question": "长文档切块时块大小和重叠比例一般怎么定？",
+        "retrieved_ids": [
+          "2042b72408639380",
+          "82e3d20f780ef03e",
+          "a8689253acf59cac",
+          "3409d77e97f597bb",
+          "dd730a5b3c1b3d32"
+        ],
+        "gold_ids": [
+          "3409d77e97f597bb"
+        ],
+        "retrieved_count": 5,
+        "latency_ms": 94.5,
+        "error": "",
+        "recall@5": 1.0,
+        "mrr@5": 0.25,
+        "ndcg@5": 0.43067655807339306,
+        "evidence_recall@5": 1.0,
+        "evidence_mrr@5": 0.25,
+        "evidence_ndcg@5": 0.43067655807339306,
+        "evidence_first_rank": 4,
+        "answer": "块大小一般从 300 到 500 字起步，按文档类型调整，代码和表格要单独处理，不能和正文混切。重叠比例一般给 10% 到 20% [2]。",
+        "answer_chars": 70,
+        "refused": false,
+        "generation_ms": 2101.7,
+        "generation_error": "",
+        "evidence_in_answer": true
+      },
+      "n15": {
+        "id": "n15",
+        "type": "normal",
+        "question": "有首诗写夜里把月光当成了地上的霜，抬头看月之后低头想家，它的最后一句是什么？",
+        "retrieved_ids": [
+          "aef787b576f04894",
+          "9c374713e39aaf0a",
+          "3bd280f80162024c",
+          "60abca5a79d297cd",
+          "c4e70e0c1653b0f7"
+        ],
+        "gold_ids": [
+          "aef787b576f04894"
+        ],
+        "retrieved_count": 5,
+        "latency_ms": 104.2,
+        "error": "",
+        "recall@5": 1.0,
+        "mrr@5": 1.0,
+        "ndcg@5": 1.0,
+        "evidence_recall@5": 1.0,
+        "evidence_mrr@5": 1.0,
+        "evidence_ndcg@5": 1.0,
+        "evidence_first_rank": 1,
+        "answer": "《静夜思》的最后两句是：“举头望山月，低头思故乡。”最后一句是“低头思故乡”。",
+        "answer_chars": 39,
+        "refused": false,
+        "generation_ms": 1341.5,
+        "generation_error": "",
+        "evidence_in_answer": true
+      },
+      "n16": {
+        "id": "n16",
+        "type": "normal",
+        "question": "杜甫在战乱里写的诗，看到花开鸟鸣反而更难过，「感时花溅泪」的下一句是什么？",
+        "retrieved_ids": [
+          "16fd1c2a65d1ed36",
+          "60abca5a79d297cd",
+          "59db273636c260ba",
+          "e20db255fca80445",
+          "a573a6ff06d4377d"
+        ],
+        "gold_ids": [
+          "16fd1c2a65d1ed36"
+        ],
+        "retrieved_count": 5,
+        "latency_ms": 102.6,
+        "error": "",
+        "recall@5": 1.0,
+        "mrr@5": 1.0,
+        "ndcg@5": 1.0,
+        "evidence_recall@5": 1.0,
+        "evidence_mrr@5": 1.0,
+        "evidence_ndcg@5": 1.0,
+        "evidence_first_rank": 1,
+        "answer": "「感时花溅泪」的下一句是「恨别鸟惊心」。依据：[1]",
+        "answer_chars": 26,
+        "refused": false,
+        "generation_ms": 8622.8,
+        "generation_error": "",
+        "evidence_in_answer": true
+      },
+      "n17": {
+        "id": "n17",
+        "type": "normal",
+        "question": "王之涣写登楼远望，说想看得更远就要再往上走一层，这句原话是什么？",
+        "retrieved_ids": [
+          "f4182982846efc5a",
+          "e466c894278bdf43",
+          "60abca5a79d297cd",
+          "c87b8059c95cfd1e",
+          "84a490fa198b2d53"
+        ],
+        "gold_ids": [
+          "c87b8059c95cfd1e",
+          "e466c894278bdf43"
+        ],
+        "retrieved_count": 5,
+        "latency_ms": 110.0,
+        "error": "",
+        "recall@5": 1.0,
+        "mrr@5": 0.5,
+        "ndcg@5": 0.6509209298071326,
+        "evidence_recall@5": 1.0,
+        "evidence_mrr@5": 0.5,
+        "evidence_ndcg@5": 0.6309297535714575,
+        "evidence_first_rank": 2,
+        "answer": "【问题】王之涣写登楼远望，说想看得更远就要再往上走一层，这句原话是什么？  \n【结论】王之涣的原话是“欲穷千里目，更上一层楼”。  \n【依据】《登鹳雀楼》中“欲穷千里目，更上一层楼”表达了登楼远望、追求更高视野的意境 [4]。",
+        "answer_chars": 113,
+        "refused": false,
+        "generation_ms": 3092.1,
+        "generation_error": "",
+        "evidence_in_answer": true
+      },
+      "n18": {
+        "id": "n18",
+        "type": "normal",
+        "question": "写大雪封山、只有一个老翁披蓑戴笠在江上垂钓的那首诗里，「孤舟蓑笠翁」的下一句是什么？",
+        "retrieved_ids": [
+          "bf6a252f4a567b92",
+          "60abca5a79d297cd",
+          "13aee5911d6defcc",
+          "34184d1804bf97f9",
+          "5d07e75273d2b327"
+        ],
+        "gold_ids": [
+          "bf6a252f4a567b92"
+        ],
+        "retrieved_count": 5,
+        "latency_ms": 100.1,
+        "error": "",
+        "recall@5": 1.0,
+        "mrr@5": 1.0,
+        "ndcg@5": 1.0,
+        "evidence_recall@5": 1.0,
+        "evidence_mrr@5": 1.0,
+        "evidence_ndcg@5": 1.0,
+        "evidence_first_rank": 1,
+        "answer": "「孤舟蓑笠翁」的下一句是「独钓寒江雪」。依据是《江雪》这首诗中的内容 [1]。",
+        "answer_chars": 39,
+        "refused": false,
+        "generation_ms": 13711.9,
+        "generation_error": "",
+        "evidence_in_answer": true
+      },
+      "n19": {
+        "id": "n19",
+        "type": "normal",
+        "question": "王维用哪种植物来寄托思念，说它最惹相思？",
+        "retrieved_ids": [
+          "1b1ef14ba9f56351",
+          "bf9b136ec9c336cb",
+          "3b7e4dff8cd72367",
+          "71d18867e3393ac7",
+          "c840edaf3efbef26"
+        ],
+        "gold_ids": [
+          "1b1ef14ba9f56351"
+        ],
+        "retrieved_count": 5,
+        "latency_ms": 102.2,
+        "error": "",
+        "recall@5": 1.0,
+        "mrr@5": 1.0,
+        "ndcg@5": 1.0,
+        "evidence_recall@5": 1.0,
+        "evidence_mrr@5": 1.0,
+        "evidence_ndcg@5": 1.0,
+        "evidence_first_rank": 1,
+        "answer": "王维用红豆来寄托思念，说它最惹相思。依据是《相思》诗中的“此物最相思” [1]。",
+        "answer_chars": 40,
+        "refused": false,
+        "generation_ms": 1525.6,
+        "generation_error": "",
+        "evidence_in_answer": false
+      },
+      "n20": {
+        "id": "n20",
+        "type": "normal",
+        "question": "写春天睡得香甜、不知不觉天就亮了的那首诗，第一句是什么？",
+        "retrieved_ids": [
+          "ebd402430557ed19",
+          "37e9abbccc80c9e7",
+          "8a8d3e7bfc993dc6",
+          "3bd280f80162024c",
+          "60abca5a79d297cd"
+        ],
+        "gold_ids": [
+          "43b52cea668d43a3"
+        ],
+        "retrieved_count": 5,
+        "latency_ms": 98.3,
+        "error": "",
+        "recall@5": 0.0,
+        "mrr@5": 0.0,
+        "ndcg@5": 0.0,
+        "evidence_recall@5": 0.0,
+        "evidence_mrr@5": 0.0,
+        "evidence_ndcg@5": 0.0,
+        "evidence_first_rank": 0,
+        "answer": "知识库中未找到相关内容。",
+        "answer_chars": 12,
+        "refused": true,
+        "generation_ms": 3546.0,
+        "generation_error": "",
+        "evidence_in_answer": false
+      },
+      "n21": {
+        "id": "n21",
+        "type": "normal",
+        "question": "杜甫写秋天登台远望、感叹年老多病，「无边落木萧萧下」的下一句是什么？",
+        "retrieved_ids": [
+          "2e7de892aedbc55a",
+          "34184d1804bf97f9",
+          "bc4ac0ca907d9d09",
+          "60abca5a79d297cd",
+          "59db273636c260ba"
+        ],
+        "gold_ids": [
+          "2e7de892aedbc55a"
+        ],
+        "retrieved_count": 5,
+        "latency_ms": 108.4,
+        "error": "",
+        "recall@5": 1.0,
+        "mrr@5": 1.0,
+        "ndcg@5": 1.0,
+        "evidence_recall@5": 1.0,
+        "evidence_mrr@5": 1.0,
+        "evidence_ndcg@5": 1.0,
+        "evidence_first_rank": 1,
+        "answer": "「无边落木萧萧下」的下一句是「不尽长江衮衮来」。依据是杜甫的《登高》诗中的句子 [1]。",
+        "answer_chars": 44,
+        "refused": false,
+        "generation_ms": 7223.4,
+        "generation_error": "",
+        "evidence_in_answer": true
+      },
+      "n22": {
+        "id": "n22",
+        "type": "normal",
+        "question": "李白写乘船离开白帝城、一天就回到江陵，「两岸猿声啼不住」的下一句是什么？",
+        "retrieved_ids": [
+          "c6c2e8c00a3c76b6",
+          "60abca5a79d297cd",
+          "c0de605a8e04be76",
+          "34184d1804bf97f9",
+          "59858a832b5fc45b"
+        ],
+        "gold_ids": [
+          "c6c2e8c00a3c76b6"
+        ],
+        "retrieved_count": 5,
+        "latency_ms": 107.1,
+        "error": "",
+        "recall@5": 1.0,
+        "mrr@5": 1.0,
+        "ndcg@5": 1.0,
+        "evidence_recall@5": 1.0,
+        "evidence_mrr@5": 1.0,
+        "evidence_ndcg@5": 1.0,
+        "evidence_first_rank": 1,
+        "answer": "「轻舟已过万重山。」 [1]",
+        "answer_chars": 14,
+        "refused": false,
+        "generation_ms": 3174.7,
+        "generation_error": "",
+        "evidence_in_answer": true
+      },
+      "n23": {
+        "id": "n23",
+        "type": "normal",
+        "question": "王维写山中秋雨后的傍晚，「明月松间照」的下一句是什么？",
+        "retrieved_ids": [
+          "3968c13da6739713",
+          "bf9b136ec9c336cb",
+          "60abca5a79d297cd",
+          "3231e3ecc81f8426",
+          "34184d1804bf97f9"
+        ],
+        "gold_ids": [
+          "3968c13da6739713"
+        ],
+        "retrieved_count": 5,
+        "latency_ms": 104.1,
+        "error": "",
+        "recall@5": 1.0,
+        "mrr@5": 1.0,
+        "ndcg@5": 1.0,
+        "evidence_recall@5": 1.0,
+        "evidence_mrr@5": 1.0,
+        "evidence_ndcg@5": 1.0,
+        "evidence_first_rank": 1,
+        "answer": "「明月松间照」的下一句是「清泉石上流」。依据是王维的《山居秋暝》中的诗句 [1]。",
+        "answer_chars": 41,
+        "refused": false,
+        "generation_ms": 1764.3,
+        "generation_error": "",
+        "evidence_in_answer": true
+      },
+      "n24": {
+        "id": "n24",
+        "type": "normal",
+        "question": "张继夜里停在姑苏城外，写寒山寺的钟声传到船上，这句诗怎么说的？",
+        "retrieved_ids": [
+          "bd73fff0266674d8",
+          "f4182982846efc5a",
+          "1a205cd025bd1573",
+          "4103ebc6e584f510",
+          "6f38bb351ead4beb"
+        ],
+        "gold_ids": [
+          "bd73fff0266674d8"
+        ],
+        "retrieved_count": 5,
+        "latency_ms": 110.9,
+        "error": "",
+        "recall@5": 1.0,
+        "mrr@5": 1.0,
+        "ndcg@5": 1.0,
+        "evidence_recall@5": 1.0,
+        "evidence_mrr@5": 1.0,
+        "evidence_ndcg@5": 1.0,
+        "evidence_first_rank": 1,
+        "answer": "张继夜里停在姑苏城外，写寒山寺的钟声传到船上，这句诗是“姑苏城外寒山寺，夜半钟声到客船”。",
+        "answer_chars": 45,
+        "refused": false,
+        "generation_ms": 8691.7,
+        "generation_error": "",
+        "evidence_in_answer": true
+      },
+      "b01": {
+        "id": "b01",
+        "type": "boundary",
+        "question": "线上要求用户提问后马上就能看到字，同时又不想砍掉精排，这种情况你会怎么处理？",
+        "retrieved_ids": [
+          "75910143e438b38c",
+          "ab4d61963b9c5416",
+          "254a30dd3ef4a9bf",
+          "28e9cb227ee8e232",
+          "1279dfb856c845e1"
+        ],
+        "gold_ids": [
+          "75910143e438b38c",
+          "3b1e96574f485ed5"
+        ],
+        "retrieved_count": 5,
+        "latency_ms": 97.6,
+        "error": "",
+        "recall@5": 0.5,
+        "mrr@5": 1.0,
+        "ndcg@5": 0.6131471927654584,
+        "evidence_recall@5": 1.0,
+        "evidence_mrr@5": 1.0,
+        "evidence_ndcg@5": 1.0,
+        "evidence_first_rank": 1,
+        "answer": "核心原则：常规路径极速响应，复杂路径动态降级，不一刀切。通过异步生成器管道实现流式返回，确保用户能立刻看到字在动。对于精排部分，仅对Top几条进行处理，以减少延迟和成本 [1]。同时，利用预热机制在非高峰时段完成精排和上下文拼接，确保高峰时段的响应速度 [4]。",
+        "answer_chars": 131,
+        "refused": false,
+        "generation_ms": 15323.5,
+        "generation_error": "",
+        "evidence_in_answer": true
+      },
+      "b02": {
+        "id": "b02",
+        "type": "boundary",
+        "question": "客户对准确性极敏感，除了检索本身，架构上还能用什么办法拦住模型瞎编？",
+        "retrieved_ids": [
+          "6ebfd147a66d35f3",
+          "d29b7716ac92357e",
+          "c1273f1da895560e",
+          "5d373451bdd39c35",
+          "8b00b277dc616003"
+        ],
+        "gold_ids": [
+          "5d373451bdd39c35"
+        ],
+        "retrieved_count": 5,
+        "latency_ms": 128.6,
+        "error": "",
+        "recall@5": 1.0,
+        "mrr@5": 0.25,
+        "ndcg@5": 0.43067655807339306,
+        "evidence_recall@5": 1.0,
+        "evidence_mrr@5": 0.25,
+        "evidence_ndcg@5": 0.43067655807339306,
+        "evidence_first_rank": 4,
+        "answer": "- 三层漏斗：生成前约束、生成中检测、生成后复核 [1]  \n- 再加一层人机协作的分级审核 [1]  \n- 强调「低成本」，别把人工当监工 [1]  \n- 分层部署、协同计算：CPU 和 GPU 分家，GPU 显存全部留给大模型推理，Embedding 和 Rerank 放在 CPU [3]  \n- 生成前强制引用绑定：System Prompt 规定凡涉及事实数据必须标引用编号，并用 JSON 模式强制输出 answer 和 cited_docs [4]",
+        "answer_chars": 231,
+        "refused": false,
+        "generation_ms": 3073.3,
+        "generation_error": "",
+        "evidence_in_answer": false
+      },
+      "b03": {
+        "id": "b03",
+        "type": "boundary",
+        "question": "长会话里历史消息太多时，按什么条件触发摘要压缩，摘要又存到哪里？",
+        "retrieved_ids": [
+          "2dd541eb75587afb",
+          "de6b09635a3610cc",
+          "492caf8563163220",
+          "cf27a80685ae6c6f",
+          "b6ed10ea76f3c639"
+        ],
+        "gold_ids": [
+          "4682f1b57db8892e"
+        ],
+        "retrieved_count": 5,
+        "latency_ms": 103.7,
+        "error": "",
+        "recall@5": 0.0,
+        "mrr@5": 0.0,
+        "ndcg@5": 0.0,
+        "evidence_recall@5": 0.0,
+        "evidence_mrr@5": 0.0,
+        "evidence_ndcg@5": 0.0,
+        "evidence_first_rank": 0,
+        "answer": "触发摘要压缩的条件是当历史消息过多时，例如达到 6000 token 的限制。摘要存入 HISTORY.md 作为事件日志方便回溯 [2]。",
+        "answer_chars": 70,
+        "refused": false,
+        "generation_ms": 1757.8,
+        "generation_error": "",
+        "evidence_in_answer": false
+      },
+      "b04": {
+        "id": "b04",
+        "type": "boundary",
+        "question": "MCP 在企业环境里的第三方凭证应该放在哪，为什么不放配置文件？",
+        "retrieved_ids": [
+          "860209fef644342c",
+          "45d0d8c89749e740",
+          "537204edb630b423",
+          "8fed0c4b09ac9e6c",
+          "ba11dd01aea8ee66"
+        ],
+        "gold_ids": [
+          "45d0d8c89749e740"
+        ],
+        "retrieved_count": 5,
+        "latency_ms": 100.7,
+        "error": "",
+        "recall@5": 1.0,
+        "mrr@5": 0.5,
+        "ndcg@5": 0.6309297535714575,
+        "evidence_recall@5": 1.0,
+        "evidence_mrr@5": 0.5,
+        "evidence_ndcg@5": 0.6309297535714575,
+        "evidence_first_rank": 2,
+        "answer": "MCP 在企业环境里的第三方凭证应该放在操作系统的 Keychain 中，而不是配置文件里。这是因为凭证必须存进操作系统的 Keychain，不能明文写在配置文件里 [2]。",
+        "answer_chars": 87,
+        "refused": false,
+        "generation_ms": 1648.1,
+        "generation_error": "",
+        "evidence_in_answer": true
+      },
+      "b05": {
+        "id": "b05",
+        "type": "boundary",
+        "question": "NanoClaw 相比 Claude Code 在机制覆盖上少做了哪些东西？",
+        "retrieved_ids": [
+          "b436c85e768af43b",
+          "b08901b8959e0f56",
+          "2dbd0e4141b18d31",
+          "4b2625e2c81e72b9",
+          "52b26ac4be07edb6"
+        ],
+        "gold_ids": [
+          "d5074516475e36ab"
+        ],
+        "retrieved_count": 5,
+        "latency_ms": 103.3,
+        "error": "",
+        "recall@5": 0.0,
+        "mrr@5": 0.0,
+        "ndcg@5": 0.0,
+        "evidence_recall@5": 0.0,
+        "evidence_mrr@5": 0.0,
+        "evidence_ndcg@5": 0.0,
+        "evidence_first_rank": 0,
+        "answer": "NanoClaw 相比 Claude Code 在机制覆盖上少做了以下内容：  \n- 传输机制  \n- 连接管理  \n- Agent 限制  \n- 认证  \n- 工具元数据  \n\n依据：  \n[3]",
+        "answer_chars": 99,
+        "refused": false,
+        "generation_ms": 25558.0,
+        "generation_error": "",
+        "evidence_in_answer": false
+      },
+      "b06": {
+        "id": "b06",
+        "type": "boundary",
+        "question": "错题本除了推给用户复习，还能反过来改进什么？",
+        "retrieved_ids": [
+          "4d2428add28cf60e",
+          "b4804f8de8a74d56",
+          "4306ec992b721c9f",
+          "2bc2ec21e0b2b496",
+          "cdcdd339ddccfbbd"
+        ],
+        "gold_ids": [
+          "4d2428add28cf60e"
+        ],
+        "retrieved_count": 5,
+        "latency_ms": 103.0,
+        "error": "",
+        "recall@5": 1.0,
+        "mrr@5": 1.0,
+        "ndcg@5": 1.0,
+        "evidence_recall@5": 1.0,
+        "evidence_mrr@5": 1.0,
+        "evidence_ndcg@5": 1.0,
+        "evidence_first_rank": 1,
+        "answer": "错题本除了推给用户复习，还能反过来改进知识库质量。  \n依据：如果某个知识点反复出错，说明这块内容切分或者表述有问题，反过来优化知识库 [1]。",
+        "answer_chars": 72,
+        "refused": false,
+        "generation_ms": 1882.9,
+        "generation_error": "",
+        "evidence_in_answer": true
+      },
+      "b07": {
+        "id": "b07",
+        "type": "boundary",
+        "question": "李商隐写「庄生晓梦迷蝴蝶」的那首诗，最后一句是什么？",
+        "retrieved_ids": [
+          "971cb0ee73a8d76c",
+          "60abca5a79d297cd",
+          "4722baa9bf3bd015",
+          "84a490fa198b2d53",
+          "1e5354b3b7f134d6"
+        ],
+        "gold_ids": [
+          "971cb0ee73a8d76c"
+        ],
+        "retrieved_count": 5,
+        "latency_ms": 100.5,
+        "error": "",
+        "recall@5": 1.0,
+        "mrr@5": 1.0,
+        "ndcg@5": 1.0,
+        "evidence_recall@5": 1.0,
+        "evidence_mrr@5": 1.0,
+        "evidence_ndcg@5": 1.0,
+        "evidence_first_rank": 1,
+        "answer": "最后一句是「只是当时已惘然」。依据是李商隐的《锦瑟》诗中最后一句为「此情可待成追忆，只是当时已惘然」[1]。",
+        "answer_chars": 54,
+        "refused": false,
+        "generation_ms": 1494.9,
+        "generation_error": "",
+        "evidence_in_answer": true
+      },
+      "b08": {
+        "id": "b08",
+        "type": "boundary",
+        "question": "从上传一份 PDF 到用户拿到带引用的回答，中间要走哪些步骤？",
+        "retrieved_ids": [
+          "1279dfb856c845e1",
+          "cba14223cafca6f0",
+          "a8689253acf59cac",
+          "ff8a33b749ef4431",
+          "68ae99036b9f114d"
+        ],
+        "gold_ids": [
+          "a8689253acf59cac"
+        ],
+        "retrieved_count": 5,
+        "latency_ms": 110.2,
+        "error": "",
+        "recall@5": 1.0,
+        "mrr@5": 0.3333333333333333,
+        "ndcg@5": 0.5,
+        "evidence_recall@5": 1.0,
+        "evidence_mrr@5": 0.3333333333333333,
+        "evidence_ndcg@5": 0.5,
+        "evidence_first_rank": 3,
+        "answer": "从上传一份 PDF 到用户拿到带引用的回答，中间要走的步骤包括：解析 PDF 文档，清洗去页眉页脚，按标题层级切分，长段落加定长重叠，调用 bge 向量模型编码，写进 FAISS 索引；同时用 jieba 分词建 BM25。然后，根据用户的问题进行召回和精排，拼接上下文，调用大模型生成答案，答案中包含引用编号和格式约束，最后返回带行号的文本，超过 10000 个 Token 时需限制。[3]",
+        "answer_chars": 197,
+        "refused": false,
+        "generation_ms": 26703.2,
+        "generation_error": "",
+        "evidence_in_answer": false
+      },
+      "x01": {
+        "id": "x01",
+        "type": "no_answer",
+        "question": "《赤壁赋》是苏轼在哪一年写成的？",
+        "retrieved_ids": [
+          "79dd9b999637d2b7",
+          "90bb1df713a577dc",
+          "2742d5fe24e1949f",
+          "1111f22a6f1f6a99",
+          "229a451a8deb7750"
+        ],
+        "gold_ids": [],
+        "retrieved_count": 5,
+        "latency_ms": 100.1,
+        "error": "",
+        "answer": "知识库中未找到相关内容。",
+        "answer_chars": 12,
+        "refused": true,
+        "generation_ms": 638.0,
+        "generation_error": "",
+        "evidence_in_answer": false
+      },
+      "x02": {
+        "id": "x02",
+        "type": "no_answer",
+        "question": "NanoClaw 开源用的是什么许可证？",
+        "retrieved_ids": [
+          "52b26ac4be07edb6",
+          "2dbd0e4141b18d31",
+          "c0be518082fcdb72",
+          "d9b75778ebff5829",
+          "cd702c144c4fc33a"
+        ],
+        "gold_ids": [],
+        "retrieved_count": 5,
+        "latency_ms": 110.1,
+        "error": "",
+        "answer": "知识库中未找到相关内容。",
+        "answer_chars": 12,
+        "refused": true,
+        "generation_ms": 553.3,
+        "generation_error": "",
+        "evidence_in_answer": false
+      },
+      "x03": {
+        "id": "x03",
+        "type": "no_answer",
+        "question": "bge-reranker-v2-m3 是用多少条样本训练出来的？",
+        "retrieved_ids": [
+          "d6b1f9c85648f19d",
+          "dd41af8b4f0b3b08",
+          "b552748eef563954",
+          "1e6881562de01f11",
+          "cdb4232198b4868e"
+        ],
+        "gold_ids": [],
+        "retrieved_count": 5,
+        "latency_ms": 100.5,
+        "error": "",
+        "answer": "知识库中未找到相关内容。",
+        "answer_chars": 12,
+        "refused": true,
+        "generation_ms": 601.0,
+        "generation_error": "",
+        "evidence_in_answer": false
+      },
+      "x04": {
+        "id": "x04",
+        "type": "no_answer",
+        "question": "LangChain 的 LCEL 里怎么用竖线运算符把多个 Runnable 串起来？",
+        "retrieved_ids": [
+          "2774d61e32fbefd7",
+          "96d28ffd8f4d5132",
+          "d43bd075d623308b",
+          "c0cd2c2ceb443219",
+          "3b4cc08ff6cc321a"
+        ],
+        "gold_ids": [],
+        "retrieved_count": 5,
+        "latency_ms": 99.6,
+        "error": "",
+        "answer": "知识库中未找到相关内容。",
+        "answer_chars": 12,
+        "refused": true,
+        "generation_ms": 611.0,
+        "generation_error": "",
+        "evidence_in_answer": false
+      },
+      "x05": {
+        "id": "x05",
+        "type": "no_answer",
+        "question": "这个知识库用的 FAISS 索引是 IVF-PQ 还是 HNSW？",
+        "retrieved_ids": [
+          "940e30686032d9cc",
+          "da061f6f08d67e01",
+          "985691d608c6ee99",
+          "a8689253acf59cac",
+          "75b0da93f92adfc1"
+        ],
+        "gold_ids": [],
+        "retrieved_count": 5,
+        "latency_ms": 103.5,
+        "error": "",
+        "answer": "知识库中未找到相关内容。",
+        "answer_chars": 12,
+        "refused": true,
+        "generation_ms": 718.4,
+        "generation_error": "",
+        "evidence_in_answer": false
+      },
+      "x06": {
+        "id": "x06",
+        "type": "no_answer",
+        "question": "《静夜思》里的「床」指的到底是井栏还是卧榻？",
+        "retrieved_ids": [
+          "34ffed7621ec7841",
+          "4722baa9bf3bd015",
+          "aef787b576f04894",
+          "2f7092b0b5daa2f6",
+          "103329a82bda1836"
+        ],
+        "gold_ids": [],
+        "retrieved_count": 5,
+        "latency_ms": 110.7,
+        "error": "",
+        "answer": "《静夜思》里的「床」指的是井栏。[3]",
+        "answer_chars": 19,
+        "refused": false,
+        "generation_ms": 3830.2,
+        "generation_error": "",
+        "evidence_in_answer": false
+      },
+      "x07": {
+        "id": "x07",
+        "type": "no_answer",
+        "question": "用 Docker 跑这个项目时，怎么给容器设置内存上限？",
+        "retrieved_ids": [
+          "0f255113755760bb",
+          "4827fadcb341c4de",
+          "db921f84e8b9fdbe",
+          "34f0d88336651f5a",
+          "95c7be312198cb8e"
+        ],
+        "gold_ids": [],
+        "retrieved_count": 5,
+        "latency_ms": 103.5,
+        "error": "",
+        "answer": "在使用 Docker 跑这个项目时，可以通过在运行容器时指定 `--memory` 参数来设置内存上限。例如：`docker run --memory=\"512m\" <image_name>`。  \n依据：资料中提到“像操作系统管内存一样管 KV Cache，吞吐和显存利用率都高得多”，这表明项目对内存管理有特定需求，因此需要通过 Docker 的内存限制功能来控制容器内存使用 [5]。",
+        "answer_chars": 195,
+        "refused": false,
+        "generation_ms": 14748.9,
+        "generation_error": "",
+        "evidence_in_answer": false
+      },
+      "x08": {
+        "id": "x08",
+        "type": "no_answer",
+        "question": "Qwen3-8B 的上下文窗口是多少 token？",
+        "retrieved_ids": [
+          "5e01577a2810fc99",
+          "14a7993fc81a5448",
+          "b4a2e059dcc39a07",
+          "c0ecbec8d1453fae",
+          "047f19fa10f31e91"
+        ],
+        "gold_ids": [],
+        "retrieved_count": 5,
+        "latency_ms": 95.7,
+        "error": "",
+        "answer": "知识库中未找到相关内容。",
+        "answer_chars": 12,
+        "refused": true,
+        "generation_ms": 3613.5,
+        "generation_error": "",
+        "evidence_in_answer": false
+      }
+    },
+    "hybrid_rerank": {
+      "n01": {
+        "id": "n01",
+        "type": "normal",
+        "question": "注意力打分时为什么要除以维度的平方根，不除会出现什么后果？",
+        "retrieved_ids": [
+          "e95dcab71c4d4247",
+          "b05f8874ec59c027",
+          "8e1e05302777731b",
+          "3e2b4c168de30fe1",
+          "706627629a490f51"
+        ],
+        "gold_ids": [
+          "e49fb4e6eecc4262"
+        ],
+        "retrieved_count": 5,
+        "latency_ms": 1471.4,
+        "error": "",
+        "recall@5": 0.0,
+        "mrr@5": 0.0,
+        "ndcg@5": 0.0,
+        "evidence_recall@5": 0.0,
+        "evidence_mrr@5": 0.0,
+        "evidence_ndcg@5": 0.0,
+        "evidence_first_rank": 0,
+        "answer": "除以维度的平方根是为了对点积结果进行缩放，防止数值过大导致softmax函数的梯度消失问题。如果不除，点积的方差会随维度线性增长，使得softmax的输出变得不稳定，难以有效学习注意力权重。[3]",
+        "answer_chars": 98,
+        "refused": false,
+        "generation_ms": 2500.4,
+        "generation_error": "",
+        "evidence_in_answer": false
+      },
+      "n02": {
+        "id": "n02",
+        "type": "normal",
+        "question": "Transformer 靠什么机制知道句子里词的先后顺序？",
+        "retrieved_ids": [
+          "5ef78101435f2b3e",
+          "7f6d8f3eec326e66",
+          "bf5eaf727370e06c",
+          "8e5aa033c29f638b",
+          "1bf493a541448664"
+        ],
+        "gold_ids": [
+          "88fd3fbdbbd7d9fd"
+        ],
+        "retrieved_count": 5,
+        "latency_ms": 1643.0,
+        "error": "",
+        "recall@5": 0.0,
+        "mrr@5": 0.0,
+        "ndcg@5": 0.0,
+        "evidence_recall@5": 0.0,
+        "evidence_mrr@5": 0.0,
+        "evidence_ndcg@5": 0.0,
+        "evidence_first_rank": 0,
+        "answer": "Transformer 依靠自注意力机制（Self-Attention）来理解句子里词的先后顺序。自注意力通过计算词与词之间的相关性，捕捉序列中不同位置的依赖关系，从而保留词的顺序信息 [1]。",
+        "answer_chars": 97,
+        "refused": false,
+        "generation_ms": 10823.8,
+        "generation_error": "",
+        "evidence_in_answer": false
+      },
+      "n03": {
+        "id": "n03",
+        "type": "normal",
+        "question": "处理变长序列时，为什么更倾向用 LayerNorm 而不是 BatchNorm？",
+        "retrieved_ids": [
+          "dbb179a5408b4d21",
+          "d1ede942e52c65ff",
+          "dd730a5b3c1b3d32",
+          "1fe1b5b0eabe9a29",
+          "32856fb8fc4def5a"
+        ],
+        "gold_ids": [
+          "dbb179a5408b4d21"
+        ],
+        "retrieved_count": 5,
+        "latency_ms": 1187.3,
+        "error": "",
+        "recall@5": 1.0,
+        "mrr@5": 1.0,
+        "ndcg@5": 1.0,
+        "evidence_recall@5": 1.0,
+        "evidence_mrr@5": 1.0,
+        "evidence_ndcg@5": 1.0,
+        "evidence_first_rank": 1,
+        "answer": "处理变长序列时，更倾向用 LayerNorm 而不是 BatchNorm，因为 LayerNorm 在特征维度上对单个样本自己的所有特征求均值和方差，与 batch 完全无关，因此不受 padding 的影响 [1]。而 BatchNorm 在 batch 维度上对同一个特征跨样本求均值和方差，当序列长度不一致时，padding 会污染统计量 [3]。",
+        "answer_chars": 177,
+        "refused": false,
+        "generation_ms": 34727.9,
+        "generation_error": "",
+        "evidence_in_answer": false
+      },
+      "n04": {
+        "id": "n04",
+        "type": "normal",
+        "question": "Claude Code 的执行环境大致可以拆成哪几块职责？",
+        "retrieved_ids": [
+          "9fd25ebd8f53445f",
+          "a1d17c5b2eee51ef",
+          "fd0333e03395d5cd",
+          "bf3c347e011704ba",
+          "2936d6cf6eb9308d"
+        ],
+        "gold_ids": [
+          "9fd25ebd8f53445f"
+        ],
+        "retrieved_count": 5,
+        "latency_ms": 1268.8,
+        "error": "",
+        "recall@5": 1.0,
+        "mrr@5": 1.0,
+        "ndcg@5": 1.0,
+        "evidence_recall@5": 1.0,
+        "evidence_mrr@5": 1.0,
+        "evidence_ndcg@5": 1.0,
+        "evidence_first_rank": 1,
+        "answer": "Claude Code 的执行环境大致可以拆成七块职责，分别是：驱动 while(true) 循环，管理 Turn 之间的状态，子 Agent 实现上递归调用 query()，新功能传播自动继承，O(1) 维护成本，上下文隔离独立 messages，以及使用 Git Worktree 做工作区隔离，子 Agent 类型分 general-purpose、Explore（只读）、Plan（只读） [1] [2] [3] [4]。",
+        "answer_chars": 215,
+        "refused": false,
+        "generation_ms": 15606.4,
+        "generation_error": "",
+        "evidence_in_answer": false
+      },
+      "n05": {
+        "id": "n05",
+        "type": "normal",
+        "question": "Claude Code 的系统提示词为什么要把不变的内容放最前面？",
+        "retrieved_ids": [
+          "e966acbd23cc09a9",
+          "7f6d8f3eec326e66",
+          "d4178215750ea72c",
+          "4306ec992b721c9f",
+          "3fb5ada00713610d"
+        ],
+        "gold_ids": [
+          "cf27a80685ae6c6f"
+        ],
+        "retrieved_count": 5,
+        "latency_ms": 1313.8,
+        "error": "",
+        "recall@5": 0.0,
+        "mrr@5": 0.0,
+        "ndcg@5": 0.0,
+        "evidence_recall@5": 0.0,
+        "evidence_mrr@5": 0.0,
+        "evidence_ndcg@5": 0.0,
+        "evidence_first_rank": 0,
+        "answer": "Claude Code 的系统提示词将不变的内容放最前面，是为了确保 prompt caching 能够有效工作，通过前缀匹配来提高效率。这种设计使得缓存机制能够依赖于提示词的固定部分，从而在动态部分变化时仍能保持缓存的有效性。资料中提到这是从 Claude Code 的设计中学习来的做法 [2]。",
+        "answer_chars": 150,
+        "refused": false,
+        "generation_ms": 13171.9,
+        "generation_error": "",
+        "evidence_in_answer": false
+      },
+      "n06": {
+        "id": "n06",
+        "type": "normal",
+        "question": "OpenClaw 怎么发现 Agent 在同一个工具上反复打转？阈值分几级？",
+        "retrieved_ids": [
+          "52e3f6532c82912e",
+          "e511169958447271",
+          "6c429a7ed7e42434",
+          "3fba838ac9239e2d",
+          "b390cafae18c9f58"
+        ],
+        "gold_ids": [
+          "52e3f6532c82912e"
+        ],
+        "retrieved_count": 5,
+        "latency_ms": 1817.9,
+        "error": "",
+        "recall@5": 1.0,
+        "mrr@5": 1.0,
+        "ndcg@5": 1.0,
+        "evidence_recall@5": 1.0,
+        "evidence_mrr@5": 1.0,
+        "evidence_ndcg@5": 1.0,
+        "evidence_first_rank": 1,
+        "answer": "OpenClaw 通过滑动窗口记录最近 30 次工具调用的签名（工具名 + 参数哈希），并使用四种检测器来发现 Agent 在同一个工具上反复打转的情况。三级阈值为：10 次警告 → 20 次切断 → 30 次终止 [1]。",
+        "answer_chars": 112,
+        "refused": false,
+        "generation_ms": 2751.9,
+        "generation_error": "",
+        "evidence_in_answer": false
+      },
+      "n07": {
+        "id": "n07",
+        "type": "normal",
+        "question": "长期记忆为什么不能只存向量库，还要保留明文层？",
+        "retrieved_ids": [
+          "47601ed7a44c637a",
+          "80f1df8fccd13dbc",
+          "ba11dd01aea8ee66",
+          "f7b7d96bb40ad999",
+          "2a015b48c5696d36"
+        ],
+        "gold_ids": [
+          "ba11dd01aea8ee66"
+        ],
+        "retrieved_count": 5,
+        "latency_ms": 1446.6,
+        "error": "",
+        "recall@5": 1.0,
+        "mrr@5": 0.3333333333333333,
+        "ndcg@5": 0.5,
+        "evidence_recall@5": 1.0,
+        "evidence_mrr@5": 0.3333333333333333,
+        "evidence_ndcg@5": 0.5,
+        "evidence_first_rank": 3,
+        "answer": "长期记忆不能只存向量库，还要保留明文层，因为明文层解决的是「可控」问题，你打开 md 就能看到 Agent 记住了什么、可以直接改、可以 git 管理 [3]。",
+        "answer_chars": 80,
+        "refused": false,
+        "generation_ms": 10171.3,
+        "generation_error": "",
+        "evidence_in_answer": false
+      },
+      "n08": {
+        "id": "n08",
+        "type": "normal",
+        "question": "ExecTool 拦截危险命令为什么选择黑名单而不是白名单？",
+        "retrieved_ids": [
+          "f0d2f2527fd30dff",
+          "411b11045db88de1",
+          "f500666e70275a90",
+          "d8e1c710e8a3905c",
+          "38ec9e37f0253375"
+        ],
+        "gold_ids": [
+          "411b11045db88de1"
+        ],
+        "retrieved_count": 5,
+        "latency_ms": 1116.6,
+        "error": "",
+        "recall@5": 1.0,
+        "mrr@5": 0.5,
+        "ndcg@5": 0.6309297535714575,
+        "evidence_recall@5": 1.0,
+        "evidence_mrr@5": 0.5,
+        "evidence_ndcg@5": 0.6309297535714575,
+        "evidence_first_rank": 2,
+        "answer": "ExecTool 选择黑名单而不是白名单是因为白名单会严重限制 Agent 的能力，无法预知用户未来会需要什么命令，而黑名单采用默认信任的哲学，仅拦截已知的致命操作，同时承认这是折衷方案，并通过其他手段进行补强 [2]。",
+        "answer_chars": 110,
+        "refused": false,
+        "generation_ms": 10881.9,
+        "generation_error": "",
+        "evidence_in_answer": true
+      },
+      "n09": {
+        "id": "n09",
+        "type": "normal",
+        "question": "技能正文不在启动时全量加载，那它是什么时候被读进来的？",
+        "retrieved_ids": [
+          "0811ecd42da2f34d",
+          "abb09c6982ddeba3",
+          "079ac4c8de666972",
+          "a2ea8250245a8566",
+          "329484b3e4715fc3"
+        ],
+        "gold_ids": [
+          "1e321c318a1a413a"
+        ],
+        "retrieved_count": 5,
+        "latency_ms": 1619.5,
+        "error": "",
+        "recall@5": 0.0,
+        "mrr@5": 0.0,
+        "ndcg@5": 0.0,
+        "evidence_recall@5": 0.0,
+        "evidence_mrr@5": 0.0,
+        "evidence_ndcg@5": 0.0,
+        "evidence_first_rank": 0,
+        "answer": "技能正文是在模型判断某个技能对当前任务有用时被读进来的。具体来说，当模型在运行过程中需要使用某个技能时，它会调用 read_file 去读取对应的 SKILL.md 正文，从而获取完整的操作步骤 [5]。",
+        "answer_chars": 102,
+        "refused": false,
+        "generation_ms": 71086.1,
+        "generation_error": "",
+        "evidence_in_answer": false
+      },
+      "n10": {
+        "id": "n10",
+        "type": "normal",
+        "question": "MCP 从 demo 走到生产会碰到哪几类工程问题？",
+        "retrieved_ids": [
+          "aa05c1f23a5acb9e",
+          "d17bbc26b136bc7d",
+          "45d0d8c89749e740",
+          "36366b98db9adb56",
+          "fb8276067e34d390"
+        ],
+        "gold_ids": [
+          "9edd9a864331d48c"
+        ],
+        "retrieved_count": 5,
+        "latency_ms": 1202.2,
+        "error": "",
+        "recall@5": 0.0,
+        "mrr@5": 0.0,
+        "ndcg@5": 0.0,
+        "evidence_recall@5": 0.0,
+        "evidence_mrr@5": 0.0,
+        "evidence_ndcg@5": 0.0,
+        "evidence_first_rank": 0,
+        "answer": "MCP 从 demo 走到生产会碰到的工程问题包括：联合认证、凭证必须存进操作系统的 Keychain、以及防爆问题。  \n依据：联合认证，而且凭证必须存进操作系统的 Keychain，不能明文写在配置文件里 [3]。",
+        "answer_chars": 109,
+        "refused": false,
+        "generation_ms": 9566.0,
+        "generation_error": "",
+        "evidence_in_answer": false
+      },
+      "n11": {
+        "id": "n11",
+        "type": "normal",
+        "question": "多个 Agent 协作时，怎么避免费用被互相传话放大？",
+        "retrieved_ids": [
+          "68ec6efe48087a66",
+          "2cbd72981909105b",
+          "6e11cf3788770c49",
+          "194160c3ddad8b2a",
+          "d43bd075d623308b"
+        ],
+        "gold_ids": [
+          "2d66433820157c84"
+        ],
+        "retrieved_count": 5,
+        "latency_ms": 1274.9,
+        "error": "",
+        "recall@5": 0.0,
+        "mrr@5": 0.0,
+        "ndcg@5": 0.0,
+        "evidence_recall@5": 0.0,
+        "evidence_mrr@5": 0.0,
+        "evidence_ndcg@5": 0.0,
+        "evidence_first_rank": 0,
+        "answer": "避免费用被互相传话放大，主要通过以下方式实现：\n\n- 模型分层：主 Agent 使用强模型，子 Agent 使用轻量模型 [3]；\n- 上下文隔离：上下文隔离本身就是省钱的方式 [3]；\n- 隔离要「选择性」：使用 AbortController 隔离，一个子 Agent 被取消不影响其他 Agent；权限状态共享，主 Agent 控制子 Agent 的权限 [4]；\n- 预算按 Agent 分配：预算要按 Agent 分配，防止费用被「互相传话」放大 [1]；\n- 费用控制机制：每个子 Agent 要有超时，防止它卡在某个工具上；再加一层兜底是整个任务的成本上限，超过就中止并把中间结果汇总给用户 [2]。",
+        "answer_chars": 307,
+        "refused": false,
+        "generation_ms": 86821.2,
+        "generation_error": "",
+        "evidence_in_answer": false
+      },
+      "n12": {
+        "id": "n12",
+        "type": "normal",
+        "question": "检索链路里同时用向量、关键词和交叉编码器，这三种各自解决什么问题？",
+        "retrieved_ids": [
+          "d29b7716ac92357e",
+          "3b59a5f1a18442a0",
+          "f61d174a4ccfb3fa",
+          "940e30686032d9cc",
+          "254a30dd3ef4a9bf"
+        ],
+        "gold_ids": [
+          "d29b7716ac92357e"
+        ],
+        "retrieved_count": 5,
+        "latency_ms": 1756.3,
+        "error": "",
+        "recall@5": 1.0,
+        "mrr@5": 1.0,
+        "ndcg@5": 1.0,
+        "evidence_recall@5": 1.0,
+        "evidence_mrr@5": 1.0,
+        "evidence_ndcg@5": 1.0,
+        "evidence_first_rank": 1,
+        "answer": "向量检索解决语义匹配问题，关键词检索解决词面匹配问题，交叉编码器解决精排准确度问题。  \n依据：向量检索抓语义，BM25抓词面，重排解决「粗排召回多、精排准」的分工问题 [4]；向量检索不是单纯向量搜索，而是混合检索，向量相似度权重 0.7，关键词匹配权重 [3]；重排是通过交叉编码器对 Top 几十条进行打分，以提高答案精度 [5]。",
+        "answer_chars": 169,
+        "refused": false,
+        "generation_ms": 3542.0,
+        "generation_error": "",
+        "evidence_in_answer": false
+      },
+      "n13": {
+        "id": "n13",
+        "type": "normal",
+        "question": "只有一张 24G 显存的卡，LLM、Embedding、重排怎么分配资源？",
+        "retrieved_ids": [
+          "c1273f1da895560e",
+          "d922ea770b205f16",
+          "4d889a2ad8ee5f60",
+          "de749dc6b15a9a46",
+          "95c7be312198cb8e"
+        ],
+        "gold_ids": [
+          "c1273f1da895560e"
+        ],
+        "retrieved_count": 5,
+        "latency_ms": 1177.6,
+        "error": "",
+        "recall@5": 1.0,
+        "mrr@5": 1.0,
+        "ndcg@5": 1.0,
+        "evidence_recall@5": 1.0,
+        "evidence_mrr@5": 1.0,
+        "evidence_ndcg@5": 1.0,
+        "evidence_first_rank": 1,
+        "answer": "- 分层部署：GPU 给 LLM，CPU 给 Embedding / Rerank [1]  \n- 量化：LLM 用 INT8 量化，将 14B 模型从 FP16 的 28G 压缩到 24G 显存 [4]  \n- 推理框架：使用 vLLM + PagedAttention，必要时通过 cpu-offload 参数将部分权重卸载到内存 [3]  \n- ONNX Runtime 加速：Embedding 和 Rerank 使用 ONNX Runtime 在 CPU 上运行，效率更高 [1]",
+        "answer_chars": 245,
+        "refused": false,
+        "generation_ms": 4139.2,
+        "generation_error": "",
+        "evidence_in_answer": false
+      },
+      "n14": {
+        "id": "n14",
+        "type": "normal",
+        "question": "长文档切块时块大小和重叠比例一般怎么定？",
+        "retrieved_ids": [
+          "82e3d20f780ef03e",
+          "a8689253acf59cac",
+          "2042b72408639380",
+          "3409d77e97f597bb",
+          "dd730a5b3c1b3d32"
+        ],
+        "gold_ids": [
+          "3409d77e97f597bb"
+        ],
+        "retrieved_count": 5,
+        "latency_ms": 1414.6,
+        "error": "",
+        "recall@5": 1.0,
+        "mrr@5": 0.25,
+        "ndcg@5": 0.43067655807339306,
+        "evidence_recall@5": 1.0,
+        "evidence_mrr@5": 0.25,
+        "evidence_ndcg@5": 0.43067655807339306,
+        "evidence_first_rank": 4,
+        "answer": "块大小一般从 300 到 500 字起步，按文档类型调整，代码和表格要单独处理，不能和正文混切。重叠比例一般给 10% 到 20% [1]。",
+        "answer_chars": 70,
+        "refused": false,
+        "generation_ms": 14247.3,
+        "generation_error": "",
+        "evidence_in_answer": true
+      },
+      "n15": {
+        "id": "n15",
+        "type": "normal",
+        "question": "有首诗写夜里把月光当成了地上的霜，抬头看月之后低头想家，它的最后一句是什么？",
+        "retrieved_ids": [
+          "aef787b576f04894",
+          "3bd280f80162024c",
+          "59858a832b5fc45b",
+          "c4e70e0c1653b0f7",
+          "60abca5a79d297cd"
+        ],
+        "gold_ids": [
+          "aef787b576f04894"
+        ],
+        "retrieved_count": 5,
+        "latency_ms": 2074.6,
+        "error": "",
+        "recall@5": 1.0,
+        "mrr@5": 1.0,
+        "ndcg@5": 1.0,
+        "evidence_recall@5": 1.0,
+        "evidence_mrr@5": 1.0,
+        "evidence_ndcg@5": 1.0,
+        "evidence_first_rank": 1,
+        "answer": "《静夜思》的最后两句是：“举头望山月，低头思故乡。”最后一句是“低头思故乡” [1]。",
+        "answer_chars": 43,
+        "refused": false,
+        "generation_ms": 1683.8,
+        "generation_error": "",
+        "evidence_in_answer": true
+      },
+      "n16": {
+        "id": "n16",
+        "type": "normal",
+        "question": "杜甫在战乱里写的诗，看到花开鸟鸣反而更难过，「感时花溅泪」的下一句是什么？",
+        "retrieved_ids": [
+          "16fd1c2a65d1ed36",
+          "59db273636c260ba",
+          "a573a6ff06d4377d",
+          "a0a31f198c2be305",
+          "e20db255fca80445"
+        ],
+        "gold_ids": [
+          "16fd1c2a65d1ed36"
+        ],
+        "retrieved_count": 5,
+        "latency_ms": 1765.8,
+        "error": "",
+        "recall@5": 1.0,
+        "mrr@5": 1.0,
+        "ndcg@5": 1.0,
+        "evidence_recall@5": 1.0,
+        "evidence_mrr@5": 1.0,
+        "evidence_ndcg@5": 1.0,
+        "evidence_first_rank": 1,
+        "answer": "「感时花溅泪」的下一句是「恨别鸟惊心」。依据是杜甫的《春望》中的诗句 [1]。",
+        "answer_chars": 39,
+        "refused": false,
+        "generation_ms": 1587.6,
+        "generation_error": "",
+        "evidence_in_answer": true
+      },
+      "n17": {
+        "id": "n17",
+        "type": "normal",
+        "question": "王之涣写登楼远望，说想看得更远就要再往上走一层，这句原话是什么？",
+        "retrieved_ids": [
+          "e466c894278bdf43",
+          "c87b8059c95cfd1e",
+          "9d5215ca8d27cf2a",
+          "4ac49376670b598b",
+          "84a490fa198b2d53"
+        ],
+        "gold_ids": [
+          "c87b8059c95cfd1e",
+          "e466c894278bdf43"
+        ],
+        "retrieved_count": 5,
+        "latency_ms": 2282.9,
+        "error": "",
+        "recall@5": 1.0,
+        "mrr@5": 1.0,
+        "ndcg@5": 1.0,
+        "evidence_recall@5": 1.0,
+        "evidence_mrr@5": 1.0,
+        "evidence_ndcg@5": 1.0,
+        "evidence_first_rank": 1,
+        "answer": "【问题】  \n王之涣写登楼远望，说想看得更远就要再往上走一层，这句原话是什么？  \n\n【结论】  \n欲穷千里目，更上一层楼。  \n\n【依据】  \n《登鹳雀楼》中提到“欲穷千里目，更上一层楼” [1]。",
+        "answer_chars": 100,
+        "refused": false,
+        "generation_ms": 2773.4,
+        "generation_error": "",
+        "evidence_in_answer": true
+      },
+      "n18": {
+        "id": "n18",
+        "type": "normal",
+        "question": "写大雪封山、只有一个老翁披蓑戴笠在江上垂钓的那首诗里，「孤舟蓑笠翁」的下一句是什么？",
+        "retrieved_ids": [
+          "bf6a252f4a567b92",
+          "f2e54610e1d9694c",
+          "5d07e75273d2b327",
+          "13aee5911d6defcc",
+          "f4182982846efc5a"
+        ],
+        "gold_ids": [
+          "bf6a252f4a567b92"
+        ],
+        "retrieved_count": 5,
+        "latency_ms": 2068.6,
+        "error": "",
+        "recall@5": 1.0,
+        "mrr@5": 1.0,
+        "ndcg@5": 1.0,
+        "evidence_recall@5": 1.0,
+        "evidence_mrr@5": 1.0,
+        "evidence_ndcg@5": 1.0,
+        "evidence_first_rank": 1,
+        "answer": "「孤舟蓑笠翁」的下一句是「独钓寒江雪」。依据是《江雪》这首诗中的内容 [2]。",
+        "answer_chars": 39,
+        "refused": false,
+        "generation_ms": 1401.2,
+        "generation_error": "",
+        "evidence_in_answer": true
+      },
+      "n19": {
+        "id": "n19",
+        "type": "normal",
+        "question": "王维用哪种植物来寄托思念，说它最惹相思？",
+        "retrieved_ids": [
+          "1b1ef14ba9f56351",
+          "bf9b136ec9c336cb",
+          "f20bd1b40a0eee75",
+          "c840edaf3efbef26",
+          "3b7e4dff8cd72367"
+        ],
+        "gold_ids": [
+          "1b1ef14ba9f56351"
+        ],
+        "retrieved_count": 5,
+        "latency_ms": 1733.2,
+        "error": "",
+        "recall@5": 1.0,
+        "mrr@5": 1.0,
+        "ndcg@5": 1.0,
+        "evidence_recall@5": 1.0,
+        "evidence_mrr@5": 1.0,
+        "evidence_ndcg@5": 1.0,
+        "evidence_first_rank": 1,
+        "answer": "红豆。依据是王维的《相思》诗中提到“此物最相思” [1]。",
+        "answer_chars": 29,
+        "refused": false,
+        "generation_ms": 1228.9,
+        "generation_error": "",
+        "evidence_in_answer": false
+      },
+      "n20": {
+        "id": "n20",
+        "type": "normal",
+        "question": "写春天睡得香甜、不知不觉天就亮了的那首诗，第一句是什么？",
+        "retrieved_ids": [
+          "37e9abbccc80c9e7",
+          "6dcad33e2f06ae7e",
+          "43b52cea668d43a3",
+          "3bd280f80162024c",
+          "ebd402430557ed19"
+        ],
+        "gold_ids": [
+          "43b52cea668d43a3"
+        ],
+        "retrieved_count": 5,
+        "latency_ms": 2164.3,
+        "error": "",
+        "recall@5": 1.0,
+        "mrr@5": 0.3333333333333333,
+        "ndcg@5": 0.5,
+        "evidence_recall@5": 1.0,
+        "evidence_mrr@5": 0.3333333333333333,
+        "evidence_ndcg@5": 0.5,
+        "evidence_first_rank": 3,
+        "answer": "《春晓》的第一句是“春眠不觉晓”。依据是该诗描述了春天睡得香甜、不知不觉天就亮了的情景 [5]。",
+        "answer_chars": 48,
+        "refused": false,
+        "generation_ms": 8698.1,
+        "generation_error": "",
+        "evidence_in_answer": true
+      },
+      "n21": {
+        "id": "n21",
+        "type": "normal",
+        "question": "杜甫写秋天登台远望、感叹年老多病，「无边落木萧萧下」的下一句是什么？",
+        "retrieved_ids": [
+          "2e7de892aedbc55a",
+          "bc4ac0ca907d9d09",
+          "a0a31f198c2be305",
+          "59db273636c260ba",
+          "84a490fa198b2d53"
+        ],
+        "gold_ids": [
+          "2e7de892aedbc55a"
+        ],
+        "retrieved_count": 5,
+        "latency_ms": 1774.8,
+        "error": "",
+        "recall@5": 1.0,
+        "mrr@5": 1.0,
+        "ndcg@5": 1.0,
+        "evidence_recall@5": 1.0,
+        "evidence_mrr@5": 1.0,
+        "evidence_ndcg@5": 1.0,
+        "evidence_first_rank": 1,
+        "answer": "「不尽长江衮衮来」。依据：[1]",
+        "answer_chars": 16,
+        "refused": false,
+        "generation_ms": 874.6,
+        "generation_error": "",
+        "evidence_in_answer": true
+      },
+      "n22": {
+        "id": "n22",
+        "type": "normal",
+        "question": "李白写乘船离开白帝城、一天就回到江陵，「两岸猿声啼不住」的下一句是什么？",
+        "retrieved_ids": [
+          "c6c2e8c00a3c76b6",
+          "c0de605a8e04be76",
+          "59858a832b5fc45b",
+          "2cd4d836120f031c",
+          "c5de93bf2bea4f82"
+        ],
+        "gold_ids": [
+          "c6c2e8c00a3c76b6"
+        ],
+        "retrieved_count": 5,
+        "latency_ms": 1926.5,
+        "error": "",
+        "recall@5": 1.0,
+        "mrr@5": 1.0,
+        "ndcg@5": 1.0,
+        "evidence_recall@5": 1.0,
+        "evidence_mrr@5": 1.0,
+        "evidence_ndcg@5": 1.0,
+        "evidence_first_rank": 1,
+        "answer": "「轻舟已过万重山」。依据：[1]",
+        "answer_chars": 16,
+        "refused": false,
+        "generation_ms": 919.9,
+        "generation_error": "",
+        "evidence_in_answer": true
+      },
+      "n23": {
+        "id": "n23",
+        "type": "normal",
+        "question": "王维写山中秋雨后的傍晚，「明月松间照」的下一句是什么？",
+        "retrieved_ids": [
+          "3968c13da6739713",
+          "bf9b136ec9c336cb",
+          "8775aff2950aac46",
+          "3231e3ecc81f8426",
+          "60abca5a79d297cd"
+        ],
+        "gold_ids": [
+          "3968c13da6739713"
+        ],
+        "retrieved_count": 5,
+        "latency_ms": 1646.4,
+        "error": "",
+        "recall@5": 1.0,
+        "mrr@5": 1.0,
+        "ndcg@5": 1.0,
+        "evidence_recall@5": 1.0,
+        "evidence_mrr@5": 1.0,
+        "evidence_ndcg@5": 1.0,
+        "evidence_first_rank": 1,
+        "answer": "「明月松间照」的下一句是「清泉石上流」。依据是王维的《山居秋暝》中的诗句 [1]。",
+        "answer_chars": 41,
+        "refused": false,
+        "generation_ms": 1078.8,
+        "generation_error": "",
+        "evidence_in_answer": true
+      },
+      "n24": {
+        "id": "n24",
+        "type": "normal",
+        "question": "张继夜里停在姑苏城外，写寒山寺的钟声传到船上，这句诗怎么说的？",
+        "retrieved_ids": [
+          "bd73fff0266674d8",
+          "1a205cd025bd1573",
+          "6f38bb351ead4beb",
+          "936867a08e5f0c39",
+          "f4182982846efc5a"
+        ],
+        "gold_ids": [
+          "bd73fff0266674d8"
+        ],
+        "retrieved_count": 5,
+        "latency_ms": 1952.5,
+        "error": "",
+        "recall@5": 1.0,
+        "mrr@5": 1.0,
+        "ndcg@5": 1.0,
+        "evidence_recall@5": 1.0,
+        "evidence_mrr@5": 1.0,
+        "evidence_ndcg@5": 1.0,
+        "evidence_first_rank": 1,
+        "answer": "【结论】张继夜里停在姑苏城外，写寒山寺的钟声传到船上，这句诗是“姑苏城外寒山寺，夜半钟声到客船”。  \n【依据】“姑苏城外寒山寺，夜半钟声到客船”出自张继的《枫桥夜泊》[1]。",
+        "answer_chars": 88,
+        "refused": false,
+        "generation_ms": 21338.7,
+        "generation_error": "",
+        "evidence_in_answer": true
+      },
+      "b01": {
+        "id": "b01",
+        "type": "boundary",
+        "question": "线上要求用户提问后马上就能看到字，同时又不想砍掉精排，这种情况你会怎么处理？",
+        "retrieved_ids": [
+          "ab4d61963b9c5416",
+          "254a30dd3ef4a9bf",
+          "28e9cb227ee8e232",
+          "1279dfb856c845e1",
+          "d3201e26312b05b0"
+        ],
+        "gold_ids": [
+          "75910143e438b38c",
+          "3b1e96574f485ed5"
+        ],
+        "retrieved_count": 5,
+        "latency_ms": 1627.6,
+        "error": "",
+        "recall@5": 0.0,
+        "mrr@5": 0.0,
+        "ndcg@5": 0.0,
+        "evidence_recall@5": 0.0,
+        "evidence_mrr@5": 0.0,
+        "evidence_ndcg@5": 0.0,
+        "evidence_first_rank": 0,
+        "answer": "为了满足线上要求用户提问后马上看到字的需求，同时保留精排的准确性，可以采用异步生成器管道，将API流式返回的每个event通过yield直接推给UI，使用户能够即时看到内容的生成过程 [1]。此外，可以利用语义缓存技术，通过向量相似度作为缓存key，设置较高的阈值（如0.92以上），在命中缓存时直接返回缓存答案流，从而绕过检索和重排步骤，进一步降低延迟 [5]。对于需要精排的情况，可以确保精排后的Top N上下文在生成答案时被高效利用，同时通过预热机制在非高峰时段完成精排和上下文拼接，以减少实时处理的压力 [3]。",
+        "answer_chars": 260,
+        "refused": false,
+        "generation_ms": 5457.0,
+        "generation_error": "",
+        "evidence_in_answer": false
+      },
+      "b02": {
+        "id": "b02",
+        "type": "boundary",
+        "question": "客户对准确性极敏感，除了检索本身，架构上还能用什么办法拦住模型瞎编？",
+        "retrieved_ids": [
+          "d29b7716ac92357e",
+          "6ebfd147a66d35f3",
+          "8b00b277dc616003",
+          "5d373451bdd39c35",
+          "c1273f1da895560e"
+        ],
+        "gold_ids": [
+          "5d373451bdd39c35"
+        ],
+        "retrieved_count": 5,
+        "latency_ms": 1387.7,
+        "error": "",
+        "recall@5": 1.0,
+        "mrr@5": 0.25,
+        "ndcg@5": 0.43067655807339306,
+        "evidence_recall@5": 1.0,
+        "evidence_mrr@5": 0.25,
+        "evidence_ndcg@5": 0.43067655807339306,
+        "evidence_first_rank": 4,
+        "answer": "三层漏斗：生成前约束、生成中检测、生成后复核，再加一层人机协作的分级审核。强调「低成本」，别把人工当监工 [2]。",
+        "answer_chars": 57,
+        "refused": false,
+        "generation_ms": 5540.9,
+        "generation_error": "",
+        "evidence_in_answer": false
+      },
+      "b03": {
+        "id": "b03",
+        "type": "boundary",
+        "question": "长会话里历史消息太多时，按什么条件触发摘要压缩，摘要又存到哪里？",
+        "retrieved_ids": [
+          "492caf8563163220",
+          "2dd541eb75587afb",
+          "de6b09635a3610cc",
+          "8103408c36a1d985",
+          "cf27a80685ae6c6f"
+        ],
+        "gold_ids": [
+          "4682f1b57db8892e"
+        ],
+        "retrieved_count": 5,
+        "latency_ms": 1340.7,
+        "error": "",
+        "recall@5": 0.0,
+        "mrr@5": 0.0,
+        "ndcg@5": 0.0,
+        "evidence_recall@5": 0.0,
+        "evidence_mrr@5": 0.0,
+        "evidence_ndcg@5": 0.0,
+        "evidence_first_rank": 0,
+        "answer": "触发摘要压缩的条件是当历史消息的 token 数超过 6000 时，取出最旧的 N 条消息，调用大模型生成摘要并替换旧消息。摘要存到 HISTORY.md 中，作为事件日志方便回溯 [1]。",
+        "answer_chars": 95,
+        "refused": false,
+        "generation_ms": 10177.1,
+        "generation_error": "",
+        "evidence_in_answer": false
+      },
+      "b04": {
+        "id": "b04",
+        "type": "boundary",
+        "question": "MCP 在企业环境里的第三方凭证应该放在哪，为什么不放配置文件？",
+        "retrieved_ids": [
+          "45d0d8c89749e740",
+          "860209fef644342c",
+          "537204edb630b423",
+          "8fed0c4b09ac9e6c",
+          "ba11dd01aea8ee66"
+        ],
+        "gold_ids": [
+          "45d0d8c89749e740"
+        ],
+        "retrieved_count": 5,
+        "latency_ms": 989.2,
+        "error": "",
+        "recall@5": 1.0,
+        "mrr@5": 1.0,
+        "ndcg@5": 1.0,
+        "evidence_recall@5": 1.0,
+        "evidence_mrr@5": 1.0,
+        "evidence_ndcg@5": 1.0,
+        "evidence_first_rank": 1,
+        "answer": "MCP 在企业环境里的第三方凭证应该存进操作系统的 Keychain。这是因为凭证不能明文写在配置文件里，以确保安全性 [1]。",
+        "answer_chars": 64,
+        "refused": false,
+        "generation_ms": 1402.5,
+        "generation_error": "",
+        "evidence_in_answer": false
+      },
+      "b05": {
+        "id": "b05",
+        "type": "boundary",
+        "question": "NanoClaw 相比 Claude Code 在机制覆盖上少做了哪些东西？",
+        "retrieved_ids": [
+          "b436c85e768af43b",
+          "2dbd0e4141b18d31",
+          "b08901b8959e0f56",
+          "4b2625e2c81e72b9",
+          "52b26ac4be07edb6"
+        ],
+        "gold_ids": [
+          "d5074516475e36ab"
+        ],
+        "retrieved_count": 5,
+        "latency_ms": 1055.8,
+        "error": "",
+        "recall@5": 0.0,
+        "mrr@5": 0.0,
+        "ndcg@5": 0.0,
+        "evidence_recall@5": 0.0,
+        "evidence_mrr@5": 0.0,
+        "evidence_ndcg@5": 0.0,
+        "evidence_first_rank": 0,
+        "answer": "NanoClaw 相比 Claude Code 在机制覆盖上少做了以下内容：  \n- 机制覆盖维度的具体内容未在资料中明确说明，但根据资料可推测其覆盖范围可能不如 Claude Code 全面。  \n\n依据：资料中提到 NanoClaw 和 Claude Code 在机制覆盖、工程化、规模验证三个维度进行对比，但未具体说明 NanoClaw 在机制覆盖上少做了哪些内容 [1]。",
+        "answer_chars": 190,
+        "refused": false,
+        "generation_ms": 3244.3,
+        "generation_error": "",
+        "evidence_in_answer": false
+      },
+      "b06": {
+        "id": "b06",
+        "type": "boundary",
+        "question": "错题本除了推给用户复习，还能反过来改进什么？",
+        "retrieved_ids": [
+          "4d2428add28cf60e",
+          "b4804f8de8a74d56",
+          "75b0da93f92adfc1",
+          "cdcdd339ddccfbbd",
+          "4306ec992b721c9f"
+        ],
+        "gold_ids": [
+          "4d2428add28cf60e"
+        ],
+        "retrieved_count": 5,
+        "latency_ms": 1385.4,
+        "error": "",
+        "recall@5": 1.0,
+        "mrr@5": 1.0,
+        "ndcg@5": 1.0,
+        "evidence_recall@5": 1.0,
+        "evidence_mrr@5": 1.0,
+        "evidence_ndcg@5": 1.0,
+        "evidence_first_rank": 1,
+        "answer": "错题本除了推给用户复习，还能反过来改进知识库质量。",
+        "answer_chars": 25,
+        "refused": false,
+        "generation_ms": 5190.1,
+        "generation_error": "",
+        "evidence_in_answer": false
+      },
+      "b07": {
+        "id": "b07",
+        "type": "boundary",
+        "question": "李商隐写「庄生晓梦迷蝴蝶」的那首诗，最后一句是什么？",
+        "retrieved_ids": [
+          "971cb0ee73a8d76c",
+          "35ac166d032403f1",
+          "1e5354b3b7f134d6",
+          "4722baa9bf3bd015",
+          "84a490fa198b2d53"
+        ],
+        "gold_ids": [
+          "971cb0ee73a8d76c"
+        ],
+        "retrieved_count": 5,
+        "latency_ms": 1882.8,
+        "error": "",
+        "recall@5": 1.0,
+        "mrr@5": 1.0,
+        "ndcg@5": 1.0,
+        "evidence_recall@5": 1.0,
+        "evidence_mrr@5": 1.0,
+        "evidence_ndcg@5": 1.0,
+        "evidence_first_rank": 1,
+        "answer": "【问题】\n李商隐写「庄生晓梦迷蝴蝶」的那首诗，最后一句是什么？\n\n【结论】\n最后一句是「此情可待成追忆，只是当时已惘然」。\n\n【依据】\n根据资料[1]，《锦瑟》中「庄生晓梦迷蝴蝶」是诗中的第三句，最后一句为「此情可待成追忆，只是当时已惘然」。",
+        "answer_chars": 121,
+        "refused": false,
+        "generation_ms": 25456.0,
+        "generation_error": "",
+        "evidence_in_answer": true
+      },
+      "b08": {
+        "id": "b08",
+        "type": "boundary",
+        "question": "从上传一份 PDF 到用户拿到带引用的回答，中间要走哪些步骤？",
+        "retrieved_ids": [
+          "1279dfb856c845e1",
+          "ff8a33b749ef4431",
+          "a8689253acf59cac",
+          "2e25450a10255eda",
+          "68ae99036b9f114d"
+        ],
+        "gold_ids": [
+          "a8689253acf59cac"
+        ],
+        "retrieved_count": 5,
+        "latency_ms": 1363.8,
+        "error": "",
+        "recall@5": 1.0,
+        "mrr@5": 0.3333333333333333,
+        "ndcg@5": 0.5,
+        "evidence_recall@5": 1.0,
+        "evidence_mrr@5": 0.3333333333333333,
+        "evidence_ndcg@5": 0.5,
+        "evidence_first_rank": 3,
+        "answer": "从上传一份 PDF 到用户拿到带引用的回答，中间要走的步骤如下：\n\n1. 解析 PDF 文档，进行清洗去页眉页脚 [3]；\n2. 按标题层级切分文档，长段落加定长重叠，调用 bge 向量模型编码，写进 FAISS 索引 [3]；\n3. 使用 jieba 分词建 BM25 [3]；\n4. 精排后的 Top N 拼成上下文，加上引用编号和格式约束，一起送进大模型生成 [1]；\n5. 最终答案带引用返回，同时把这一轮沉淀成笔记或者题目 [1]；\n6. 第二层生成中，做实时一致性检测：用一个很小的 NLI 模型（比如 DeBERTa 级别，推理 20） [2]；\n7. 把答案拆成 2-4 层，每层给一个名字 [4]；\n8. 给具体证据 [4]。",
+        "answer_chars": 322,
+        "refused": false,
+        "generation_ms": 6995.2,
+        "generation_error": "",
+        "evidence_in_answer": false
+      },
+      "x01": {
+        "id": "x01",
+        "type": "no_answer",
+        "question": "《赤壁赋》是苏轼在哪一年写成的？",
+        "retrieved_ids": [
+          "6075f4d536e918c9",
+          "90bb1df713a577dc",
+          "79dd9b999637d2b7",
+          "1111f22a6f1f6a99",
+          "229a451a8deb7750"
+        ],
+        "gold_ids": [],
+        "retrieved_count": 5,
+        "latency_ms": 1526.7,
+        "error": "",
+        "answer": "知识库中未找到相关内容。",
+        "answer_chars": 12,
+        "refused": true,
+        "generation_ms": 2749.7,
+        "generation_error": "",
+        "evidence_in_answer": false
+      },
+      "x02": {
+        "id": "x02",
+        "type": "no_answer",
+        "question": "NanoClaw 开源用的是什么许可证？",
+        "retrieved_ids": [
+          "2dbd0e4141b18d31",
+          "c0be518082fcdb72",
+          "e9fbd3690241480e",
+          "52b26ac4be07edb6",
+          "d9b75778ebff5829"
+        ],
+        "gold_ids": [],
+        "retrieved_count": 5,
+        "latency_ms": 1213.3,
+        "error": "",
+        "answer": "知识库中未找到相关内容。",
+        "answer_chars": 12,
+        "refused": true,
+        "generation_ms": 647.2,
+        "generation_error": "",
+        "evidence_in_answer": false
+      },
+      "x03": {
+        "id": "x03",
+        "type": "no_answer",
+        "question": "bge-reranker-v2-m3 是用多少条样本训练出来的？",
+        "retrieved_ids": [
+          "dd41af8b4f0b3b08",
+          "d6b1f9c85648f19d",
+          "b552748eef563954",
+          "1e6881562de01f11",
+          "940e30686032d9cc"
+        ],
+        "gold_ids": [],
+        "retrieved_count": 5,
+        "latency_ms": 1859.2,
+        "error": "",
+        "answer": "知识库中未找到相关内容。",
+        "answer_chars": 12,
+        "refused": true,
+        "generation_ms": 561.6,
+        "generation_error": "",
+        "evidence_in_answer": false
+      },
+      "x04": {
+        "id": "x04",
+        "type": "no_answer",
+        "question": "LangChain 的 LCEL 里怎么用竖线运算符把多个 Runnable 串起来？",
+        "retrieved_ids": [
+          "a616be391295c799",
+          "d759157340a7d49f",
+          "2774d61e32fbefd7",
+          "c0cd2c2ceb443219",
+          "4827fadcb341c4de"
+        ],
+        "gold_ids": [],
+        "retrieved_count": 5,
+        "latency_ms": 1857.8,
+        "error": "",
+        "answer": "知识库中未找到相关内容。",
+        "answer_chars": 12,
+        "refused": true,
+        "generation_ms": 591.8,
+        "generation_error": "",
+        "evidence_in_answer": false
+      },
+      "x05": {
+        "id": "x05",
+        "type": "no_answer",
+        "question": "这个知识库用的 FAISS 索引是 IVF-PQ 还是 HNSW？",
+        "retrieved_ids": [
+          "a8689253acf59cac",
+          "da061f6f08d67e01",
+          "b552748eef563954",
+          "940e30686032d9cc",
+          "985691d608c6ee99"
+        ],
+        "gold_ids": [],
+        "retrieved_count": 5,
+        "latency_ms": 1468.6,
+        "error": "",
+        "answer": "知识库中未找到相关内容。",
+        "answer_chars": 12,
+        "refused": true,
+        "generation_ms": 15762.9,
+        "generation_error": "",
+        "evidence_in_answer": false
+      },
+      "x06": {
+        "id": "x06",
+        "type": "no_answer",
+        "question": "《静夜思》里的「床」指的到底是井栏还是卧榻？",
+        "retrieved_ids": [
+          "3b7e4dff8cd72367",
+          "aef787b576f04894",
+          "f8883cfc5c083866",
+          "4722baa9bf3bd015",
+          "2f7092b0b5daa2f6"
+        ],
+        "gold_ids": [],
+        "retrieved_count": 5,
+        "latency_ms": 2180.9,
+        "error": "",
+        "answer": "《静夜思》里的「床」指的是卧榻。依据是诗中提到“举头望山月，低头思故乡”，这表明诗人是在床上低头思考，因此「床」应理解为卧榻 [3]。",
+        "answer_chars": 67,
+        "refused": false,
+        "generation_ms": 2175.4,
+        "generation_error": "",
+        "evidence_in_answer": false
+      },
+      "x07": {
+        "id": "x07",
+        "type": "no_answer",
+        "question": "用 Docker 跑这个项目时，怎么给容器设置内存上限？",
+        "retrieved_ids": [
+          "95c7be312198cb8e",
+          "34f0d88336651f5a",
+          "0f255113755760bb",
+          "db921f84e8b9fdbe",
+          "7a7329571c7d83ce"
+        ],
+        "gold_ids": [],
+        "retrieved_count": 5,
+        "latency_ms": 1561.3,
+        "error": "",
+        "answer": "知识库中未找到相关内容。",
+        "answer_chars": 12,
+        "refused": true,
+        "generation_ms": 562.3,
+        "generation_error": "",
+        "evidence_in_answer": false
+      },
+      "x08": {
+        "id": "x08",
+        "type": "no_answer",
+        "question": "Qwen3-8B 的上下文窗口是多少 token？",
+        "retrieved_ids": [
+          "c0ecbec8d1453fae",
+          "a12e9c91798e4182",
+          "14a7993fc81a5448",
+          "5e01577a2810fc99",
+          "047f19fa10f31e91"
+        ],
+        "gold_ids": [],
+        "retrieved_count": 5,
+        "latency_ms": 1365.1,
+        "error": "",
+        "answer": "Qwen3-8B 的上下文窗口是 6000 token。[1]",
+        "answer_chars": 31,
+        "refused": false,
+        "generation_ms": 1302.5,
+        "generation_error": "",
+        "evidence_in_answer": false
+      }
+    },
+    "vector_only": {
+      "n01": {
+        "id": "n01",
+        "type": "normal",
+        "question": "注意力打分时为什么要除以维度的平方根，不除会出现什么后果？",
+        "retrieved_ids": [
+          "b05f8874ec59c027",
+          "706627629a490f51",
+          "e95dcab71c4d4247",
+          "8e1e05302777731b",
+          "985691d608c6ee99"
+        ],
+        "gold_ids": [
+          "e49fb4e6eecc4262"
+        ],
+        "retrieved_count": 5,
+        "latency_ms": 99.2,
+        "error": "",
+        "recall@5": 0.0,
+        "mrr@5": 0.0,
+        "ndcg@5": 0.0,
+        "evidence_recall@5": 0.0,
+        "evidence_mrr@5": 0.0,
+        "evidence_ndcg@5": 0.0,
+        "evidence_first_rank": 0,
+        "answer": "在注意力打分时，除以维度的平方根是为了防止点积结果过大，导致softmax函数的梯度消失问题。如果不进行缩放，点积的值会随着维度的增加而线性增长，使得softmax的输出变得不稳定，难以有效学习注意力权重。[4]",
+        "answer_chars": 106,
+        "refused": false,
+        "generation_ms": 40835.1,
+        "generation_error": "",
+        "evidence_in_answer": false
+      },
+      "n02": {
+        "id": "n02",
+        "type": "normal",
+        "question": "Transformer 靠什么机制知道句子里词的先后顺序？",
+        "retrieved_ids": [
+          "5ef78101435f2b3e",
+          "1bf493a541448664",
+          "8e5aa033c29f638b",
+          "bf5eaf727370e06c",
+          "21a6f6e24ea52342"
+        ],
+        "gold_ids": [
+          "88fd3fbdbbd7d9fd"
+        ],
+        "retrieved_count": 5,
+        "latency_ms": 94.9,
+        "error": "",
+        "recall@5": 0.0,
+        "mrr@5": 0.0,
+        "ndcg@5": 0.0,
+        "evidence_recall@5": 0.0,
+        "evidence_mrr@5": 0.0,
+        "evidence_ndcg@5": 0.0,
+        "evidence_first_rank": 0,
+        "answer": "Transformer 通过自注意力机制（Self-Attention）来捕捉词之间的先后顺序关系。自注意力机制通过计算词与词之间的相关性，使得模型能够关注到序列中不同位置的词，从而隐式地学习词的顺序信息。[1]",
+        "answer_chars": 106,
+        "refused": false,
+        "generation_ms": 2074.1,
+        "generation_error": "",
+        "evidence_in_answer": false
+      },
+      "n03": {
+        "id": "n03",
+        "type": "normal",
+        "question": "处理变长序列时，为什么更倾向用 LayerNorm 而不是 BatchNorm？",
+        "retrieved_ids": [
+          "dbb179a5408b4d21",
+          "dd730a5b3c1b3d32",
+          "d1ede942e52c65ff",
+          "1fe1b5b0eabe9a29",
+          "1e6881562de01f11"
+        ],
+        "gold_ids": [
+          "dbb179a5408b4d21"
+        ],
+        "retrieved_count": 5,
+        "latency_ms": 96.2,
+        "error": "",
+        "recall@5": 1.0,
+        "mrr@5": 1.0,
+        "ndcg@5": 1.0,
+        "evidence_recall@5": 1.0,
+        "evidence_mrr@5": 1.0,
+        "evidence_ndcg@5": 1.0,
+        "evidence_first_rank": 1,
+        "answer": "处理变长序列时，更倾向用 LayerNorm 而不是 BatchNorm，因为 LayerNorm 是在特征维度上，对单个样本自己的所有特征求均值和方差，跟 batch 完全无关，所以特别适合变长序列 [1]。而 BatchNorm 在 batch 维度上对同一个特征跨样本求均值和方差，变长序列里 padding 会污染统计量 [2]。",
+        "answer_chars": 169,
+        "refused": false,
+        "generation_ms": 46801.4,
+        "generation_error": "",
+        "evidence_in_answer": true
+      },
+      "n04": {
+        "id": "n04",
+        "type": "normal",
+        "question": "Claude Code 的执行环境大致可以拆成哪几块职责？",
+        "retrieved_ids": [
+          "9fd25ebd8f53445f",
+          "bf3c347e011704ba",
+          "2936d6cf6eb9308d",
+          "fd0333e03395d5cd",
+          "496e0c5c8463c0ac"
+        ],
+        "gold_ids": [
+          "9fd25ebd8f53445f"
+        ],
+        "retrieved_count": 5,
+        "latency_ms": 90.8,
+        "error": "",
+        "recall@5": 1.0,
+        "mrr@5": 1.0,
+        "ndcg@5": 1.0,
+        "evidence_recall@5": 1.0,
+        "evidence_mrr@5": 1.0,
+        "evidence_ndcg@5": 1.0,
+        "evidence_first_rank": 1,
+        "answer": "Claude Code 的执行环境大致可以拆成七块职责，包括驱动 while(true) 循环，管理 Turn 之间的状态，即 Agent；Git Worktree 做工作区隔离；子 Agent 类型分 general-purpose、Explore（只读）、Plan（只读）；System Prompt 大约 54.3；六个维度；递归调用 query()；独立 messages 实现上下文隔离。[1][2][3][4][5]",
+        "answer_chars": 214,
+        "refused": false,
+        "generation_ms": 3763.8,
+        "generation_error": "",
+        "evidence_in_answer": false
+      },
+      "n05": {
+        "id": "n05",
+        "type": "normal",
+        "question": "Claude Code 的系统提示词为什么要把不变的内容放最前面？",
+        "retrieved_ids": [
+          "3fb5ada00713610d",
+          "d4178215750ea72c",
+          "4306ec992b721c9f",
+          "2936d6cf6eb9308d",
+          "4fa3b8d0080d13cf"
+        ],
+        "gold_ids": [
+          "cf27a80685ae6c6f"
+        ],
+        "retrieved_count": 5,
+        "latency_ms": 92.4,
+        "error": "",
+        "recall@5": 0.0,
+        "mrr@5": 0.0,
+        "ndcg@5": 0.0,
+        "evidence_recall@5": 0.0,
+        "evidence_mrr@5": 0.0,
+        "evidence_ndcg@5": 0.0,
+        "evidence_first_rank": 0,
+        "answer": "Claude Code 的系统提示词把不变的内容放最前面是为了利用 prompt caching 的前缀匹配特性，从而在长会话中复用缓存，节省成本。[5]",
+        "answer_chars": 77,
+        "refused": false,
+        "generation_ms": 1580.5,
+        "generation_error": "",
+        "evidence_in_answer": false
+      },
+      "n06": {
+        "id": "n06",
+        "type": "normal",
+        "question": "OpenClaw 怎么发现 Agent 在同一个工具上反复打转？阈值分几级？",
+        "retrieved_ids": [
+          "e511169958447271",
+          "b390cafae18c9f58",
+          "52e3f6532c82912e",
+          "3fba838ac9239e2d",
+          "d759157340a7d49f"
+        ],
+        "gold_ids": [
+          "52e3f6532c82912e"
+        ],
+        "retrieved_count": 5,
+        "latency_ms": 95.5,
+        "error": "",
+        "recall@5": 1.0,
+        "mrr@5": 0.3333333333333333,
+        "ndcg@5": 0.5,
+        "evidence_recall@5": 1.0,
+        "evidence_mrr@5": 0.3333333333333333,
+        "evidence_ndcg@5": 0.5,
+        "evidence_first_rank": 3,
+        "answer": "OpenClaw 通过维护一个滑动窗口，记录最近 30 次工具调用的签名（工具名 + 参数哈希），并运行四种检测器来发现 Agent 在同一个工具上反复打转。阈值分为三级：10 次警告 → 20 次切断 → 30 次终止 [3]。",
+        "answer_chars": 115,
+        "refused": false,
+        "generation_ms": 2706.7,
+        "generation_error": "",
+        "evidence_in_answer": false
+      },
+      "n07": {
+        "id": "n07",
+        "type": "normal",
+        "question": "长期记忆为什么不能只存向量库，还要保留明文层？",
+        "retrieved_ids": [
+          "80f1df8fccd13dbc",
+          "47601ed7a44c637a",
+          "f7b7d96bb40ad999",
+          "ba11dd01aea8ee66",
+          "2a015b48c5696d36"
+        ],
+        "gold_ids": [
+          "ba11dd01aea8ee66"
+        ],
+        "retrieved_count": 5,
+        "latency_ms": 94.6,
+        "error": "",
+        "recall@5": 1.0,
+        "mrr@5": 0.25,
+        "ndcg@5": 0.43067655807339306,
+        "evidence_recall@5": 1.0,
+        "evidence_mrr@5": 0.25,
+        "evidence_ndcg@5": 0.43067655807339306,
+        "evidence_first_rank": 4,
+        "answer": "长期记忆不能只存向量库，还要保留明文层，因为明文层解决的是「可控」问题，你打开 md 就能看到 Agent 记住了什么、可以直接改、可以 git 管理 [4]。而向量库解决的是「可查」问题，当历史内容很长时，无法全部塞进上下文，必须切块向量化，检索时只捞相关片段 [2]。如果只有向量库，记忆就变成黑盒，无法知道它到底记住了什么，出了幻觉也难以定位 [2]。",
+        "answer_chars": 179,
+        "refused": false,
+        "generation_ms": 4626.4,
+        "generation_error": "",
+        "evidence_in_answer": false
+      },
+      "n08": {
+        "id": "n08",
+        "type": "normal",
+        "question": "ExecTool 拦截危险命令为什么选择黑名单而不是白名单？",
+        "retrieved_ids": [
+          "f0d2f2527fd30dff",
+          "411b11045db88de1",
+          "f500666e70275a90",
+          "d8e1c710e8a3905c",
+          "d6b9d987b26a6ff8"
+        ],
+        "gold_ids": [
+          "411b11045db88de1"
+        ],
+        "retrieved_count": 5,
+        "latency_ms": 95.9,
+        "error": "",
+        "recall@5": 1.0,
+        "mrr@5": 0.5,
+        "ndcg@5": 0.6309297535714575,
+        "evidence_recall@5": 1.0,
+        "evidence_mrr@5": 0.5,
+        "evidence_ndcg@5": 0.6309297535714575,
+        "evidence_first_rank": 2,
+        "answer": "ExecTool 拦截危险命令选择黑名单而不是白名单，是因为白名单会严重限制 Agent 的能力，无法预知用户未来会需要什么命令，写白名单等于把 Agent 变成一个只会跑固定几条命令的脚本，而大模型的价值恰恰在于「灵活地解决各种问题」。黑名单的哲学是：默认信任，但把已知的致命操作拦住，比如 rm -rf、mkfs、dd 写盘、curl 管道到 bash [2]。此外，黑名单有天然缺陷，它只能防已知的、防不了变种（比如 rm -rf 写成 rm -r -f）[3]。",
+        "answer_chars": 235,
+        "refused": false,
+        "generation_ms": 5261.5,
+        "generation_error": "",
+        "evidence_in_answer": true
+      },
+      "n09": {
+        "id": "n09",
+        "type": "normal",
+        "question": "技能正文不在启动时全量加载，那它是什么时候被读进来的？",
+        "retrieved_ids": [
+          "a2ea8250245a8566",
+          "329484b3e4715fc3",
+          "0811ecd42da2f34d",
+          "e91ba4ab4e9bd91e",
+          "7f6d8f3eec326e66"
+        ],
+        "gold_ids": [
+          "1e321c318a1a413a"
+        ],
+        "retrieved_count": 5,
+        "latency_ms": 109.6,
+        "error": "",
+        "recall@5": 0.0,
+        "mrr@5": 0.0,
+        "ndcg@5": 0.0,
+        "evidence_recall@5": 0.0,
+        "evidence_mrr@5": 0.0,
+        "evidence_ndcg@5": 0.0,
+        "evidence_first_rank": 0,
+        "answer": "技能正文是在模型判断某个技能对当前任务有用时被读进来的，通过调用 read_file 工具来读取完整的 SKILL.md 正文。[1]",
+        "answer_chars": 67,
+        "refused": false,
+        "generation_ms": 7059.6,
+        "generation_error": "",
+        "evidence_in_answer": false
+      },
+      "n10": {
+        "id": "n10",
+        "type": "normal",
+        "question": "MCP 从 demo 走到生产会碰到哪几类工程问题？",
+        "retrieved_ids": [
+          "aa05c1f23a5acb9e",
+          "d17bbc26b136bc7d",
+          "36366b98db9adb56",
+          "34ffed7621ec7841",
+          "2604c4f2bf64801b"
+        ],
+        "gold_ids": [
+          "9edd9a864331d48c"
+        ],
+        "retrieved_count": 5,
+        "latency_ms": 102.2,
+        "error": "",
+        "recall@5": 0.0,
+        "mrr@5": 0.0,
+        "ndcg@5": 0.0,
+        "evidence_recall@5": 0.0,
+        "evidence_mrr@5": 0.0,
+        "evidence_ndcg@5": 0.0,
+        "evidence_first_rank": 0,
+        "answer": "MCP 从 demo 走到生产会碰到的工程问题包括：循环、工具与 ExecTool、压缩与记忆、防爆、子 Agent。这些是 MCP 在生产环境中可能遇到的挑战。  \n依据：[1]",
+        "answer_chars": 90,
+        "refused": false,
+        "generation_ms": 1677.0,
+        "generation_error": "",
+        "evidence_in_answer": false
+      },
+      "n11": {
+        "id": "n11",
+        "type": "normal",
+        "question": "多个 Agent 协作时，怎么避免费用被互相传话放大？",
+        "retrieved_ids": [
+          "68ec6efe48087a66",
+          "2cbd72981909105b",
+          "6e11cf3788770c49",
+          "194160c3ddad8b2a",
+          "c7a7d0cd8c6870ad"
+        ],
+        "gold_ids": [
+          "2d66433820157c84"
+        ],
+        "retrieved_count": 5,
+        "latency_ms": 102.8,
+        "error": "",
+        "recall@5": 0.0,
+        "mrr@5": 0.0,
+        "ndcg@5": 0.0,
+        "evidence_recall@5": 0.0,
+        "evidence_mrr@5": 0.0,
+        "evidence_ndcg@5": 0.0,
+        "evidence_first_rank": 0,
+        "answer": "多个 Agent 协作时，通过模型分层、上下文隔离、硬预算和并发超时控制来避免费用被互相传话放大。主 Agent 使用强模型，子 Agent 使用轻量模型，上下文隔离使每个子 Agent 只处理自己的输入，减少 Token 消耗。每个子 Agent 有独立的最大轮次和 Token 预算，超时后会返回已有结果。并发数和超时时间也被限制，防止因过多子 Agent 同时运行导致成本失控 [1]。",
+        "answer_chars": 196,
+        "refused": false,
+        "generation_ms": 3548.3,
+        "generation_error": "",
+        "evidence_in_answer": false
+      },
+      "n12": {
+        "id": "n12",
+        "type": "normal",
+        "question": "检索链路里同时用向量、关键词和交叉编码器，这三种各自解决什么问题？",
+        "retrieved_ids": [
+          "d29b7716ac92357e",
+          "940e30686032d9cc",
+          "0fe3e797078e1ccf",
+          "f61d174a4ccfb3fa",
+          "dd41af8b4f0b3b08"
+        ],
+        "gold_ids": [
+          "d29b7716ac92357e"
+        ],
+        "retrieved_count": 5,
+        "latency_ms": 93.2,
+        "error": "",
+        "recall@5": 1.0,
+        "mrr@5": 1.0,
+        "ndcg@5": 1.0,
+        "evidence_recall@5": 1.0,
+        "evidence_mrr@5": 1.0,
+        "evidence_ndcg@5": 1.0,
+        "evidence_first_rank": 1,
+        "answer": "检索链路里同时用向量、关键词和交叉编码器，这三种各自解决的问题如下：\n\n- 向量检索解决语义相似性问题，通过向量相似度权重 0.7 来抓取语义相关的文本块 [4]。\n- 关键词检索解决词面精确匹配问题，通过词频和逆文档频率来实现，对型号、参数、人名等专有名词、编号、函数名敏感 [5]。\n- 交叉编码器解决粗排召回与精排准确之间的分工问题，用于重排以提高召回结果的准确性 [5]。",
+        "answer_chars": 190,
+        "refused": false,
+        "generation_ms": 4369.3,
+        "generation_error": "",
+        "evidence_in_answer": false
+      },
+      "n13": {
+        "id": "n13",
+        "type": "normal",
+        "question": "只有一张 24G 显存的卡，LLM、Embedding、重排怎么分配资源？",
+        "retrieved_ids": [
+          "d922ea770b205f16",
+          "c1273f1da895560e",
+          "95c7be312198cb8e",
+          "de749dc6b15a9a46",
+          "4d889a2ad8ee5f60"
+        ],
+        "gold_ids": [
+          "c1273f1da895560e"
+        ],
+        "retrieved_count": 5,
+        "latency_ms": 92.3,
+        "error": "",
+        "recall@5": 1.0,
+        "mrr@5": 0.5,
+        "ndcg@5": 0.6309297535714575,
+        "evidence_recall@5": 1.0,
+        "evidence_mrr@5": 0.5,
+        "evidence_ndcg@5": 0.6309297535714575,
+        "evidence_first_rank": 2,
+        "answer": "分层部署：GPU 给 LLM，CPU 给 Embedding / Rerank [2]。量化：INT8 / INT4 / NF4，给具体数字 [4]。推理框架：vLLM + PagedAttention，必要时 cpu-offload [3]。",
+        "answer_chars": 122,
+        "refused": false,
+        "generation_ms": 19877.9,
+        "generation_error": "",
+        "evidence_in_answer": false
+      },
+      "n14": {
+        "id": "n14",
+        "type": "normal",
+        "question": "长文档切块时块大小和重叠比例一般怎么定？",
+        "retrieved_ids": [
+          "82e3d20f780ef03e",
+          "2042b72408639380",
+          "3409d77e97f597bb",
+          "96d28ffd8f4d5132",
+          "4d550c99e4563bff"
+        ],
+        "gold_ids": [
+          "3409d77e97f597bb"
+        ],
+        "retrieved_count": 5,
+        "latency_ms": 101.0,
+        "error": "",
+        "recall@5": 1.0,
+        "mrr@5": 0.3333333333333333,
+        "ndcg@5": 0.5,
+        "evidence_recall@5": 1.0,
+        "evidence_mrr@5": 0.3333333333333333,
+        "evidence_ndcg@5": 0.5,
+        "evidence_first_rank": 3,
+        "answer": "块大小一般定为 300 到 500 字起步，具体可根据文档类型调整，代码和表格需单独处理。重叠比例一般给 10% 到 20% [1]。",
+        "answer_chars": 67,
+        "refused": false,
+        "generation_ms": 10881.3,
+        "generation_error": "",
+        "evidence_in_answer": false
+      },
+      "n15": {
+        "id": "n15",
+        "type": "normal",
+        "question": "有首诗写夜里把月光当成了地上的霜，抬头看月之后低头想家，它的最后一句是什么？",
+        "retrieved_ids": [
+          "aef787b576f04894",
+          "3bd280f80162024c",
+          "c4e70e0c1653b0f7",
+          "59858a832b5fc45b",
+          "4722baa9bf3bd015"
+        ],
+        "gold_ids": [
+          "aef787b576f04894"
+        ],
+        "retrieved_count": 5,
+        "latency_ms": 97.3,
+        "error": "",
+        "recall@5": 1.0,
+        "mrr@5": 1.0,
+        "ndcg@5": 1.0,
+        "evidence_recall@5": 1.0,
+        "evidence_mrr@5": 1.0,
+        "evidence_ndcg@5": 1.0,
+        "evidence_first_rank": 1,
+        "answer": "《静夜思》的最后一句是“低头思故乡”。依据是诗中描述了“举头望山月，低头思故乡” [1]。",
+        "answer_chars": 45,
+        "refused": false,
+        "generation_ms": 11569.1,
+        "generation_error": "",
+        "evidence_in_answer": true
+      },
+      "n16": {
+        "id": "n16",
+        "type": "normal",
+        "question": "杜甫在战乱里写的诗，看到花开鸟鸣反而更难过，「感时花溅泪」的下一句是什么？",
+        "retrieved_ids": [
+          "16fd1c2a65d1ed36",
+          "59db273636c260ba",
+          "a573a6ff06d4377d",
+          "a0a31f198c2be305",
+          "447cfce229b3f81d"
+        ],
+        "gold_ids": [
+          "16fd1c2a65d1ed36"
+        ],
+        "retrieved_count": 5,
+        "latency_ms": 89.4,
+        "error": "",
+        "recall@5": 1.0,
+        "mrr@5": 1.0,
+        "ndcg@5": 1.0,
+        "evidence_recall@5": 1.0,
+        "evidence_mrr@5": 1.0,
+        "evidence_ndcg@5": 1.0,
+        "evidence_first_rank": 1,
+        "answer": "「感时花溅泪」的下一句是「恨别鸟惊心」。依据：[1]",
+        "answer_chars": 26,
+        "refused": false,
+        "generation_ms": 7374.3,
+        "generation_error": "",
+        "evidence_in_answer": true
+      },
+      "n17": {
+        "id": "n17",
+        "type": "normal",
+        "question": "王之涣写登楼远望，说想看得更远就要再往上走一层，这句原话是什么？",
+        "retrieved_ids": [
+          "e466c894278bdf43",
+          "c87b8059c95cfd1e",
+          "4ac49376670b598b",
+          "9d5215ca8d27cf2a",
+          "22b6c18935f7c009"
+        ],
+        "gold_ids": [
+          "c87b8059c95cfd1e",
+          "e466c894278bdf43"
+        ],
+        "retrieved_count": 5,
+        "latency_ms": 98.1,
+        "error": "",
+        "recall@5": 1.0,
+        "mrr@5": 1.0,
+        "ndcg@5": 1.0,
+        "evidence_recall@5": 1.0,
+        "evidence_mrr@5": 1.0,
+        "evidence_ndcg@5": 1.0,
+        "evidence_first_rank": 1,
+        "answer": "欲穷千里目，更上一层楼。 [1]",
+        "answer_chars": 16,
+        "refused": false,
+        "generation_ms": 5879.1,
+        "generation_error": "",
+        "evidence_in_answer": true
+      },
+      "n18": {
+        "id": "n18",
+        "type": "normal",
+        "question": "写大雪封山、只有一个老翁披蓑戴笠在江上垂钓的那首诗里，「孤舟蓑笠翁」的下一句是什么？",
+        "retrieved_ids": [
+          "13aee5911d6defcc",
+          "bf6a252f4a567b92",
+          "5d07e75273d2b327",
+          "f2e54610e1d9694c",
+          "b6ff30d58784259c"
+        ],
+        "gold_ids": [
+          "bf6a252f4a567b92"
+        ],
+        "retrieved_count": 5,
+        "latency_ms": 102.2,
+        "error": "",
+        "recall@5": 1.0,
+        "mrr@5": 0.5,
+        "ndcg@5": 0.6309297535714575,
+        "evidence_recall@5": 1.0,
+        "evidence_mrr@5": 0.5,
+        "evidence_ndcg@5": 0.6309297535714575,
+        "evidence_first_rank": 2,
+        "answer": "「孤舟蓑笠翁」的下一句是「独钓寒江雪」。依据：[2]",
+        "answer_chars": 26,
+        "refused": false,
+        "generation_ms": 10869.6,
+        "generation_error": "",
+        "evidence_in_answer": true
+      },
+      "n19": {
+        "id": "n19",
+        "type": "normal",
+        "question": "王维用哪种植物来寄托思念，说它最惹相思？",
+        "retrieved_ids": [
+          "1b1ef14ba9f56351",
+          "3b7e4dff8cd72367",
+          "c840edaf3efbef26",
+          "f20bd1b40a0eee75",
+          "224b61f55c27a1f0"
+        ],
+        "gold_ids": [
+          "1b1ef14ba9f56351"
+        ],
+        "retrieved_count": 5,
+        "latency_ms": 101.0,
+        "error": "",
+        "recall@5": 1.0,
+        "mrr@5": 1.0,
+        "ndcg@5": 1.0,
+        "evidence_recall@5": 1.0,
+        "evidence_mrr@5": 1.0,
+        "evidence_ndcg@5": 1.0,
+        "evidence_first_rank": 1,
+        "answer": "王维用红豆来寄托思念，说它最惹相思。依据是《相思》诗中的“此物最相思” [1]。",
+        "answer_chars": 40,
+        "refused": false,
+        "generation_ms": 1762.1,
+        "generation_error": "",
+        "evidence_in_answer": false
+      },
+      "n20": {
+        "id": "n20",
+        "type": "normal",
+        "question": "写春天睡得香甜、不知不觉天就亮了的那首诗，第一句是什么？",
+        "retrieved_ids": [
+          "37e9abbccc80c9e7",
+          "3bd280f80162024c",
+          "6dcad33e2f06ae7e",
+          "43b52cea668d43a3",
+          "a8a2cc8f9e8e034e"
+        ],
+        "gold_ids": [
+          "43b52cea668d43a3"
+        ],
+        "retrieved_count": 5,
+        "latency_ms": 100.4,
+        "error": "",
+        "recall@5": 1.0,
+        "mrr@5": 0.25,
+        "ndcg@5": 0.43067655807339306,
+        "evidence_recall@5": 1.0,
+        "evidence_mrr@5": 0.25,
+        "evidence_ndcg@5": 0.43067655807339306,
+        "evidence_first_rank": 4,
+        "answer": "《春晓》　孟浩然  \n第一句是：春眠不觉晓。  \n依据：春眠不觉晓，处处闻啼鸟。 [4]",
+        "answer_chars": 44,
+        "refused": false,
+        "generation_ms": 1672.0,
+        "generation_error": "",
+        "evidence_in_answer": true
+      },
+      "n21": {
+        "id": "n21",
+        "type": "normal",
+        "question": "杜甫写秋天登台远望、感叹年老多病，「无边落木萧萧下」的下一句是什么？",
+        "retrieved_ids": [
+          "2e7de892aedbc55a",
+          "bc4ac0ca907d9d09",
+          "59db273636c260ba",
+          "a0a31f198c2be305",
+          "f8f8a54aec4e289e"
+        ],
+        "gold_ids": [
+          "2e7de892aedbc55a"
+        ],
+        "retrieved_count": 5,
+        "latency_ms": 98.7,
+        "error": "",
+        "recall@5": 1.0,
+        "mrr@5": 1.0,
+        "ndcg@5": 1.0,
+        "evidence_recall@5": 1.0,
+        "evidence_mrr@5": 1.0,
+        "evidence_ndcg@5": 1.0,
+        "evidence_first_rank": 1,
+        "answer": "「无边落木萧萧下」的下一句是「不尽长江衮衮来」。依据：[1]",
+        "answer_chars": 30,
+        "refused": false,
+        "generation_ms": 1416.7,
+        "generation_error": "",
+        "evidence_in_answer": true
+      },
+      "n22": {
+        "id": "n22",
+        "type": "normal",
+        "question": "李白写乘船离开白帝城、一天就回到江陵，「两岸猿声啼不住」的下一句是什么？",
+        "retrieved_ids": [
+          "c6c2e8c00a3c76b6",
+          "c0de605a8e04be76",
+          "59858a832b5fc45b",
+          "2cd4d836120f031c",
+          "936867a08e5f0c39"
+        ],
+        "gold_ids": [
+          "c6c2e8c00a3c76b6"
+        ],
+        "retrieved_count": 5,
+        "latency_ms": 93.8,
+        "error": "",
+        "recall@5": 1.0,
+        "mrr@5": 1.0,
+        "ndcg@5": 1.0,
+        "evidence_recall@5": 1.0,
+        "evidence_mrr@5": 1.0,
+        "evidence_ndcg@5": 1.0,
+        "evidence_first_rank": 1,
+        "answer": "「轻舟已过万重山。」 [1]",
+        "answer_chars": 14,
+        "refused": false,
+        "generation_ms": 746.3,
+        "generation_error": "",
+        "evidence_in_answer": true
+      },
+      "n23": {
+        "id": "n23",
+        "type": "normal",
+        "question": "王维写山中秋雨后的傍晚，「明月松间照」的下一句是什么？",
+        "retrieved_ids": [
+          "3968c13da6739713",
+          "3231e3ecc81f8426",
+          "8775aff2950aac46",
+          "bf9b136ec9c336cb",
+          "82b942b70c89de75"
+        ],
+        "gold_ids": [
+          "3968c13da6739713"
+        ],
+        "retrieved_count": 5,
+        "latency_ms": 98.6,
+        "error": "",
+        "recall@5": 1.0,
+        "mrr@5": 1.0,
+        "ndcg@5": 1.0,
+        "evidence_recall@5": 1.0,
+        "evidence_mrr@5": 1.0,
+        "evidence_ndcg@5": 1.0,
+        "evidence_first_rank": 1,
+        "answer": "「明月松间照」的下一句是「清泉石上流」。依据：[1]",
+        "answer_chars": 26,
+        "refused": false,
+        "generation_ms": 1262.3,
+        "generation_error": "",
+        "evidence_in_answer": true
+      },
+      "n24": {
+        "id": "n24",
+        "type": "normal",
+        "question": "张继夜里停在姑苏城外，写寒山寺的钟声传到船上，这句诗怎么说的？",
+        "retrieved_ids": [
+          "bd73fff0266674d8",
+          "1a205cd025bd1573",
+          "6f38bb351ead4beb",
+          "936867a08e5f0c39",
+          "027095b82f82856f"
+        ],
+        "gold_ids": [
+          "bd73fff0266674d8"
+        ],
+        "retrieved_count": 5,
+        "latency_ms": 98.4,
+        "error": "",
+        "recall@5": 1.0,
+        "mrr@5": 1.0,
+        "ndcg@5": 1.0,
+        "evidence_recall@5": 1.0,
+        "evidence_mrr@5": 1.0,
+        "evidence_ndcg@5": 1.0,
+        "evidence_first_rank": 1,
+        "answer": "张继夜里停在姑苏城外，写寒山寺的钟声传到船上，这句诗是：“姑苏城外寒山寺，夜半钟声到客船。” [1]",
+        "answer_chars": 50,
+        "refused": false,
+        "generation_ms": 1602.0,
+        "generation_error": "",
+        "evidence_in_answer": true
+      },
+      "b01": {
+        "id": "b01",
+        "type": "boundary",
+        "question": "线上要求用户提问后马上就能看到字，同时又不想砍掉精排，这种情况你会怎么处理？",
+        "retrieved_ids": [
+          "254a30dd3ef4a9bf",
+          "75910143e438b38c",
+          "d3201e26312b05b0",
+          "4433cdfebf1bbe16",
+          "5708fca7a8bd6936"
+        ],
+        "gold_ids": [
+          "75910143e438b38c",
+          "3b1e96574f485ed5"
+        ],
+        "retrieved_count": 5,
+        "latency_ms": 101.4,
+        "error": "",
+        "recall@5": 0.5,
+        "mrr@5": 0.5,
+        "ndcg@5": 0.38685280723454163,
+        "evidence_recall@5": 1.0,
+        "evidence_mrr@5": 0.5,
+        "evidence_ndcg@5": 0.6309297535714575,
+        "evidence_first_rank": 2,
+        "answer": "核心原则：常规路径极速响应，复杂路径动态降级，不一刀切。对于常规查询，使用语义缓存，用向量相似度做缓存 key，阈值设 0.92 以上，命中就直接返回缓存答案流，首字能压到 200 毫秒 [3]。对于复杂多条件查询，才触发重排，且用推测性预加载，不等用户等 [2]。",
+        "answer_chars": 133,
+        "refused": false,
+        "generation_ms": 3690.5,
+        "generation_error": "",
+        "evidence_in_answer": true
+      },
+      "b02": {
+        "id": "b02",
+        "type": "boundary",
+        "question": "客户对准确性极敏感，除了检索本身，架构上还能用什么办法拦住模型瞎编？",
+        "retrieved_ids": [
+          "d29b7716ac92357e",
+          "6ebfd147a66d35f3",
+          "5d373451bdd39c35",
+          "1beac00411cdb122",
+          "0c7cf86a2d6f77f0"
+        ],
+        "gold_ids": [
+          "5d373451bdd39c35"
+        ],
+        "retrieved_count": 5,
+        "latency_ms": 97.9,
+        "error": "",
+        "recall@5": 1.0,
+        "mrr@5": 0.3333333333333333,
+        "ndcg@5": 0.5,
+        "evidence_recall@5": 1.0,
+        "evidence_mrr@5": 0.3333333333333333,
+        "evidence_ndcg@5": 0.5,
+        "evidence_first_rank": 3,
+        "answer": "【结论】客户对准确性极敏感时，除了检索本身，架构上可以采用三层漏斗加人工审核机制来拦住模型瞎编。  \n【依据】  \n- 三层漏斗：生成前约束、生成中检测、生成后复核，并强调「低成本」，避免将人工当监工 [2]；  \n- 第一层生成前，强制引用绑定：System Prompt 里规定凡涉及事实数据必须标引用编号，并用 JSON 模式强制输出 answer 和 cited_docs [3]；  \n- 工程兜底：不管检测器多聪明，都要有总轮次上限、成本上限和人工中断，这三条是最后一道墙，不能只依赖智能检测 [4]。",
+        "answer_chars": 257,
+        "refused": false,
+        "generation_ms": 23722.5,
+        "generation_error": "",
+        "evidence_in_answer": false
+      },
+      "b03": {
+        "id": "b03",
+        "type": "boundary",
+        "question": "长会话里历史消息太多时，按什么条件触发摘要压缩，摘要又存到哪里？",
+        "retrieved_ids": [
+          "492caf8563163220",
+          "de6b09635a3610cc",
+          "2dd541eb75587afb",
+          "8103408c36a1d985",
+          "0715407ba02189a3"
+        ],
+        "gold_ids": [
+          "4682f1b57db8892e"
+        ],
+        "retrieved_count": 5,
+        "latency_ms": 94.5,
+        "error": "",
+        "recall@5": 0.0,
+        "mrr@5": 0.0,
+        "ndcg@5": 0.0,
+        "evidence_recall@5": 0.0,
+        "evidence_mrr@5": 0.0,
+        "evidence_ndcg@5": 0.0,
+        "evidence_first_rank": 0,
+        "answer": "触发摘要压缩的条件是当历史消息的 token 数超过 6000，就取出最旧的 N 条消息，调用大模型生成摘要替换旧消息 [2]。摘要存到 HISTORY.md，作为事件日志方便回溯 [1]。",
+        "answer_chars": 95,
+        "refused": false,
+        "generation_ms": 9785.8,
+        "generation_error": "",
+        "evidence_in_answer": false
+      },
+      "b04": {
+        "id": "b04",
+        "type": "boundary",
+        "question": "MCP 在企业环境里的第三方凭证应该放在哪，为什么不放配置文件？",
+        "retrieved_ids": [
+          "860209fef644342c",
+          "537204edb630b423",
+          "45d0d8c89749e740",
+          "ba11dd01aea8ee66",
+          "2a015b48c5696d36"
+        ],
+        "gold_ids": [
+          "45d0d8c89749e740"
+        ],
+        "retrieved_count": 5,
+        "latency_ms": 92.1,
+        "error": "",
+        "recall@5": 1.0,
+        "mrr@5": 0.3333333333333333,
+        "ndcg@5": 0.5,
+        "evidence_recall@5": 1.0,
+        "evidence_mrr@5": 0.3333333333333333,
+        "evidence_ndcg@5": 0.5,
+        "evidence_first_rank": 3,
+        "answer": "MCP 在企业环境里的第三方凭证应该放在操作系统的 Keychain 中。这是因为凭证必须存进操作系统的 Keychain，不能明文写在配置文件里 [3]。",
+        "answer_chars": 78,
+        "refused": false,
+        "generation_ms": 1647.4,
+        "generation_error": "",
+        "evidence_in_answer": true
+      },
+      "b05": {
+        "id": "b05",
+        "type": "boundary",
+        "question": "NanoClaw 相比 Claude Code 在机制覆盖上少做了哪些东西？",
+        "retrieved_ids": [
+          "b436c85e768af43b",
+          "b08901b8959e0f56",
+          "2dbd0e4141b18d31",
+          "52b26ac4be07edb6",
+          "05dfca91f3cc500c"
+        ],
+        "gold_ids": [
+          "d5074516475e36ab"
+        ],
+        "retrieved_count": 5,
+        "latency_ms": 97.8,
+        "error": "",
+        "recall@5": 0.0,
+        "mrr@5": 0.0,
+        "ndcg@5": 0.0,
+        "evidence_recall@5": 0.0,
+        "evidence_mrr@5": 0.0,
+        "evidence_ndcg@5": 0.0,
+        "evidence_first_rank": 0,
+        "answer": "NanoClaw 相比 Claude Code 在机制覆盖上少做了分级授权和始终允许的机制。[5]",
+        "answer_chars": 49,
+        "refused": false,
+        "generation_ms": 1137.6,
+        "generation_error": "",
+        "evidence_in_answer": false
+      },
+      "b06": {
+        "id": "b06",
+        "type": "boundary",
+        "question": "错题本除了推给用户复习，还能反过来改进什么？",
+        "retrieved_ids": [
+          "4d2428add28cf60e",
+          "b4804f8de8a74d56",
+          "2bc2ec21e0b2b496",
+          "75b0da93f92adfc1",
+          "264587fd22cabf8d"
+        ],
+        "gold_ids": [
+          "4d2428add28cf60e"
+        ],
+        "retrieved_count": 5,
+        "latency_ms": 101.1,
+        "error": "",
+        "recall@5": 1.0,
+        "mrr@5": 1.0,
+        "ndcg@5": 1.0,
+        "evidence_recall@5": 1.0,
+        "evidence_mrr@5": 1.0,
+        "evidence_ndcg@5": 1.0,
+        "evidence_first_rank": 1,
+        "answer": "错题本除了推给用户复习，还能反过来改进知识库质量。  \n依据：如果某个知识点反复出错，说明这块内容切分或者表述有问题，反过来优化知识库 [1]。",
+        "answer_chars": 72,
+        "refused": false,
+        "generation_ms": 1840.9,
+        "generation_error": "",
+        "evidence_in_answer": true
+      },
+      "b07": {
+        "id": "b07",
+        "type": "boundary",
+        "question": "李商隐写「庄生晓梦迷蝴蝶」的那首诗，最后一句是什么？",
+        "retrieved_ids": [
+          "971cb0ee73a8d76c",
+          "4722baa9bf3bd015",
+          "1e5354b3b7f134d6",
+          "35ac166d032403f1",
+          "9739ef86af1df338"
+        ],
+        "gold_ids": [
+          "971cb0ee73a8d76c"
+        ],
+        "retrieved_count": 5,
+        "latency_ms": 104.7,
+        "error": "",
+        "recall@5": 1.0,
+        "mrr@5": 1.0,
+        "ndcg@5": 1.0,
+        "evidence_recall@5": 1.0,
+        "evidence_mrr@5": 1.0,
+        "evidence_ndcg@5": 1.0,
+        "evidence_first_rank": 1,
+        "answer": "最后一句是“此情可待成追忆，只是当时已惘然。” [1]",
+        "answer_chars": 27,
+        "refused": false,
+        "generation_ms": 1467.2,
+        "generation_error": "",
+        "evidence_in_answer": true
+      },
+      "b08": {
+        "id": "b08",
+        "type": "boundary",
+        "question": "从上传一份 PDF 到用户拿到带引用的回答，中间要走哪些步骤？",
+        "retrieved_ids": [
+          "ff8a33b749ef4431",
+          "cba14223cafca6f0",
+          "1279dfb856c845e1",
+          "2e25450a10255eda",
+          "254a30dd3ef4a9bf"
+        ],
+        "gold_ids": [
+          "a8689253acf59cac"
+        ],
+        "retrieved_count": 5,
+        "latency_ms": 104.3,
+        "error": "",
+        "recall@5": 0.0,
+        "mrr@5": 0.0,
+        "ndcg@5": 0.0,
+        "evidence_recall@5": 0.0,
+        "evidence_mrr@5": 0.0,
+        "evidence_ndcg@5": 0.0,
+        "evidence_first_rank": 0,
+        "answer": "从上传一份 PDF 到用户拿到带引用的回答，中间要走的步骤包括：  \n1. 用一个很小的 NLI 模型（比如 DeBERTa 级别）进行实时一致性检测；  \n2. 分层展开，将答案拆成 2-4 层，每层给一个名字；  \n3. 给具体证据，将问题与候选文档成对送进交叉编码器打分，精度高但慢，只对 Top 几十条做；  \n4. 精排后的 Top N 拼成上下文，加上引用编号和格式约束，一起送进大模型生成；  \n5. 最后答案带引用返回，同时把这一轮沉淀成笔记或者题目。  \n\n依据：  \n[1] 用一个很小的 NLI 模型进行实时一致性检测；  \n[2] 分层展开，将答案拆成 2-4 层；  \n[3] 精排后的 Top N 拼成上下文，加上引用编号和格式约束，一起送进大模型生成；  \n[4] 分层展开，将答案拆成 2-4 层；  \n[5] 问题与候选文档成对送进交叉编码器打分，精度高但慢，只对 Top 几十条做。",
+        "answer_chars": 409,
+        "refused": false,
+        "generation_ms": 48407.2,
+        "generation_error": "",
+        "evidence_in_answer": false
+      },
+      "x01": {
+        "id": "x01",
+        "type": "no_answer",
+        "question": "《赤壁赋》是苏轼在哪一年写成的？",
+        "retrieved_ids": [
+          "79dd9b999637d2b7",
+          "229a451a8deb7750",
+          "6075f4d536e918c9",
+          "90bb1df713a577dc",
+          "96e715b6c67cb629"
+        ],
+        "gold_ids": [],
+        "retrieved_count": 5,
+        "latency_ms": 97.1,
+        "error": "",
+        "answer": "知识库中未找到相关内容。",
+        "answer_chars": 12,
+        "refused": true,
+        "generation_ms": 3441.9,
+        "generation_error": "",
+        "evidence_in_answer": false
+      },
+      "x02": {
+        "id": "x02",
+        "type": "no_answer",
+        "question": "NanoClaw 开源用的是什么许可证？",
+        "retrieved_ids": [
+          "c0be518082fcdb72",
+          "2dbd0e4141b18d31",
+          "52b26ac4be07edb6",
+          "e9fbd3690241480e",
+          "b08901b8959e0f56"
+        ],
+        "gold_ids": [],
+        "retrieved_count": 5,
+        "latency_ms": 90.8,
+        "error": "",
+        "answer": "知识库中未找到相关内容。",
+        "answer_chars": 12,
+        "refused": true,
+        "generation_ms": 657.6,
+        "generation_error": "",
+        "evidence_in_answer": false
+      },
+      "x03": {
+        "id": "x03",
+        "type": "no_answer",
+        "question": "bge-reranker-v2-m3 是用多少条样本训练出来的？",
+        "retrieved_ids": [
+          "dd41af8b4f0b3b08",
+          "1e6881562de01f11",
+          "8e5aa033c29f638b",
+          "a616be391295c799",
+          "d6b1f9c85648f19d"
+        ],
+        "gold_ids": [],
+        "retrieved_count": 5,
+        "latency_ms": 108.1,
+        "error": "",
+        "answer": "知识库中未找到相关内容。",
+        "answer_chars": 12,
+        "refused": true,
+        "generation_ms": 727.0,
+        "generation_error": "",
+        "evidence_in_answer": false
+      },
+      "x04": {
+        "id": "x04",
+        "type": "no_answer",
+        "question": "LangChain 的 LCEL 里怎么用竖线运算符把多个 Runnable 串起来？",
+        "retrieved_ids": [
+          "96d28ffd8f4d5132",
+          "c0cd2c2ceb443219",
+          "d759157340a7d49f",
+          "a616be391295c799",
+          "fc3ff9790f1dbbbc"
+        ],
+        "gold_ids": [],
+        "retrieved_count": 5,
+        "latency_ms": 92.4,
+        "error": "",
+        "answer": "在 LangChain 的 LCEL 中，使用竖线运算符（|）将多个 Runnable 串起来，表示这些 Runnable 按顺序执行。例如，`RunnableA | RunnableB` 表示 RunnableA 的输出作为 RunnableB 的输入，依次执行。",
+        "answer_chars": 133,
+        "refused": false,
+        "generation_ms": 1505.7,
+        "generation_error": "",
+        "evidence_in_answer": false
+      },
+      "x05": {
+        "id": "x05",
+        "type": "no_answer",
+        "question": "这个知识库用的 FAISS 索引是 IVF-PQ 还是 HNSW？",
+        "retrieved_ids": [
+          "940e30686032d9cc",
+          "a8689253acf59cac",
+          "ff8a33b749ef4431",
+          "b552748eef563954",
+          "8103408c36a1d985"
+        ],
+        "gold_ids": [],
+        "retrieved_count": 5,
+        "latency_ms": 101.7,
+        "error": "",
+        "answer": "知识库中未找到相关内容。",
+        "answer_chars": 12,
+        "refused": true,
+        "generation_ms": 632.8,
+        "generation_error": "",
+        "evidence_in_answer": false
+      },
+      "x06": {
+        "id": "x06",
+        "type": "no_answer",
+        "question": "《静夜思》里的「床」指的到底是井栏还是卧榻？",
+        "retrieved_ids": [
+          "4722baa9bf3bd015",
+          "2f7092b0b5daa2f6",
+          "f8883cfc5c083866",
+          "7132564dc5fc7b28",
+          "44c7f019c65b3d8d"
+        ],
+        "gold_ids": [],
+        "retrieved_count": 5,
+        "latency_ms": 93.1,
+        "error": "",
+        "answer": "知识库中未找到相关内容。",
+        "answer_chars": 12,
+        "refused": true,
+        "generation_ms": 810.2,
+        "generation_error": "",
+        "evidence_in_answer": false
+      },
+      "x07": {
+        "id": "x07",
+        "type": "no_answer",
+        "question": "用 Docker 跑这个项目时，怎么给容器设置内存上限？",
+        "retrieved_ids": [
+          "db921f84e8b9fdbe",
+          "0f255113755760bb",
+          "95c7be312198cb8e",
+          "7a7329571c7d83ce",
+          "68ae99036b9f114d"
+        ],
+        "gold_ids": [],
+        "retrieved_count": 5,
+        "latency_ms": 163.2,
+        "error": "",
+        "answer": "在使用 Docker 运行项目时，可以通过在运行容器时指定 `--memory` 参数来设置内存上限。例如：`docker run --memory=\"512m\" <image_name>`，其中 `512m` 表示设置容器的内存上限为 512MB。[1]",
+        "answer_chars": 128,
+        "refused": false,
+        "generation_ms": 24308.9,
+        "generation_error": "",
+        "evidence_in_answer": false
+      },
+      "x08": {
+        "id": "x08",
+        "type": "no_answer",
+        "question": "Qwen3-8B 的上下文窗口是多少 token？",
+        "retrieved_ids": [
+          "14a7993fc81a5448",
+          "c0ecbec8d1453fae",
+          "5e01577a2810fc99",
+          "a12e9c91798e4182",
+          "d800c3f7242f4259"
+        ],
+        "gold_ids": [],
+        "retrieved_count": 5,
+        "latency_ms": 88.9,
+        "error": "",
+        "answer": "知识库中未找到相关内容。",
+        "answer_chars": 12,
+        "refused": true,
+        "generation_ms": 4555.9,
+        "generation_error": "",
+        "evidence_in_answer": false
+      }
+    }
+  },
+  "meta": {
+    "date": "2026-10-27",
+    "git": "15843f6",
+    "dataset": "eval/dataset/v1.0.jsonl",
+    "dataset_md5": "559d14690bb7338048021235f28019f7",
+    "items": 40,
+    "counts": {
+      "normal": 24,
+      "boundary": 8,
+      "no_answer": 8
+    },
+    "kb": "评测基准",
+    "chunks": 874,
+    "corpus": [
+      "agent面试问答.md",
+      "唐诗三百首.md"
+    ],
+    "chat_model": "Qwen/Qwen3-8B",
+    "k": 5,
+    "python": "3.10.21 / linux",
+    "config_specs": [
+      {
+        "name": "vector_only",
+        "description": "纯向量召回，BM25 与重排都关，top 5 直接作为最终结果（基线）",
+        "retrieval": {
+          "use_bm25": false,
+          "use_reranker": false,
+          "top_k_vector": 5,
+          "top_k_bm25": 4,
+          "top_k_final": 5
+        }
+      },
+      {
+        "name": "hybrid",
+        "description": "向量 + BM25 混合召回（RRF 等权），不重排，融合后取前 5",
+        "retrieval": {
+          "use_bm25": true,
+          "use_reranker": false,
+          "top_k_vector": 4,
+          "top_k_bm25": 4,
+          "top_k_final": 5
+        }
+      },
+      {
+        "name": "hybrid_rerank",
+        "description": "向量 + BM25 混合召回后过 bge-reranker-v2-m3 重排，取前 5（线上默认链路）",
+        "retrieval": {
+          "use_bm25": true,
+          "use_reranker": true,
+          "top_k_vector": 4,
+          "top_k_bm25": 4,
+          "top_k_final": 5
+        }
+      }
+    ],
+    "config_order": [
+      "vector_only",
+      "hybrid",
+      "hybrid_rerank"
+    ],
+    "item_meta": {
+      "order": [
+        "n01",
+        "n02",
+        "n03",
+        "n04",
+        "n05",
+        "n06",
+        "n07",
+        "n08",
+        "n09",
+        "n10",
+        "n11",
+        "n12",
+        "n13",
+        "n14",
+        "n15",
+        "n16",
+        "n17",
+        "n18",
+        "n19",
+        "n20",
+        "n21",
+        "n22",
+        "n23",
+        "n24",
+        "b01",
+        "b02",
+        "b03",
+        "b04",
+        "b05",
+        "b06",
+        "b07",
+        "b08",
+        "x01",
+        "x02",
+        "x03",
+        "x04",
+        "x05",
+        "x06",
+        "x07",
+        "x08"
+      ],
+      "items": {
+        "n01": {
+          "type": "normal",
+          "question": "注意力打分时为什么要除以维度的平方根，不除会出现什么后果？"
+        },
+        "n02": {
+          "type": "normal",
+          "question": "Transformer 靠什么机制知道句子里词的先后顺序？"
+        },
+        "n03": {
+          "type": "normal",
+          "question": "处理变长序列时，为什么更倾向用 LayerNorm 而不是 BatchNorm？"
+        },
+        "n04": {
+          "type": "normal",
+          "question": "Claude Code 的执行环境大致可以拆成哪几块职责？"
+        },
+        "n05": {
+          "type": "normal",
+          "question": "Claude Code 的系统提示词为什么要把不变的内容放最前面？"
+        },
+        "n06": {
+          "type": "normal",
+          "question": "OpenClaw 怎么发现 Agent 在同一个工具上反复打转？阈值分几级？"
+        },
+        "n07": {
+          "type": "normal",
+          "question": "长期记忆为什么不能只存向量库，还要保留明文层？"
+        },
+        "n08": {
+          "type": "normal",
+          "question": "ExecTool 拦截危险命令为什么选择黑名单而不是白名单？"
+        },
+        "n09": {
+          "type": "normal",
+          "question": "技能正文不在启动时全量加载，那它是什么时候被读进来的？"
+        },
+        "n10": {
+          "type": "normal",
+          "question": "MCP 从 demo 走到生产会碰到哪几类工程问题？"
+        },
+        "n11": {
+          "type": "normal",
+          "question": "多个 Agent 协作时，怎么避免费用被互相传话放大？"
+        },
+        "n12": {
+          "type": "normal",
+          "question": "检索链路里同时用向量、关键词和交叉编码器，这三种各自解决什么问题？"
+        },
+        "n13": {
+          "type": "normal",
+          "question": "只有一张 24G 显存的卡，LLM、Embedding、重排怎么分配资源？"
+        },
+        "n14": {
+          "type": "normal",
+          "question": "长文档切块时块大小和重叠比例一般怎么定？"
+        },
+        "n15": {
+          "type": "normal",
+          "question": "有首诗写夜里把月光当成了地上的霜，抬头看月之后低头想家，它的最后一句是什么？"
+        },
+        "n16": {
+          "type": "normal",
+          "question": "杜甫在战乱里写的诗，看到花开鸟鸣反而更难过，「感时花溅泪」的下一句是什么？"
+        },
+        "n17": {
+          "type": "normal",
+          "question": "王之涣写登楼远望，说想看得更远就要再往上走一层，这句原话是什么？"
+        },
+        "n18": {
+          "type": "normal",
+          "question": "写大雪封山、只有一个老翁披蓑戴笠在江上垂钓的那首诗里，「孤舟蓑笠翁」的下一句是什么？"
+        },
+        "n19": {
+          "type": "normal",
+          "question": "王维用哪种植物来寄托思念，说它最惹相思？"
+        },
+        "n20": {
+          "type": "normal",
+          "question": "写春天睡得香甜、不知不觉天就亮了的那首诗，第一句是什么？"
+        },
+        "n21": {
+          "type": "normal",
+          "question": "杜甫写秋天登台远望、感叹年老多病，「无边落木萧萧下」的下一句是什么？"
+        },
+        "n22": {
+          "type": "normal",
+          "question": "李白写乘船离开白帝城、一天就回到江陵，「两岸猿声啼不住」的下一句是什么？"
+        },
+        "n23": {
+          "type": "normal",
+          "question": "王维写山中秋雨后的傍晚，「明月松间照」的下一句是什么？"
+        },
+        "n24": {
+          "type": "normal",
+          "question": "张继夜里停在姑苏城外，写寒山寺的钟声传到船上，这句诗怎么说的？"
+        },
+        "b01": {
+          "type": "boundary",
+          "question": "线上要求用户提问后马上就能看到字，同时又不想砍掉精排，这种情况你会怎么处理？"
+        },
+        "b02": {
+          "type": "boundary",
+          "question": "客户对准确性极敏感，除了检索本身，架构上还能用什么办法拦住模型瞎编？"
+        },
+        "b03": {
+          "type": "boundary",
+          "question": "长会话里历史消息太多时，按什么条件触发摘要压缩，摘要又存到哪里？"
+        },
+        "b04": {
+          "type": "boundary",
+          "question": "MCP 在企业环境里的第三方凭证应该放在哪，为什么不放配置文件？"
+        },
+        "b05": {
+          "type": "boundary",
+          "question": "NanoClaw 相比 Claude Code 在机制覆盖上少做了哪些东西？"
+        },
+        "b06": {
+          "type": "boundary",
+          "question": "错题本除了推给用户复习，还能反过来改进什么？"
+        },
+        "b07": {
+          "type": "boundary",
+          "question": "李商隐写「庄生晓梦迷蝴蝶」的那首诗，最后一句是什么？"
+        },
+        "b08": {
+          "type": "boundary",
+          "question": "从上传一份 PDF 到用户拿到带引用的回答，中间要走哪些步骤？"
+        },
+        "x01": {
+          "type": "no_answer",
+          "question": "《赤壁赋》是苏轼在哪一年写成的？"
+        },
+        "x02": {
+          "type": "no_answer",
+          "question": "NanoClaw 开源用的是什么许可证？"
+        },
+        "x03": {
+          "type": "no_answer",
+          "question": "bge-reranker-v2-m3 是用多少条样本训练出来的？"
+        },
+        "x04": {
+          "type": "no_answer",
+          "question": "LangChain 的 LCEL 里怎么用竖线运算符把多个 Runnable 串起来？"
+        },
+        "x05": {
+          "type": "no_answer",
+          "question": "这个知识库用的 FAISS 索引是 IVF-PQ 还是 HNSW？"
+        },
+        "x06": {
+          "type": "no_answer",
+          "question": "《静夜思》里的「床」指的到底是井栏还是卧榻？"
+        },
+        "x07": {
+          "type": "no_answer",
+          "question": "用 Docker 跑这个项目时，怎么给容器设置内存上限？"
+        },
+        "x08": {
+          "type": "no_answer",
+          "question": "Qwen3-8B 的上下文窗口是多少 token？"
+        }
+      }
+    },
+    "generate": true,
+    "conclusion": "各配置绝对值（同一次运行、同一批题）：\n\n- `vector_only`：证据 Recall@5 0.719、MRR@5 0.526、nDCG@5 0.575；块级 Recall@5 0.703；误拒率 0%（检索已覆盖时 0%）；拒答正确率 75%；检索 p50 98 ms、p95 108 ms。\n- `hybrid`：证据 Recall@5 0.656、MRR@5 0.490、nDCG@5 0.532；块级 Recall@5 0.641；误拒率 3%（检索已覆盖时 0%）；拒答正确率 75%；检索 p50 104 ms、p95 120 ms。\n- `hybrid_rerank`：证据 Recall@5 0.719、MRR@5 0.594、nDCG@5 0.625；块级 Recall@5 0.719；误拒率 0%（检索已覆盖时 0%）；拒答正确率 75%；检索 p50 1544 ms、p95 2165 ms。\n\n相对基线 `vector_only` 的差值：\n\n- `hybrid`：证据 Recall@5 -6.3 个百分点，证据 MRR@5 -3.6，检索 p50 +6 ms。\n- `hybrid_rerank`：证据 Recall@5 +0.0 个百分点，证据 MRR@5 +6.8，检索 p50 +1446 ms。\n\n怎么读这些数字：\n\n- Recall@5 的上限由**召回**决定：只要 top-5 里没出现答案片段，后面怎么排都没用，所以重排不会凭空提高覆盖率；它改善的是 MRR / nDCG，也就是「答案多早出现在上下文里」。\n- 混合召回的收益取决于语料：BM25 会按字面把同词不同义的片段拉进来，挤掉原本靠语义命中的块，覆盖率有可能不升反降——这属于真实结果，不做选择性汇报。\n- 时延差是线上体感的直接代价：重排的 p50 通常比不重排高一个数量级，是否值得要看 MRR 涨多少。\n- 本次每组样本量见「分类型」表，40 条属于「够用但不显著」，结论按趋势看、按每题的命中名次复核，不要当成精确排名。"
+  }
+}

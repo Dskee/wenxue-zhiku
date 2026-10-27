@@ -225,15 +225,16 @@ def render_report(meta, results) -> str:
         "",
         f"- 代码版本：`{meta['git']}`",
         f"- 数据集：`{meta['dataset']}`（md5 `{meta['dataset_md5']}`，{meta['items']} 条："
-        f"normal {meta['counts']['normal']} / boundary {meta['counts']['boundary']} / "
-        f"no_answer {meta['counts']['no_answer']}）",
+        f"normal {meta['counts'].get('normal', 0)} / boundary {meta['counts'].get('boundary', 0)} / "
+        f"no_answer {meta['counts'].get('no_answer', 0)}）",
         f"- 知识库：`{meta['kb']}`，{meta['chunks'] if meta['chunks'] else '未知'} 个 chunk，来源 {', '.join(meta['corpus'])}",
         f"- 生成模型：`{meta['chat_model']}`，temperature=0，max_tokens=512，固定单轮 prompt",
         f"- 主指标：证据覆盖 Recall@{meta['k']} / MRR@{meta['k']} / nDCG@{meta['k']}"
         "（答案片段是否出现在 top-k 上下文的某段正文里，与切块边界无关，只看 normal+boundary）",
         f"- 对照指标：块级 Recall@{meta['k']}（整块 chunk id 精确匹配，切块边界会拉低它）",
         "- 生成层：误拒率（该答却拒答）、拒答正确率（该拒就拒）、gold 证据命中率；全部字符串规则，零 LLM 裁判。"
-        "误拒率另给一列「检索已覆盖答案片段时」的条件值，用来把检索的锅和生成的锅分开",
+        "误拒率另给一列「检索已覆盖答案片段时」的条件值，用来把检索的锅和生成的锅分开"
+        + ("" if meta.get("generate", True) else "（本次运行用了 --no-generate，生成层相关的列显示为 -）"),
         f"- 运行环境：{meta['python']}",
         "",
         "## 二、配置对比",
@@ -245,7 +246,7 @@ def render_report(meta, results) -> str:
         retrieval = spec["retrieval"]
         lines.append(
             f"| `{spec['name']}` | {spec['description']} | "
-            f"{'否' if not retrieval['use_bm25'] else '是'} | "
+            f"{'是' if not retrieval['use_bm25'] and not retrieval['use_reranker'] else '否'} | "
             f"{'是' if retrieval['use_bm25'] else '否'} | "
             f"{'是' if retrieval['use_reranker'] else '否'} | "
             f"{retrieval['top_k_vector']} | {retrieval['top_k_bm25']} | {retrieval['top_k_final']} |"
@@ -255,8 +256,8 @@ def render_report(meta, results) -> str:
         "",
         "## 三、总表",
         "",
-        "| 配置 | 证据 Recall@5 | 证据 MRR@5 | 证据 nDCG@5 | 块级 Recall@5 | 误拒率 | 检索已覆盖时误拒率 | 证据命中率 | 检索 p50 | 检索 p95 | 生成 p50 | 错误 |",
-        "| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |",
+        "| 配置 | 证据 Recall@5 | 证据 MRR@5 | 证据 nDCG@5 | 块级 Recall@5 | 误拒率 | 检索已覆盖时误拒率 | 拒答正确率 | 证据逐字命中率 | 检索 p50 | 检索 p95 | 生成 p50 | 错误 |",
+        "| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |",
     ]
     for name, summary in results:
         lines.append(
@@ -264,6 +265,7 @@ def render_report(meta, results) -> str:
             f"{summary['evidence_ndcg@5']:.3f} | {summary['recall@5']:.3f} | "
             f"{fmt_pct(summary.get('refusal_rate_answerable'))} | "
             f"{fmt_pct(summary.get('refusal_rate_answerable_covered'))} | "
+            f"{fmt_pct(summary.get('refusal_accuracy_no_answer'))} | "
             f"{fmt_pct(summary.get('evidence_hit_rate'))} | "
             f"{summary['latency_ms_p50']:.0f} ms | {summary['latency_ms_p95']:.0f} ms | "
             f"{fmt_ms(summary.get('generation_ms_p50'))} | "
@@ -276,6 +278,16 @@ def render_report(meta, results) -> str:
         "检索到「答案的前半段」也算没命中，配置之间的差异会被切块边界噪声吃掉。"
         "证据口径问的是「上下文里有没有这句话」，更接近 RAG 真正关心的事；块级口径保留，"
         "用来观察索引本身有没有取到同一块。",
+        "",
+        "列口径说明：",
+        "",
+        "- **误拒率**：normal + boundary 里模型输出拒答语的比例。",
+        "- **检索已覆盖时误拒率**：只在「top-5 里确实出现了 gold 答案片段」的样本上算。"
+        "检索没找到、模型因此拒答是检索的锅；这一列才反映生成层自己有没有乱拒。",
+        "- **拒答正确率**：8 条 no_answer 里模型真的拒答的比例，越低说明越容易编。",
+        "- **证据逐字命中率**：回答正文里逐字包含 gold 证据片段的比例。这是**下限**——"
+        "模型会改写、合并、只答结论，答对了也常常不逐字复述原句，所以这列数值偏低不代表答错，"
+        "判断答案质量请看拒答指标和人工抽检。",
         "",
         "## 四、分类型",
         "",
@@ -310,7 +322,9 @@ def render_report(meta, results) -> str:
 
     lines += [
         "",
-        "## 六、拒答明细（no_answer 8 条）",
+        "## 六、拒答明细（no_answer "
+        + str(sum(1 for info in meta["item_meta"]["items"].values() if info["type"] == "no_answer"))
+        + " 条）",
         "",
         "| 题目 | " + " | ".join(f"`{name}` 是否拒答" for name, _ in results) + " |",
         "| --- | " + " | ".join("---" for _ in results) + " |",
@@ -348,6 +362,12 @@ def render_report(meta, results) -> str:
     return "\n".join(lines)
 
 
+def sort_configs(specs):
+    """报告里按「从简到繁」排列，第一份当基线：纯向量 → 混合 → 混合+重排。"""
+    order = {"vector_only": 0, "hybrid": 1, "hybrid_rerank": 2}
+    return sorted(specs, key=lambda spec: (order.get(spec["name"], 99), spec["name"]))
+
+
 def fmt_pct(value):
     return "-" if value is None else f"{value * 100:.0f}%"
 
@@ -366,14 +386,34 @@ def main() -> int:
     parser.add_argument("--json-out", default="")
     parser.add_argument("--limit", type=int, default=0, help="只跑前 N 条，调试用")
     parser.add_argument("--no-generate", action="store_true", help="跳过生成层（只测检索）")
+    parser.add_argument(
+        "--from-json",
+        default="",
+        help="不重新跑实验，直接用上次的 JSON 结果重新渲染报告（改排版时用）",
+    )
     args = parser.parse_args()
+
+    if args.from_json:
+        data = json.loads(Path(args.from_json).read_text(encoding="utf-8"))
+        meta = data["meta"]
+        meta["per_item"] = data["per_item"]
+        meta["config_specs"] = sort_configs(meta["config_specs"])
+        order = [spec["name"] for spec in meta["config_specs"]]
+        meta["config_order"] = order
+        results = [(name, data["summary"][name]) for name in order]
+        meta["conclusion"] = build_conclusion(results, meta["k"])
+        out_path = Path(args.out)
+        out_path.parent.mkdir(parents=True, exist_ok=True)
+        out_path.write_text(render_report(meta, results), encoding="utf-8")
+        print(f"报告已从 {args.from_json} 重新渲染到 {out_path}", flush=True)
+        return 0
 
     dataset_path = Path(args.dataset)
     if not dataset_path.exists():
         raise SystemExit(f"数据集不存在: {dataset_path}")
     items = load_dataset(dataset_path)
 
-    specs = eval_configs.load_configs(args.configs)
+    specs = sort_configs(eval_configs.load_configs(args.configs))
     module = __import__(
         "knowledgebase_server.loader.KnowledgeFastAPI", fromlist=["retrieve"]
     )
@@ -444,18 +484,6 @@ def main() -> int:
     out_path = Path(args.out)
     out_path.parent.mkdir(parents=True, exist_ok=True)
 
-    if args.json_out:
-        payload = {
-            "summary": {name: summary for name, summary in results},
-            "per_item": {
-                name: {item_id: row for item_id, row in rows.items()}
-                for name, rows in per_item.items()
-            },
-        }
-        Path(args.json_out).write_text(
-            json.dumps(payload, ensure_ascii=False, indent=2), encoding="utf-8"
-        )
-
     conclusions = build_conclusion(results, args.k)
     meta = {
         "date": dt.date.today().isoformat(),
@@ -466,15 +494,29 @@ def main() -> int:
         "counts": counts,
         "kb": args.kb,
         "chunks": count_chunks(args.kb),
-        "corpus": ["agent面试问答.md", "唐诗三百首.md"],
+        "corpus": sorted({item["gold_source"] for item in items if item.get("gold_source")}),
         "chat_model": runtime_config.get("chat_model"),
         "k": args.k,
         "python": f"{sys.version.split()[0]} / {sys.platform}",
         "config_specs": specs,
+        "config_order": [name for name, _ in results],
         "per_item": per_item,
         "item_meta": item_meta,
+        "generate": not args.no_generate,
         "conclusion": conclusions,
     }
+
+    if args.json_out:
+        # meta 里带上除 per_item 外的全部设置，--from-json 才能只靠这份文件重渲染
+        payload = {
+            "summary": {name: summary for name, summary in results},
+            "per_item": per_item,
+            "meta": {key: value for key, value in meta.items() if key != "per_item"},
+        }
+        Path(args.json_out).write_text(
+            json.dumps(payload, ensure_ascii=False, indent=2), encoding="utf-8"
+        )
+
     report = render_report(meta, results)
     out_path.write_text(report, encoding="utf-8")
     print(f"\n报告已写入 {out_path}", flush=True)
@@ -498,17 +540,42 @@ def build_conclusion(results, k: int) -> str:
     if len(results) < 2:
         return "只有一份配置，无法对比。"
     baseline_name, baseline = results[0]
-    lines = []
+
+    lines = ["各配置绝对值（同一次运行、同一批题）：", ""]
+    for name, summary in results:
+        lines.append(
+            f"- `{name}`：证据 Recall@{k} {summary['evidence_recall@5']:.3f}、"
+            f"MRR@{k} {summary['evidence_mrr@5']:.3f}、nDCG@{k} {summary['evidence_ndcg@5']:.3f}；"
+            f"块级 Recall@{k} {summary['recall@5']:.3f}；"
+            f"误拒率 {fmt_pct(summary.get('refusal_rate_answerable'))}"
+            f"（检索已覆盖时 {fmt_pct(summary.get('refusal_rate_answerable_covered'))}）；"
+            f"拒答正确率 {fmt_pct(summary.get('refusal_accuracy_no_answer'))}；"
+            f"检索 p50 {summary['latency_ms_p50']:.0f} ms、p95 {summary['latency_ms_p95']:.0f} ms。"
+        )
+
+    lines += ["", f"相对基线 `{baseline_name}` 的差值：", ""]
     for name, summary in results[1:]:
         delta_recall = summary["evidence_recall@5"] - baseline["evidence_recall@5"]
         delta_mrr = summary["evidence_mrr@5"] - baseline["evidence_mrr@5"]
         delta_p50 = summary["latency_ms_p50"] - baseline["latency_ms_p50"]
         lines.append(
-            f"- 相对 `{baseline_name}`：`{name}` 的证据 Recall@{k} "
-            f"{'+' if delta_recall >= 0 else ''}{delta_recall * 100:.1f} 个百分点，"
-            f"证据 MRR@{k} {'+' if delta_mrr >= 0 else ''}{delta_mrr * 100:.1f}，"
-            f"检索 p50 {'+' if delta_p50 >= 0 else ''}{delta_p50:.0f} ms。"
+            f"- `{name}`：证据 Recall@{k} {'+' if delta_recall >= 0 else ''}"
+            f"{delta_recall * 100:.1f} 个百分点，证据 MRR@{k} {'+' if delta_mrr >= 0 else ''}"
+            f"{delta_mrr * 100:.1f}，检索 p50 {'+' if delta_p50 >= 0 else ''}{delta_p50:.0f} ms。"
         )
+
+    lines += [
+        "",
+        "怎么读这些数字：",
+        "",
+        f"- Recall@{k} 的上限由**召回**决定：只要 top-{k} 里没出现答案片段，后面怎么排都没用，"
+        "所以重排不会凭空提高覆盖率；它改善的是 MRR / nDCG，也就是「答案多早出现在上下文里」。",
+        "- 混合召回的收益取决于语料：BM25 会按字面把同词不同义的片段拉进来，"
+        "挤掉原本靠语义命中的块，覆盖率有可能不升反降——这属于真实结果，不做选择性汇报。",
+        "- 时延差是线上体感的直接代价：重排的 p50 通常比不重排高一个数量级，是否值得要看 MRR 涨多少。",
+        "- 本次每组样本量见「分类型」表，40 条属于「够用但不显著」，"
+        "结论按趋势看、按每题的命中名次复核，不要当成精确排名。",
+    ]
     return "\n".join(lines)
 
 
