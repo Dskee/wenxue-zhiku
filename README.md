@@ -266,7 +266,7 @@ ollama pull bge-m3          # 向量化模型（知识库需要）
 
 ### 数据集 v1.0（冻结）
 
-- 40 条：`normal` 24 / `boundary` 8 / `no_answer` 8，逐条人工核过 gold。
+- 40 条：`normal` 24 / `boundary` 8 / `no_answer` 8。每条 gold 都有逐字证据片段，构建脚本会对语料做子串校验；**人工核验清单见 [`eval/dataset/v1.0.review.md`](eval/dataset/v1.0.review.md)**，改动 evidence 后重跑构建脚本即可。
 - md5 `559d14690bb7338048021235f28019f7`，变更记录见 [`eval/dataset/CHANGELOG.md`](eval/dataset/CHANGELOG.md)。
 - gold 不是手抄 UUID：`eval/dataset/specs/v1.0.json` 里逐字摘答案片段，由构建脚本归一化后反查
   **内容寻址**的 chunk id（`sha1(文件名 + 正文)[:16]`）。语料一改，构建直接失败，标注不会悄悄漂移。
