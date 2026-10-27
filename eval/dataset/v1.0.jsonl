@@ -1,0 +1,40 @@
+{"id": "n01", "type": "normal", "question": "注意力打分时为什么要除以维度的平方根，不除会出现什么后果？", "gold_chunk_ids": ["e49fb4e6eecc4262"], "gold_source": "agent面试问答.md", "gold_evidence": ["点积的方差会随维度 d_k 线性增长"], "notes": ""}
+{"id": "n02", "type": "normal", "question": "Transformer 靠什么机制知道句子里词的先后顺序？", "gold_chunk_ids": ["88fd3fbdbbd7d9fd"], "gold_source": "agent面试问答.md", "gold_evidence": ["注意力本身对顺序是无感的"], "notes": ""}
+{"id": "n03", "type": "normal", "question": "处理变长序列时，为什么更倾向用 LayerNorm 而不是 BatchNorm？", "gold_chunk_ids": ["dbb179a5408b4d21"], "gold_source": "agent面试问答.md", "gold_evidence": ["LayerNorm 是在特征维度上"], "notes": ""}
+{"id": "n04", "type": "normal", "question": "Claude Code 的执行环境大致可以拆成哪几块职责？", "gold_chunk_ids": ["9fd25ebd8f53445f"], "gold_source": "agent面试问答.md", "gold_evidence": ["我会把 Claude Code 的 Harness 拆成七块职责来讲"], "notes": ""}
+{"id": "n05", "type": "normal", "question": "Claude Code 的系统提示词为什么要把不变的内容放最前面？", "gold_chunk_ids": ["cf27a80685ae6c6f"], "gold_source": "agent面试问答.md", "gold_evidence": ["prompt caching 是靠前缀匹配的"], "notes": ""}
+{"id": "n06", "type": "normal", "question": "OpenClaw 怎么发现 Agent 在同一个工具上反复打转？阈值分几级？", "gold_chunk_ids": ["52e3f6532c82912e"], "gold_source": "agent面试问答.md", "gold_evidence": ["它在后台维护一个滑动窗口"], "notes": ""}
+{"id": "n07", "type": "normal", "question": "长期记忆为什么不能只存向量库，还要保留明文层？", "gold_chunk_ids": ["ba11dd01aea8ee66"], "gold_source": "agent面试问答.md", "gold_evidence": ["因为这两层解决的是不同问题"], "notes": ""}
+{"id": "n08", "type": "normal", "question": "ExecTool 拦截危险命令为什么选择黑名单而不是白名单？", "gold_chunk_ids": ["411b11045db88de1"], "gold_source": "agent面试问答.md", "gold_evidence": ["因为白名单会严重限制 Agent 的能力"], "notes": ""}
+{"id": "n09", "type": "normal", "question": "技能正文不在启动时全量加载，那它是什么时候被读进来的？", "gold_chunk_ids": ["1e321c318a1a413a"], "gold_source": "agent面试问答.md", "gold_evidence": ["用「图书馆模式」"], "notes": ""}
+{"id": "n10", "type": "normal", "question": "MCP 从 demo 走到生产会碰到哪几类工程问题？", "gold_chunk_ids": ["9edd9a864331d48c"], "gold_source": "agent面试问答.md", "gold_evidence": ["核心挑战有三个"], "notes": ""}
+{"id": "n11", "type": "normal", "question": "多个 Agent 协作时，怎么避免费用被互相传话放大？", "gold_chunk_ids": ["2d66433820157c84"], "gold_source": "agent面试问答.md", "gold_evidence": ["四道闸"], "notes": ""}
+{"id": "n12", "type": "normal", "question": "检索链路里同时用向量、关键词和交叉编码器，这三种各自解决什么问题？", "gold_chunk_ids": ["d29b7716ac92357e"], "gold_source": "agent面试问答.md", "gold_evidence": ["因为三种手段解决的是不同问题"], "notes": ""}
+{"id": "n13", "type": "normal", "question": "只有一张 24G 显存的卡，LLM、Embedding、重排怎么分配资源？", "gold_chunk_ids": ["c1273f1da895560e"], "gold_source": "agent面试问答.md", "gold_evidence": ["策略是「分层部署、协同计算」"], "notes": ""}
+{"id": "n14", "type": "normal", "question": "长文档切块时块大小和重叠比例一般怎么定？", "gold_chunk_ids": ["3409d77e97f597bb"], "gold_source": "agent面试问答.md", "gold_evidence": ["按文档类型调"], "notes": ""}
+{"id": "n15", "type": "normal", "question": "有首诗写夜里把月光当成了地上的霜，抬头看月之后低头想家，它的最后一句是什么？", "gold_chunk_ids": ["aef787b576f04894"], "gold_source": "唐诗三百首.md", "gold_evidence": ["低头思故乡"], "notes": ""}
+{"id": "n16", "type": "normal", "question": "杜甫在战乱里写的诗，看到花开鸟鸣反而更难过，「感时花溅泪」的下一句是什么？", "gold_chunk_ids": ["16fd1c2a65d1ed36"], "gold_source": "唐诗三百首.md", "gold_evidence": ["恨别鸟惊心"], "notes": ""}
+{"id": "n17", "type": "normal", "question": "王之涣写登楼远望，说想看得更远就要再往上走一层，这句原话是什么？", "gold_chunk_ids": ["c87b8059c95cfd1e", "e466c894278bdf43"], "gold_source": "唐诗三百首.md", "gold_evidence": ["更上一层楼"], "notes": ""}
+{"id": "n18", "type": "normal", "question": "写大雪封山、只有一个老翁披蓑戴笠在江上垂钓的那首诗里，「孤舟蓑笠翁」的下一句是什么？", "gold_chunk_ids": ["bf6a252f4a567b92"], "gold_source": "唐诗三百首.md", "gold_evidence": ["独钓寒江雪"], "notes": ""}
+{"id": "n19", "type": "normal", "question": "王维用哪种植物来寄托思念，说它最惹相思？", "gold_chunk_ids": ["1b1ef14ba9f56351"], "gold_source": "唐诗三百首.md", "gold_evidence": ["红豆生南国"], "notes": ""}
+{"id": "n20", "type": "normal", "question": "写春天睡得香甜、不知不觉天就亮了的那首诗，第一句是什么？", "gold_chunk_ids": ["43b52cea668d43a3"], "gold_source": "唐诗三百首.md", "gold_evidence": ["春眠不觉晓"], "notes": ""}
+{"id": "n21", "type": "normal", "question": "杜甫写秋天登台远望、感叹年老多病，「无边落木萧萧下」的下一句是什么？", "gold_chunk_ids": ["2e7de892aedbc55a"], "gold_source": "唐诗三百首.md", "gold_evidence": ["不尽长江衮衮来"], "notes": ""}
+{"id": "n22", "type": "normal", "question": "李白写乘船离开白帝城、一天就回到江陵，「两岸猿声啼不住」的下一句是什么？", "gold_chunk_ids": ["c6c2e8c00a3c76b6"], "gold_source": "唐诗三百首.md", "gold_evidence": ["轻舟已过万重山"], "notes": ""}
+{"id": "n23", "type": "normal", "question": "王维写山中秋雨后的傍晚，「明月松间照」的下一句是什么？", "gold_chunk_ids": ["3968c13da6739713"], "gold_source": "唐诗三百首.md", "gold_evidence": ["清泉石上流"], "notes": ""}
+{"id": "n24", "type": "normal", "question": "张继夜里停在姑苏城外，写寒山寺的钟声传到船上，这句诗怎么说的？", "gold_chunk_ids": ["bd73fff0266674d8"], "gold_source": "唐诗三百首.md", "gold_evidence": ["夜半钟声到客船"], "notes": ""}
+{"id": "b01", "type": "boundary", "question": "线上要求用户提问后马上就能看到字，同时又不想砍掉精排，这种情况你会怎么处理？", "gold_chunk_ids": ["75910143e438b38c", "3b1e96574f485ed5"], "gold_source": "agent面试问答.md", "gold_evidence": ["常规路径极速响应"], "notes": "长查询 + 两个约束同时出现，答案在追问题的答稿里"}
+{"id": "b02", "type": "boundary", "question": "客户对准确性极敏感，除了检索本身，架构上还能用什么办法拦住模型瞎编？", "gold_chunk_ids": ["5d373451bdd39c35"], "gold_source": "agent面试问答.md", "gold_evidence": ["三层漏斗加一层人工"], "notes": "口语化，且原文用的是「幻觉兜底」不是「瞎编」"}
+{"id": "b03", "type": "boundary", "question": "长会话里历史消息太多时，按什么条件触发摘要压缩，摘要又存到哪里？", "gold_chunk_ids": ["4682f1b57db8892e"], "gold_source": "agent面试问答.md", "gold_evidence": ["摘要还会写进 HISTORY.md"], "notes": "问的是答稿里的一个数字和一个文件名"}
+{"id": "b04", "type": "boundary", "question": "MCP 在企业环境里的第三方凭证应该放在哪，为什么不放配置文件？", "gold_chunk_ids": ["45d0d8c89749e740"], "gold_source": "agent面试问答.md", "gold_evidence": ["凭证必须存进操作系统的 Keychain"], "notes": "精确到 Keychain，词面无法糊过去"}
+{"id": "b05", "type": "boundary", "question": "NanoClaw 相比 Claude Code 在机制覆盖上少做了哪些东西？", "gold_chunk_ids": ["d5074516475e36ab"], "gold_source": "agent面试问答.md", "gold_evidence": ["机制覆盖上，我只有正则黑名单"], "notes": "对比题，容易召回 Claude Code 那一大段而漏掉真正的对比段"}
+{"id": "b06", "type": "boundary", "question": "错题本除了推给用户复习，还能反过来改进什么？", "gold_chunk_ids": ["4d2428add28cf60e"], "gold_source": "agent面试问答.md", "gold_evidence": ["反过来优化知识库"], "notes": "与当前项目同源，容易被人名/项目名干扰"}
+{"id": "b07", "type": "boundary", "question": "李商隐写「庄生晓梦迷蝴蝶」的那首诗，最后一句是什么？", "gold_chunk_ids": ["971cb0ee73a8d76c"], "gold_source": "唐诗三百首.md", "gold_evidence": ["只是当时已惘然"], "notes": "语料里《锦瑟》正文与标题分属不同 chunk，考是否召回正文那一段"}
+{"id": "b08", "type": "boundary", "question": "从上传一份 PDF 到用户拿到带引用的回答，中间要走哪些步骤？", "gold_chunk_ids": ["a8689253acf59cac"], "gold_source": "agent面试问答.md", "gold_evidence": ["分两条链路"], "notes": "需要离线建库 + 在线问答两条链路的 chunk"}
+{"id": "x01", "type": "no_answer", "question": "《赤壁赋》是苏轼在哪一年写成的？", "gold_chunk_ids": [], "gold_source": null, "gold_evidence": [], "notes": "语料只有唐诗，无宋代散文"}
+{"id": "x02", "type": "no_answer", "question": "NanoClaw 开源用的是什么许可证？", "gold_chunk_ids": [], "gold_source": null, "gold_evidence": [], "notes": "语料未提许可证，MIT/Apache/许可证 均 0 命中"}
+{"id": "x03", "type": "no_answer", "question": "bge-reranker-v2-m3 是用多少条样本训练出来的？", "gold_chunk_ids": [], "gold_source": null, "gold_evidence": [], "notes": "提到过模型名，但没有任何训练数据规模信息"}
+{"id": "x04", "type": "no_answer", "question": "LangChain 的 LCEL 里怎么用竖线运算符把多个 Runnable 串起来？", "gold_chunk_ids": [], "gold_source": null, "gold_evidence": [], "notes": "全库无 LCEL"}
+{"id": "x05", "type": "no_answer", "question": "这个知识库用的 FAISS 索引是 IVF-PQ 还是 HNSW？", "gold_chunk_ids": [], "gold_source": null, "gold_evidence": [], "notes": "提到 FAISS，但索引类型 IVF/HNSW 均 0 命中，属于「知道组件不知道配置」的硬拒答点"}
+{"id": "x06", "type": "no_answer", "question": "《静夜思》里的「床」指的到底是井栏还是卧榻？", "gold_chunk_ids": [], "gold_source": null, "gold_evidence": [], "notes": "诗在库里，但释义不在库里；唯一一处「井栏」出自《长相思》，是典型相似干扰"}
+{"id": "x07", "type": "no_answer", "question": "用 Docker 跑这个项目时，怎么给容器设置内存上限？", "gold_chunk_ids": [], "gold_source": null, "gold_evidence": [], "notes": "语料讲的是 Docker 逃逸防护，不是资源限额（cgroup），属于同词不同题"}
+{"id": "x08", "type": "no_answer", "question": "Qwen3-8B 的上下文窗口是多少 token？", "gold_chunk_ids": [], "gold_source": null, "gold_evidence": [], "notes": "语料只把 Qwen3-VL 当专有名词举例，没有模型参数规格"}

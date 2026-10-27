@@ -1,0 +1,9 @@
+name = "hybrid"
+description = "向量 + BM25 混合召回（RRF 等权），不重排，融合后取前 5"
+
+[retrieval]
+use_bm25 = true
+use_reranker = false
+top_k_vector = 4
+top_k_bm25 = 4
+top_k_final = 5

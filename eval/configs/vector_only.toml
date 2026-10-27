@@ -1,0 +1,9 @@
+name = "vector_only"
+description = "纯向量召回，BM25 与重排都关，top 5 直接作为最终结果（基线）"
+
+[retrieval]
+use_bm25 = false
+use_reranker = false
+top_k_vector = 5
+top_k_bm25 = 4
+top_k_final = 5

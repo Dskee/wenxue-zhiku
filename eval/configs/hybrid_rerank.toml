@@ -1,0 +1,9 @@
+name = "hybrid_rerank"
+description = "向量 + BM25 混合召回后过 bge-reranker-v2-m3 重排，取前 5（线上默认链路）"
+
+[retrieval]
+use_bm25 = true
+use_reranker = true
+top_k_vector = 4
+top_k_bm25 = 4
+top_k_final = 5

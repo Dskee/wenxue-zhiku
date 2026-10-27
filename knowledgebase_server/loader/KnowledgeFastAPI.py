@@ -1,4 +1,5 @@
-from typing import List
+from dataclasses import dataclass
+from typing import List, Optional
 from fastapi import Body, APIRouter, Request, HTTPException, UploadFile, File, Form, Query
 from db_server.data.KnowledgeBase import session
 from db_server.data.KnowledgeDB import add, delete, queryall
@@ -356,34 +357,135 @@ def rerank_status() -> dict:
             "note": "首次检索时才会加载模型；加载失败不影响服务启动，检索会降级为不重排",
         }
 
+# ---------------- 检索配置：把"组件开关"变成参数 ----------------
+# 线上只走 DEFAULT_RETRIEVAL_CONFIG（等价于改造前的行为：BM25 开、重排开、各取 4 条、最终不截断）。
+# 评测时用不同配置调用同一个 retrieve()，保证「一份代码 + 三份配置」，而不是维护两套检索实现。
+@dataclass(frozen=True)
+class RetrievalConfig:
+    """一次检索要用哪些组件、各取多少条。
+
+    use_bm25      是否启用 BM25 关键词召回（关掉即纯向量检索）
+    use_reranker  是否启用 bge 重排序（线上模型缺失时降级；评测传 strict_reranker=True 直接报错）
+    top_k_vector  向量召回条数
+    top_k_bm25    BM25 召回条数
+    top_k_final   重排/融合后最终保留条数；0 表示不截断（改造前的行为）
+    """
+
+    use_bm25: bool = True
+    use_reranker: bool = True
+    top_k_vector: int = 4
+    top_k_bm25: int = 4
+    top_k_final: int = 0
+
+    def __post_init__(self):
+        for name in ("top_k_vector", "top_k_bm25"):
+            value = getattr(self, name)
+            if not isinstance(value, int) or isinstance(value, bool) or value <= 0:
+                raise ValueError(f"{name} 必须是正整数，当前为 {value!r}")
+        if not isinstance(self.top_k_final, int) or isinstance(self.top_k_final, bool) or self.top_k_final < 0:
+            raise ValueError(f"top_k_final 必须是非负整数，当前为 {self.top_k_final!r}")
+
+
+DEFAULT_RETRIEVAL_CONFIG = RetrievalConfig()
+
+
+@dataclass
+class RetrievalResult:
+    """retrieve() 的返回值：带分数的文档列表（评测据此计算 chunk 级指标）。"""
+
+    docs: List[Document]
+    scores: List[Optional[float]]
+    reranked: bool
+    warning: Optional[str] = None
+
+
 # ---------------- search_kb 检索器缓存 ----------------
 # 每次查询都重新 FAISS.load_local + BM25Retriever.from_documents 是大库慢/超时的根因。
-# 改为按知识库缓存混合检索器，仅在 .faiss 索引文件的 mtime 变化时重建（上传/删除/更新文档后 mtime 自动变化）。
+# 改为按「知识库 + 检索配置」缓存检索器，仅在 .faiss 索引文件的 mtime 变化时重建
+# （上传/删除/更新文档后 mtime 自动变化）。
 _search_cache: dict = {}
 
 
-def _get_ensemble_retriever(kb_name, kb_path):
-    """获取该知识库的混合检索器（FAISS + BM25），带 mtime 缓存。"""
+def _get_retriever(kb_name, kb_path, config: RetrievalConfig = DEFAULT_RETRIEVAL_CONFIG):
+    """获取该知识库的检索器（FAISS，按配置可再叠 BM25），带 mtime 缓存。"""
     mtime = os.path.getmtime(kb_path)
-    cached = _search_cache.get(kb_name)
+    cache_key = (kb_name, config.use_bm25, config.top_k_vector, config.top_k_bm25)
+    cached = _search_cache.get(cache_key)
     if cached and cached["mtime"] == mtime:
-        return cached["ensemble"]
+        return cached["retriever"]
 
     vector_store = FAISS.load_local(kb_path, embedding_model,
                                     allow_dangerous_deserialization=True)
-    faiss_retriever = vector_store.as_retriever(search_kwargs={"k": 4})
+    faiss_retriever = vector_store.as_retriever(search_kwargs={"k": config.top_k_vector})
     docs = list(vector_store.docstore._dict.values())
-    bm25_retriever = BM25Retriever.from_documents(
-        docs,
-        preprocess_func=jieba.lcut_for_search,
+    if config.use_bm25:
+        bm25_retriever = BM25Retriever.from_documents(
+            docs,
+            preprocess_func=jieba.lcut_for_search,
+        )
+        bm25_retriever.k = config.top_k_bm25
+        retriever = EnsembleRetriever(
+            retrievers=[bm25_retriever, faiss_retriever], weights=[0.5, 0.5]
+        )
+        mode = "FAISS+BM25"
+    else:
+        retriever = faiss_retriever
+        mode = "FAISS"
+    _search_cache[cache_key] = {"mtime": mtime, "retriever": retriever}
+    print(f"[CACHE] 构建知识库「{kb_name}」检索器 ({mode}, 文档数={len(docs)})")
+    return retriever
+
+
+def _rerank_unavailable_warning() -> str:
+    return (
+        "重排序模型未就绪，本次结果未经过 rerank（仅混合检索）。"
+        f"原因：{_rerank_state['error']}。"
+        f"请按 README 下载模型到 {RERANK_MODEL_PATH}，或设置环境变量 RERANK_MODEL_PATH。"
     )
-    bm25_retriever.k = 4
-    ensemble_retriever = EnsembleRetriever(
-        retrievers=[bm25_retriever, faiss_retriever], weights=[0.5, 0.5]
-    )
-    _search_cache[kb_name] = {"mtime": mtime, "ensemble": ensemble_retriever}
-    print(f"[CACHE] 构建知识库「{kb_name}」检索器 (文档数={len(docs)})")
-    return ensemble_retriever
+
+
+def retrieve(kb_name: str, query: str,
+             config: Optional[RetrievalConfig] = None,
+             strict_reranker: bool = False) -> RetrievalResult:
+    """执行一次「召回（+融合）→ 重排 → 截断」，返回带分数的文档列表。
+
+    search_kb 与评测脚本共用这一个函数，避免线上和评测跑两套逻辑。
+    strict_reranker=True 时，配置要求重排但模型不可用会直接抛错——评测不接受静默降级，
+    否则"开了重排"的那组数字会悄悄退化成"没开重排"。
+    """
+    config = config or DEFAULT_RETRIEVAL_CONFIG
+    kb_path = _kb_index_path(kb_name)
+    if not os.path.exists(kb_path):
+        raise FileNotFoundError(f"知识库「{kb_name}」的索引不存在: {kb_path}")
+
+    retriever = _get_retriever(kb_name, kb_path, config)
+    docs = list(retriever.invoke(query))
+    scores: List[Optional[float]] = [None] * len(docs)
+
+    reranker = get_rerank_model() if config.use_reranker else None
+    reranked = reranker is not None
+    warning = None
+
+    if reranker is not None:
+        if docs:
+            raw_scores = reranker.predict([[query, doc.page_content] for doc in docs])
+            order = sorted(range(len(docs)), key=lambda i: float(raw_scores[i]), reverse=True)
+            docs = [docs[i] for i in order]
+            scores = [float(raw_scores[i]) for i in order]
+    elif config.use_reranker:
+        if strict_reranker:
+            raise RuntimeError(
+                f"配置要求重排序，但模型不可用：{_rerank_state['error']}。"
+                f"模型路径 {RERANK_MODEL_PATH}"
+            )
+        warning = _rerank_unavailable_warning()
+        print(f"[search_kb] 降级返回（未重排）: {_rerank_state['error']}")
+
+    if config.top_k_final > 0:
+        docs = docs[:config.top_k_final]
+        scores = scores[:config.top_k_final]
+
+    return RetrievalResult(docs=docs, scores=scores, reranked=reranked, warning=warning)
 
 
 @kb_router.post("/search_kb")
@@ -395,37 +497,10 @@ def search_kb(
     # 若用 async def 会阻塞 uvicorn 事件循环，导致所有请求（包括 LLM 流式）一起变慢/超时。
     # FastAPI 对同步 def 会自动放入线程池执行，不阻塞其他请求。
     print("="*20)
-    kb_name = _check_kb_name(kb_name)
-    kb_path = _kb_index_path(kb_name)
-
-    if not os.path.exists(kb_path):
+    try:
+        result = retrieve(kb_name, query, DEFAULT_RETRIEVAL_CONFIG)
+    except FileNotFoundError:
         raise HTTPException(status_code=404, detail="Database not found")
-
-    ensemble_retriever = _get_ensemble_retriever(kb_name, kb_path)
-    print('============ensemble_retriever=======', ensemble_retriever)
-    raw_docs = ensemble_retriever.invoke(query)
-
-    # ----------------Rerank重排序（模型缺失时降级为不重排）----------------
-    # 懒加载：模型在这里才第一次被读取；拿不到就只用检索结果，保证"能查得到东西"
-    # 而不是整个接口报错——刚 clone 下来还没下载模型的人也能先把功能跑起来。
-    reranker = get_rerank_model()
-    reranked = reranker is not None
-    warning = None
-
-    if reranked:
-        pairs = [[query, doc.page_content] for doc in raw_docs]
-        scores = reranker.predict(pairs)
-        doc_score_pairs = list(zip(raw_docs, scores))
-        doc_score_pairs.sort(key=lambda x: x[1], reverse=True)
-    else:
-        # 未重排：保持混合检索的原始顺序，分数置空
-        doc_score_pairs = [(doc, None) for doc in raw_docs]
-        warning = (
-            "重排序模型未就绪，本次结果未经过 rerank（仅混合检索）。"
-            f"原因：{_rerank_state['error']}。"
-            f"请按 README 下载模型到 {RERANK_MODEL_PATH}，或设置环境变量 RERANK_MODEL_PATH。"
-        )
-        print(f"[search_kb] ⚠️ 降级返回（未重排）: {_rerank_state['error']}")
 
     contexts = {
         "results": [
@@ -434,12 +509,12 @@ def search_kb(
                 "page_contents": doc.page_content,
                 "rerank_score": (float(score) if score is not None else None),
             }
-            for doc, score in doc_score_pairs
+            for doc, score in zip(result.docs, result.scores)
         ],
-        "reranked": reranked,
+        "reranked": result.reranked,
     }
-    if warning:
-        contexts["warning"] = warning
+    if result.warning:
+        contexts["warning"] = result.warning
     print('=========contexts======', contexts)
     return contexts
 
