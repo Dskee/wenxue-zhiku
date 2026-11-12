@@ -39,6 +39,10 @@ requests==2.34.2
 beautifulsoup4==4.15.0          # web_search 回退通道解析必应结果页
 python-dotenv==1.2.3            # 从 .env 读取 API Key（避免硬编码密钥）
 
+# ---------- Anki 卡片导出 ----------
+# 把知识库笔记导出成 .apkg，用 Anki 打开即可背诵。
+genanki==0.13.1
+
 # ---------- 文档解析 ----------
 # PyPDFLoader 依赖。原环境未安装 pypdf，导致上传 PDF 时在 load() 阶段抛
 # ModuleNotFoundError（loader 里的 import 是延迟执行的，所以启动时不报错、上传才失败）。

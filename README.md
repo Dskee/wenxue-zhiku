@@ -19,6 +19,7 @@
 | 对话问答整理 | 按「回溯分类 → 提炼最优提问模板 → 过滤保留 → 按序输出」把多轮对话整理成结构化笔记 |
 | 笔记自动归档 | 笔记导出时用 embedding 余弦相似度自动匹配已有知识库，匹配不到则按主题自动新建 |
 | 自动出题 / 错题本 | 基于库内容生成选择题/填空题/判断题/简答题，对完答案后把错题勾选保存为「错题」笔记，同名自动追加 |
+| Anki 卡片导出 | 把库内笔记整理成可背诵的卡片（基础问答 / 填空 / 选择题），先预览挑选、再导出 `.apkg`，用 Anki 打开即可复习；重复导入是更新而非新增 |
 
 ---
 
@@ -31,6 +32,7 @@
 - **Embedding**：`BAAI/bge-large-zh-v1.5`（走 API）
 - **元数据存储**：SQLAlchemy + SQLite
 - **文档解析**：LangChain Community Loaders（TextLoader / CSVLoader / PyPDFLoader）
+- **卡片导出**：`genanki` 生成 `.apkg`（Anki 官方导入格式）
 
 ---
 
@@ -45,9 +47,12 @@
 │   └── prompt.py                    # Agent 提示词、对话总结提示词
 ├── chat/
 │   └── ChatFastAPI.py               # /chat/chatbot（流式问答）、/chat/summarize（对话整理）
-├── knowledgebase_server/loader/
-│   ├── KnowledgeFastAPI.py          # 知识库 CRUD、上传、检索、笔记保存、出题
-│   └── loader.py                    # 按扩展名分派文档加载器
+├── knowledgebase_server/
+│   ├── anki/                        # Anki 卡片导出（纯函数：模型/牌组/打包，不碰网络）
+│   │   └── exporter.py
+│   └── loader/
+│       ├── KnowledgeFastAPI.py      # 知识库 CRUD、上传、检索、笔记保存、出题、卡片导出
+│       └── loader.py                # 按扩展名分派文档加载器
 ├── db_server/data/
 │   ├── KnowledgeBase.py             # SQLAlchemy engine / session
 │   └── KnowledgeDB.py               # 知识库元数据 CRUD
@@ -240,6 +245,10 @@ ollama pull bge-m3          # 向量化模型（知识库需要）
 | `POST` | `/knowledge/match_kb` | 按主题语义匹配最合适的知识库 |
 | `POST` | `/knowledge/save_note` | 保存笔记到知识库（自动匹配/新建） |
 | `POST` | `/knowledge/quiz` | 基于库内容生成练习题 |
+| `POST` | `/knowledge/anki/preview` | 按笔记生成候选 Anki 卡片（`basic` / `cloze` / `choice`），不落盘，供前端挑选 |
+| `POST` | `/knowledge/anki/export` | 把选中的卡片打包成 `.apkg`，返回下载地址 |
+| `GET` | `/knowledge/anki/download/{file}` | 下载 `.apkg`（文件名白名单校验） |
+| `POST` | `/knowledge/anki/cleanup` | 清理过期的导出文件（默认 24 小时前） |
 | `GET` | `/settings` | 读取当前设置（Key 只回传打码值） |
 | `POST` | `/settings` | 保存来源/模型/Key/地址并**立即生效**（字段留空 = 不修改，`clear` 可显式清空） |
 | `GET` | `/settings/profiles` | 返回模型来源预设（默认地址、默认模型名、提示文案） |

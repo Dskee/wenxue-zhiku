@@ -17,6 +17,7 @@ from langchain_community.vectorstores import FAISS
 from langchain_community.embeddings import HuggingFaceEmbeddings
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 from configs.setting import (
+    BASE_DIR,
     KB_DIR,
     FILE_STORAGE_DIR,
     RERANK_MODEL_PATH,
@@ -36,6 +37,7 @@ import math
 import re
 import threading
 import time
+import uuid
 from pydantic import BaseModel
 
 # 注意：sentence_transformers（会连带拉起 torch）不在这里导入。
@@ -949,3 +951,310 @@ async def quiz(req: QuizReq):
 
     # 出题只负责生成题目；错题保存已由前端 save_quiz_notes 复用 /knowledge/save_note 完成（见 webui/Quiz_UI.py）
     return {"kb_name": kb_name, "quiz": quiz_text.strip()}
+
+# ==================== Anki 卡片导出 ====================
+# 目标：把知识库里的笔记变成"能背的卡片"，导出 .apkg 后用 Anki 打开即可记忆。
+#
+# 为什么拆成两步：
+#   预览（preview）只调大模型生成候选卡片，不落盘；
+#   导出（export）不再调模型，只把用户选中的卡片打包。
+#   这样"选择"发生在中间——用户可以删掉不想要的卡、改错字，再导出，
+#   而且打包失败和大模型失败是两类问题，分开好定位。
+_ANKI_DIR = os.path.join(str(BASE_DIR), "temp", "anki")
+_SAFE_ANKI_NAME = re.compile(r"^[0-9A-Za-z_.\-]{1,120}\.apkg$")
+_ANKI_PROMPTS = {
+    "basic": (
+        "请把下面的笔记整理成「基础问答卡片」：每张卡正面是一个能独立回答的问题，"
+        "背面是简洁准确的答案（1~3 句，可用分号列出要点）。\n"
+        "要求：只依据给定内容，不要编造；问题要具体，避免“本文讲了什么”这种过于宽泛的题。\n"
+        "只输出一个 JSON 数组，不要任何解释文字，不要用 Markdown 代码块包裹。格式：\n"
+        '[{"front": "问题", "back": "答案"}]\n'
+    ),
+    "cloze": (
+        "请把下面的笔记整理成「填空卡片」，用于记忆定义、术语、公式、结论。\n"
+        "要求：只依据给定内容；每张卡把需要记住的关键内容用 {{c1::内容}} 挖空，"
+        "一张卡只挖一个空，正文保持原句语义，不要把整句都挖掉。\n"
+        "只输出一个 JSON 数组，不要任何解释文字，不要用 Markdown 代码块包裹。格式：\n"
+        '[{"text": "含有 {{c1::关键词}} 的句子", "extra": "可选的补充说明"}]\n'
+    ),
+    "choice": (
+        "请把下面的笔记整理成「选择题卡片」，每题四选一。\n"
+        "要求：只依据给定内容；题干清晰；四个选项放在 options 里（每行一个，以 A. B. C. D. 开头）；"
+        "answer 只填正确选项的字母；explanation 简要说明依据。\n"
+        "只输出一个 JSON 数组，不要任何解释文字，不要用 Markdown 代码块包裹。格式：\n"
+        '[{"question": "题干", "options": "A. 选项一\\nB. 选项二\\nC. 选项三\\nD. 选项四", '
+        '"answer": "B", "explanation": "解析"}]\n'
+    ),
+}
+
+
+def _extract_json_array(text: str):
+    """从大模型输出里尽力抠出 JSON 数组。
+
+    模型常见的不听话：包了 ```json 代码块、前后加了解释、末尾多一个逗号、
+    以及被 max_tokens 截断（数组没写完）。前三种直接解析，最后一种从尾部
+    逐个补 ] 抢救，能救回已写完的那几张卡。
+    """
+    import json
+
+    s = (text or "").strip()
+    if not s:
+        return None
+    # 去掉 ```json ... ``` 包裹
+    fence = re.search(r"```(?:json)?\s*(.+?)```", s, re.S)
+    if fence:
+        s = fence.group(1).strip()
+    start = s.find("[")
+    if start == -1:
+        return None
+    end = s.rfind("]")
+    body = s[start:end + 1] if end > start else s[start:]
+
+    candidates = [body, re.sub(r",\s*([\]}])", r"\1", body)]
+
+    # 被截断时的抢救：从最后一个 } 往前找，补上 ] 再试
+    tail = s[start:]
+    closers = [i for i, ch in enumerate(tail) if ch == "}"]
+    for pos in reversed(closers[-40:]):
+        frag = tail[:pos + 1] + "]"
+        candidates.append(frag)
+        candidates.append(re.sub(r",\s*([\]}])", r"\1", frag))
+
+    for candidate in candidates:
+        try:
+            data = json.loads(candidate)
+        except Exception:
+            continue
+        if isinstance(data, list) and data:
+            return data
+    return None
+
+
+def _collect_notes_text(kb_name: str, files: List[str], char_limit: int = 12000):
+    """读取知识库笔记正文（可只取指定文件），返回 (合并文本, 实际用到的文件名)。"""
+    target_dir = _kb_storage_dir(kb_name)
+    if not os.path.isdir(target_dir):
+        raise HTTPException(status_code=404, detail=f"知识库「{kb_name}」的笔记目录不存在")
+
+    wanted = [str(f).strip() for f in (files or []) if str(f).strip()]
+    available = [n for n in os.listdir(target_dir)
+                 if os.path.isfile(os.path.join(target_dir, n))]
+    if wanted:
+        # 只接受确实在该知识库目录里的文件名（防止 ../ 穿越）
+        selected = [n for n in wanted if n in available]
+        if not selected:
+            raise HTTPException(status_code=400, detail="选中的笔记文件不存在，请刷新文件列表后重试")
+    else:
+        selected = available
+
+    chunks, used = [], []
+    total = 0
+    for name in selected:
+        fp = os.path.join(target_dir, name)
+        try:
+            with open(fp, "r", encoding="utf-8") as f:
+                body = f.read()
+        except Exception:
+            continue
+        if not body.strip():
+            continue
+        piece = f"【{name}】\n{body}"
+        if total + len(piece) > char_limit:
+            piece = piece[: max(0, char_limit - total)]
+            chunks.append(piece)
+            used.append(name)
+            break
+        chunks.append(piece)
+        used.append(name)
+        total += len(piece)
+
+    if not chunks:
+        raise HTTPException(status_code=400, detail="该知识库里没有可读的笔记内容（或选中的文件为空）")
+    return "\n\n".join(chunks), used
+
+
+class AnkiPreviewReq(BaseModel):
+    kb_name: str = Body(..., description="知识库名称")
+    files: List[str] = Body(default=[], description="只取这些笔记文件；留空表示整库")
+    card_type: str = Body("basic", description="卡片类型：basic / cloze / choice")
+    max_cards: int = Body(20, description="最多生成多少张卡片")
+    topic: str = Body("", description="可选的出卡方向，例如“只围绕公式”")
+
+
+@knowledgeapp.post('/anki/preview')
+async def anki_preview(req: AnkiPreviewReq):
+    """根据知识库笔记生成候选 Anki 卡片（不落盘，供用户挑选）。"""
+    kb_name = (req.kb_name or "").strip()
+    if not kb_name:
+        raise HTTPException(status_code=400, detail="请先选择知识库")
+    kb_name = _check_kb_name(kb_name)
+    card_type = (req.card_type or "basic").strip().lower()
+    if card_type not in _ANKI_PROMPTS:
+        raise HTTPException(status_code=400, detail="卡片类型只能是 basic / cloze / choice")
+
+    max_cards = max(1, min(int(req.max_cards or 20), 50))
+    content, used_files = _collect_notes_text(kb_name, req.files)
+
+    from langchain_openai import ChatOpenAI
+    import asyncio
+
+    # 带“思考”的模型（Qwen3 等）会把 max_tokens 大量花在推理上，留给正文的额度不够时
+    # 输出就被截断成半个 JSON。所以额度按卡片数放大，并优先请求关闭思考；
+    # 如果该服务商不认 enable_thinking，会抛错，再退回默认重试一次。
+    base_kwargs = dict(
+        model=runtime_config.get("chat_model"),
+        api_key=runtime_config.require_api_key("chat"),
+        base_url=runtime_config.base_url_for("chat") or base_url,
+        temperature=0.4,
+        max_tokens=min(8192, max(3000, max_cards * 400)),
+        streaming=False,
+        request_timeout=300,
+    )
+    topic_line = f"重点围绕「{req.topic.strip()}」。\n" if (req.topic or "").strip() else ""
+    prompt = (
+        _ANKI_PROMPTS[card_type]
+        + f"\n生成 {max_cards} 张卡片。{topic_line}"
+        + f"\n笔记内容（来源知识库「{kb_name}」）：\n{content}"
+    )
+
+    raw, last_err = "", None
+
+    async def _try_invoke(extra_body):
+        extra = {"extra_body": extra_body} if extra_body else {}
+        llm = ChatOpenAI(**base_kwargs, **extra)
+        res = await asyncio.to_thread(llm.invoke, prompt)
+        text = res.content if hasattr(res, "content") else str(res)
+        return text or ""
+
+    for extra_body in ({"enable_thinking": False}, None):
+        try:
+            raw = await _try_invoke(extra_body)
+        except runtime_config.MissingApiKeyError:
+            raise
+        except Exception as e:
+            last_err = e
+            raw = ""
+            continue
+        if raw.strip():
+            break
+
+    if not raw.strip():
+        err_hint = f"（{type(last_err).__name__}: {last_err}）" if last_err else ""
+        raise HTTPException(status_code=502, detail=f"模型没有返回内容{err_hint}，请重试")
+
+    cards = _extract_json_array(raw)
+    if cards is None:
+        raise HTTPException(
+            status_code=502,
+            detail="模型没有返回可解析的 JSON 卡片，请重试或减少卡片数量（原始输出前 200 字：" + str(raw)[:200] + "）",
+        )
+
+    from knowledgebase_server.anki import CARD_TYPE_LABELS, normalize_card, preview_card
+    valid, invalid = [], 0
+    for c in cards[:max_cards]:
+        norm = normalize_card(c, card_type)
+        if not norm:
+            invalid += 1
+            continue
+        item = {"raw": norm, "preview": preview_card(norm, card_type)}
+        valid.append(item)
+
+    if not valid:
+        raise HTTPException(status_code=502, detail="生成的卡片全部不符合该类型要求，请换个卡片类型或换笔记重试")
+
+    return {
+        "kb_name": kb_name,
+        "card_type": card_type,
+        "card_type_label": CARD_TYPE_LABELS.get(card_type, card_type),
+        "source_files": used_files,
+        "cards": valid,
+        "count": len(valid),
+        "invalid_count": invalid,
+    }
+
+
+class AnkiExportReq(BaseModel):
+    kb_name: str = Body(..., description="知识库名称（用于给出默认牌组名）")
+    deck_name: str = Body("", description="Anki 牌组名；留空则用知识库名")
+    card_type: str = Body("basic", description="卡片类型：basic / cloze / choice")
+    cards: List[dict] = Body(..., description="用户在预览里选定的卡片（raw 字段数组）")
+
+
+@knowledgeapp.post('/anki/export')
+async def anki_export(req: AnkiExportReq):
+    """把选定的卡片打包成 .apkg，返回下载地址。"""
+    kb_name = (req.kb_name or "").strip()
+    if not kb_name:
+        raise HTTPException(status_code=400, detail="请先选择知识库")
+    kb_name = _check_kb_name(kb_name)
+    card_type = (req.card_type or "basic").strip().lower()
+    if card_type not in _ANKI_PROMPTS:
+        raise HTTPException(status_code=400, detail="卡片类型只能是 basic / cloze / choice")
+    if not req.cards:
+        raise HTTPException(status_code=400, detail="没有选中任何卡片")
+
+    from knowledgebase_server.anki import build_apkg
+    deck_name = (req.deck_name or "").strip() or kb_name
+    # 文件名只用安全字符，避免任何路径拼接风险。
+    # 时间戳精确到毫秒并加随机后缀：同一秒内导出两个牌组时文件名相同，
+    # 后一次会把前一次的结果覆盖掉，用户下载到的就是错的那份。
+    safe_kb = re.sub(r"[^0-9A-Za-z_.-]", "_", kb_name)[:40]
+    stamp = time.strftime("%Y%m%d_%H%M%S") + f"_{int(time.time() * 1000) % 1000:03d}"
+    rand = uuid.uuid4().hex[:5]
+    fname = f"anki_{safe_kb}_{stamp}_{rand}.apkg"
+    out_path = os.path.join(_ANKI_DIR, fname)
+
+    try:
+        import asyncio
+        info = await asyncio.to_thread(
+            build_apkg, req.cards, card_type, deck_name, out_path, [kb_name]
+        )
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"打包失败: {type(e).__name__}: {e}")
+
+    size = os.path.getsize(out_path) if os.path.isfile(out_path) else 0
+    return {
+        "kb_name": kb_name,
+        "deck": info["deck"],
+        "card_type": card_type,
+        "count": info["count"],
+        "skipped": info["skipped"],
+        "file_name": fname,
+        "size": size,
+        "download": f"/knowledge/anki/download/{fname}",
+    }
+
+
+@knowledgeapp.get('/anki/download/{filename}')
+def anki_download(filename: str):
+    """下载已生成的 .apkg。文件名严格白名单，防止路径穿越。"""
+    from fastapi.responses import FileResponse
+
+    if not _SAFE_ANKI_NAME.match(filename or ""):
+        raise HTTPException(status_code=400, detail="非法的文件名")
+    path = os.path.join(_ANKI_DIR, filename)
+    if not os.path.isfile(path):
+        raise HTTPException(status_code=404, detail="文件不存在或已被清理，请重新导出")
+    return FileResponse(path, filename=filename, media_type="application/octet-stream")
+
+
+@knowledgeapp.post('/anki/cleanup')
+def anki_cleanup(max_age_hours: int = Body(24, embed=True)):
+    """清理过期的导出文件（默认 24 小时前的），避免 temp 目录一直涨。"""
+    if not os.path.isdir(_ANKI_DIR):
+        return {"removed": 0}
+    cutoff = time.time() - max(1, int(max_age_hours)) * 3600
+    removed = 0
+    for name in os.listdir(_ANKI_DIR):
+        if not _SAFE_ANKI_NAME.match(name):
+            continue
+        fp = os.path.join(_ANKI_DIR, name)
+        try:
+            if os.path.isfile(fp) and os.path.getmtime(fp) < cutoff:
+                os.remove(fp)
+                removed += 1
+        except Exception:
+            continue
+    return {"removed": removed}
