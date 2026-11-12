@@ -1,0 +1,265 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>问学知库 · 个人知识库问答</title>
+<link rel="stylesheet" href="/style.css" />
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><text y='24' font-size='24'>📚</text></svg>" />
+</head>
+<body>
+<div class="layout">
+  <aside class="sidebar">
+    <div class="brand">
+      <span class="brand-mark">知</span>
+      <div>
+        <strong>问学知库</strong>
+        <small>RAG 知识库 · 笔记 · 背诵</small>
+      </div>
+    </div>
+
+    <nav class="nav" id="nav">
+      <button class="nav-item active" data-view="chat"><span>💬</span>问答</button>
+      <button class="nav-item" data-view="kb"><span>🗂</span>知识库</button>
+      <button class="nav-item" data-view="files"><span>📄</span>文件</button>
+      <button class="nav-item" data-view="summary"><span>🧾</span>整理</button>
+      <button class="nav-item" data-view="quiz"><span>❓</span>出题</button>
+      <button class="nav-item" data-view="anki"><span>🃏</span>Anki 卡片</button>
+      <button class="nav-item" data-view="settings"><span>⚙️</span>设置</button>
+    </nav>
+
+    <div class="sidebar-foot">
+      <div class="status" id="backend-status">正在检查后端…</div>
+    </div>
+  </aside>
+
+  <main class="main">
+    <!-- ================= 问答 ================= -->
+    <section class="view active" id="view-chat">
+      <header class="view-head">
+        <h1>问答</h1>
+        <div class="head-actions">
+          <label class="inline">
+            检索范围
+            <select id="chat-kb"><option value="">自动选择</option></select>
+          </label>
+          <button class="ghost" id="chat-clear">清空对话</button>
+        </div>
+      </header>
+
+      <div class="messages" id="chat-messages">
+        <div class="empty">
+          <p>问点什么吧。默认会自动挑最相关的知识库检索，也可以在右上角指定。</p>
+        </div>
+      </div>
+
+      <form class="composer" id="chat-form">
+        <textarea id="chat-input" rows="1" placeholder="输入问题，Enter 发送，Shift+Enter 换行"></textarea>
+        <div class="composer-bar">
+          <label class="attach">
+            <input type="file" id="chat-files" multiple hidden />
+            📎 附件
+          </label>
+          <span class="files-hint" id="chat-files-hint"></span>
+          <details class="adv">
+            <summary>高级</summary>
+            <div class="adv-body">
+              <label>温度 <input type="number" id="chat-temp" value="0.7" step="0.1" min="0" max="2" /></label>
+              <label>最大 token <input type="number" id="chat-maxtok" value="4096" step="256" min="256" /></label>
+              <label class="wide">系统提示词
+                <textarea id="chat-sys" rows="2" placeholder="留空使用默认"></textarea>
+              </label>
+            </div>
+          </details>
+          <button type="submit" class="primary" id="chat-send">发送</button>
+        </div>
+      </form>
+    </section>
+
+    <!-- ================= 知识库 ================= -->
+    <section class="view" id="view-kb">
+      <header class="view-head"><h1>知识库</h1></header>
+      <div class="grid-2">
+        <div class="card">
+          <h2>新建知识库</h2>
+          <p class="muted">建库需要一次向量化调用，所以必须已配置 Embedding 的 API Key。</p>
+          <form id="kb-form" class="stack">
+            <label>名称 <span class="req">必填</span>
+              <input id="kb-name" placeholder="例如 高等数学" required />
+            </label>
+            <label>描述 <span class="req">必填</span>
+              <input id="kb-desc" placeholder="例如 极限、导数、积分的例题与错题" required />
+            </label>
+            <button class="primary" type="submit">创建</button>
+          </form>
+        </div>
+
+        <div class="card">
+          <h2>上传文档</h2>
+          <p class="muted">支持 .txt / .md / .csv / .pdf，上传后自动切分并建索引。</p>
+          <form id="upload-form" class="stack">
+            <label>目标知识库
+              <select id="upload-kb" required></select>
+            </label>
+            <label>文件
+              <input type="file" id="upload-files" multiple required />
+            </label>
+            <div class="row">
+              <label>切分长度 <input type="number" id="upload-chunk" value="128" min="32" /></label>
+              <label>重叠 <input type="number" id="upload-overlap" value="20" min="0" /></label>
+            </div>
+            <button class="primary" type="submit">上传并建索引</button>
+          </form>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>全部知识库</h2>
+        <div id="kb-list" class="kb-list"><p class="muted">加载中…</p></div>
+      </div>
+    </section>
+
+    <!-- ================= 文件 ================= -->
+    <section class="view" id="view-files">
+      <header class="view-head">
+        <h1>文件</h1>
+        <label class="inline">知识库 <select id="files-kb"></select></label>
+      </header>
+      <div class="grid-files">
+        <div class="card list-card">
+          <h2>库内文件</h2>
+          <ul class="file-list" id="file-list"><li class="muted">选择知识库后加载</li></ul>
+        </div>
+        <div class="card">
+          <h2>内容</h2>
+          <p class="muted" id="file-current">未选择文件</p>
+          <textarea id="file-content" rows="18" placeholder="选中左侧文件后可编辑" disabled></textarea>
+          <div class="row end">
+            <button class="ghost" id="file-delete" disabled>删除</button>
+            <button class="primary" id="file-save" disabled>保存并重建索引</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= 整理 ================= -->
+    <section class="view" id="view-summary">
+      <header class="view-head">
+        <h1>对话整理</h1>
+        <button class="ghost" id="summary-pull">取用当前对话</button>
+      </header>
+      <div class="card">
+        <p class="muted">把多轮对话整理成结构化问答笔记，检查后保存进知识库。</p>
+        <textarea id="summary-input" rows="8" placeholder="粘贴对话内容，或点右上角「取用当前对话」"></textarea>
+        <div class="row">
+          <button class="primary" id="summary-run">生成笔记</button>
+          <span class="files-hint" id="summary-hint"></span>
+        </div>
+        <textarea id="summary-output" rows="12" placeholder="整理结果会出现在这里，可以直接改"></textarea>
+        <div class="row end">
+          <label>保存到 <select id="summary-kb"><option value="">自动匹配 / 新建</option></select></label>
+          <button class="primary" id="summary-save">保存为笔记</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= 出题 ================= -->
+    <section class="view" id="view-quiz">
+      <header class="view-head"><h1>出题</h1></header>
+      <div class="card">
+        <div class="row">
+          <label>知识库 <select id="quiz-kb" required></select></label>
+          <label>题型
+            <select id="quiz-type">
+              <option value="选择题">选择题</option>
+              <option value="填空题">填空题</option>
+              <option value="判断题">判断题</option>
+              <option value="简答题">简答题</option>
+            </select>
+          </label>
+          <label>数量 <input type="number" id="quiz-num" value="5" min="1" max="20" /></label>
+          <label>主题 <input id="quiz-topic" placeholder="留空 = 整库" /></label>
+          <button class="primary" id="quiz-run">生成</button>
+        </div>
+        <pre class="output" id="quiz-output"></pre>
+      </div>
+    </section>
+
+    <!-- ================= Anki ================= -->
+    <section class="view" id="view-anki">
+      <header class="view-head"><h1>Anki 卡片</h1></header>
+      <div class="card">
+        <p class="muted">
+          从笔记里生成可背诵的卡片，挑好之后导出 <code>.apkg</code>，用 Anki 打开即可。
+          同样的内容重复导入是「更新」而不是新增。
+        </p>
+        <div class="row">
+          <label>知识库 <select id="anki-kb"></select></label>
+          <label>卡片类型
+            <select id="anki-type">
+              <option value="basic">基础问答卡</option>
+              <option value="cloze">填空卡</option>
+              <option value="choice">选择题卡</option>
+            </select>
+          </label>
+          <label>数量 <input type="number" id="anki-num" value="10" min="1" max="50" /></label>
+          <label>方向 <input id="anki-topic" placeholder="留空 = 整库" /></label>
+          <button class="primary" id="anki-run">生成候选</button>
+        </div>
+        <div class="row end">
+          <span class="files-hint" id="anki-hint"></span>
+          <button class="ghost" id="anki-all">全选</button>
+          <button class="primary" id="anki-export" disabled>导出 .apkg</button>
+        </div>
+      </div>
+      <div id="anki-cards" class="anki-cards"></div>
+    </section>
+
+    <!-- ================= 设置 ================= -->
+    <section class="view" id="view-settings">
+      <header class="view-head">
+        <h1>设置</h1>
+        <button class="ghost" id="settings-test">测试连接</button>
+      </header>
+      <div class="card">
+        <p class="muted">Key 不会回显，密码框留空表示不修改。</p>
+        <form id="settings-form" class="stack">
+          <label>模型来源
+            <select id="set-profile"></select>
+          </label>
+          <p class="hint" id="set-profile-hint"></p>
+
+          <div class="row">
+            <label>接口地址 <input id="set-base-url" placeholder="https://api.siliconflow.cn/v1" /></label>
+          </div>
+          <div class="row">
+            <label>对话模型 <input id="set-chat-model" placeholder="Qwen/Qwen3-8B" list="chat-models" />
+              <datalist id="chat-models"></datalist>
+            </label>
+            <button type="button" class="ghost" id="set-fetch-chat">拉取模型</button>
+          </div>
+          <label>API Key <input type="password" id="set-api-key" placeholder="留空 = 不修改" autocomplete="new-password" /></label>
+
+          <div class="row">
+            <label>向量模型 <input id="set-embedding-model" placeholder="BAAI/bge-large-zh-v1.5" list="embedding-models" />
+              <datalist id="embedding-models"></datalist>
+            </label>
+            <button type="button" class="ghost" id="set-fetch-emb">拉取模型</button>
+          </div>
+          <label>向量化独立地址 <input id="set-embedding-base" placeholder="留空 = 跟随对话地址" /></label>
+          <label>向量化独立 Key <input type="password" id="set-embedding-key" placeholder="留空 = 跟随对话 Key" autocomplete="new-password" /></label>
+
+          <div class="row end">
+            <button class="primary" type="submit">保存设置</button>
+          </div>
+        </form>
+        <pre class="output" id="settings-output"></pre>
+      </div>
+    </section>
+  </main>
+</div>
+
+<div class="toast" id="toast"></div>
+<script src="/app.js"></script>
+</body>
+</html>

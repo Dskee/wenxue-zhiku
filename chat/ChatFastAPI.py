@@ -8,6 +8,9 @@ from tools.tools_select import tools
 from typing import List, AsyncIterable
 from langchain_openai import ChatOpenAI
 from langchain_classic.agents import create_react_agent, AgentExecutor
+from langchain_classic.agents.output_parsers import ReActSingleInputOutputParser
+from langchain_core.agents import AgentFinish
+from langchain_core.exceptions import OutputParserException
 from langchain_core.prompts import SystemMessagePromptTemplate, HumanMessagePromptTemplate, ChatPromptTemplate
 from configs.prompt import PROMPT_TEMPLATES
 from configs.setting import (
@@ -28,6 +31,110 @@ ChatAIapp = APIRouter(prefix='/chat', tags=['chatai'])
 # 说明：密钥与 base_url 统一来自 configs.setting（环境变量 / .env），源码中不再出现明文 Key。
 # 原文件此处曾再次写死 api_key，重复且会覆盖配置导入，已移除。
 aclient = None  # 预留：如需独立 OpenAI 异步客户端，请在首次使用时按需创建
+
+
+def _strip_invented_observation(text: str) -> str:
+    """截掉模型自己"脑补"的 Observation 段。
+
+    ReAct 里 Observation 只能由系统在工具执行后给出。但小模型经常顺着格式往下写，
+    把一段假的工具结果也吐出来；这段假结果会被解析器当成正常内容带进下一轮，
+    使后续推理全建立在没发生过的检索上。规则：只有在它前面已经出现过 Action 行时，
+    才认为这是编造的 Observation，并从该行截断。
+    """
+    lines = str(text or "").splitlines()
+    seen_action = False
+    keep = []
+    for line in lines:
+        stripped = line.strip()
+        if stripped.startswith("Action:") or stripped.startswith("Action Input:"):
+            seen_action = True
+        if seen_action and stripped.startswith("Observation:"):
+            break
+        keep.append(line)
+    return "\n".join(keep).strip()
+
+
+class LenientReActParser(ReActSingleInputOutputParser):
+    """在官方 ReAct 解析器上放宽两处小模型常见的不规范写法。
+
+    1. 自己编造 Observation（见上）；
+    2. 只写了 Final Answer、没写 Action —— 官方解析器会因为"Thought 后面找不到 Action"
+       直接抛错，5 轮之后整段回答变成 "Agent stopped due to iteration limit"。
+    """
+
+    def parse(self, text: str):
+        cleaned = _strip_invented_observation(text)
+        try:
+            return super().parse(cleaned)
+        except OutputParserException:
+            if "Final Answer:" in cleaned:
+                answer = cleaned.split("Final Answer:", 1)[1].strip()
+                if answer:
+                    return AgentFinish({"output": answer}, cleaned)
+            raise
+
+
+_LENIENT_PARSER = LenientReActParser()
+
+_FINAL_MARK = "Final Answer:"
+
+
+class AnswerOnlyStream:
+    """只把 Final Answer 之后的文字发给前端。
+
+    ReAct 的 Thought / Action / Observation 是给解析器看的中间过程，
+    以前它们也被逐 token 推给用户，界面上就是一大段看不懂的英文协议，
+    看起来像"卡住了"或"答非所问"。这里做一个简单的状态机：
+    标记出现之前的内容全部吞掉，只保留可能与标记前缀重叠的尾巴。
+    """
+
+    def __init__(self):
+        self._buf = ""
+        self._started = False
+
+    def feed(self, token: str) -> str:
+        if not token:
+            return ""
+        if self._started:
+            return token
+        self._buf += token
+        idx = self._buf.find(_FINAL_MARK)
+        if idx >= 0:
+            self._started = True
+            out = self._buf[idx + len(_FINAL_MARK):]
+            self._buf = ""
+            return out
+        # 丢掉确定不是标记开头的部分，只留可能是标记前缀的结尾
+        keep = 0
+        limit = min(len(_FINAL_MARK) - 1, len(self._buf))
+        for n in range(limit, 0, -1):
+            if _FINAL_MARK.startswith(self._buf[-n:]):
+                keep = n
+                break
+        self._buf = self._buf[-keep:] if keep else ""
+        return ""
+
+    def flush(self) -> str:
+        """整段回答没有写 Final Answer 时（例如直接寒暄），把缓存原样交出来。"""
+        out = "" if self._started else self._buf
+        self._buf = ""
+        return out
+
+
+
+def _chat_model_extra() -> dict:
+    """按服务商决定是否关闭 Qwen3 的"思考"。
+
+    Qwen3 默认先花几百 token 在 reasoning 上（实测一次 510 token 的回复里有 390 是思考），
+    ReAct 是文本协议，输出预算被思考吃掉后格式会被截断，表现为
+    "Missing 'Action:' after 'Thought:'" 反复重试、最终超时。已知支持的服务商显式关掉；
+    本地 vLLM / Ollama 不认这个字段，传了反而报 400，所以不加。
+    """
+    url = (runtime_config.base_url_for("chat") or base_url or "").lower()
+    if "siliconflow" in url or "dashscope" in url or "aliyuncs" in url:
+        return {"extra_body": {"enable_thinking": False}}
+    return {}
+
 
 
 def files_rag(files, uuid):
@@ -119,7 +226,8 @@ async def chatai(
             max_tokens=max_tokens,
             streaming=True,
             callbacks=callbacks,
-            request_timeout=TIME_OUT  # 兜底：LLM 单次请求超时，防止 API 慢时无限挂起
+            request_timeout=TIME_OUT,  # 兜底：LLM 单次请求超时，防止 API 慢时无限挂起
+            **_chat_model_extra(),
         )
 
         system_prompt = SystemMessagePromptTemplate.from_template(
@@ -139,8 +247,14 @@ async def chatai(
         # 组装成完整的 ChatPromptTemplate
 
 
-        # 创建代理
-        agent = create_react_agent(chat_model, tools, chat_prompt, stop_sequence=["\nObservation"])
+        # 创建代理：输出解析器用放宽版，容忍模型编造 Observation / 漏写 Action
+        agent = create_react_agent(
+            chat_model,
+            tools,
+            chat_prompt,
+            output_parser=_LENIENT_PARSER,
+            stop_sequence=["\nObservation"],
+        )
         agent_executor = AgentExecutor.from_agent_and_tools(
             agent=agent,
             tools=tools,
@@ -179,17 +293,38 @@ async def chatai(
 
 
         streamed_text = []
-        async for token in callback.aiter():
+        answer_stream = AnswerOnlyStream()
+        # 不能直接用 callback.aiter()：它在每轮 LLM 结束时都会收到 None 哨兵，
+        # 而 Agent 是按轮调用 LLM 的（Thought/Action → 工具 → 再 Thought/Final Answer），
+        # 一旦第一轮就 break，后面真正的回答就再也读不到，只能等任务结束后整段补发。
+        # 这里给任务挂一个 done 回调当作"真正的结束哨兵"，每轮之间的 None 跳过不退出。
+        # 注意不能用 asyncio.wait_for 包 queue.get() 来轮询：取消可能把已经取出的 token 丢掉。
+        task.add_done_callback(lambda _t: callback.queue.put_nowait(None))
+        while True:
+            token = await callback.queue.get()
+            if token is None:
+                if task.done() and callback.queue.empty():
+                    break
+                continue
             # 过滤空 token：硅基流动 Qwen3 思考模型的流式 chunk 常出现 content 为空的中间块
             if not token:
                 continue
-            streamed_text.append(token)
+            # 只转发 Final Answer 正文，中间推理过程不外泄
+            visible = answer_stream.feed(token)
+            if not visible:
+                continue
+            streamed_text.append(visible)
             response_data = {
-                "answer": token,
+                "answer": visible,
             }
             # 每条 JSON 以 \n 结尾（NDJSON）：前端按行切分后再解析，
             # 避免一个 JSON 对象被 TCP 拆成两个 chunk 时 json.loads 抛异常导致回答中断
             yield (json.dumps(response_data) + "\n").encode('utf-8')
+
+        tail = answer_stream.flush()
+        if tail:
+            streamed_text.append(tail)
+            yield (json.dumps({"answer": tail}) + "\n").encode('utf-8')
 
         # 等待agent任务执行完毕
         await asyncio.wait_for(task, TIME_OUT)
@@ -200,13 +335,21 @@ async def chatai(
         except Exception as e:
             print(f"[DEBUG] agent任务异常: {type(e).__name__}: {e}")
             final_answer = ""
+        # AgentExecutor 达到迭代上限时会把这句英文当成最终答案，对用户毫无意义，
+        # 统一按"没答出来"处理，改用已检索到的内容兜底
+        stopped = final_answer and "Agent stopped" in final_answer
+        if stopped:
+            final_answer = ""
+        emitted = "".join(streamed_text).strip()
         # 兜底输出：若最终答案尚未出现在流式内容中（多轮 agent 的第二轮 LLM 输出偶发
         # 未走流式、或流式 chunk 全空），则补发完整最终答案，避免用户看不到回答且不重复
-        if final_answer and final_answer not in "".join(streamed_text):
+        if final_answer and final_answer.strip() not in emitted:
             yield (json.dumps({"answer": final_answer}) + "\n").encode('utf-8')
-        elif not final_answer and callback.last_tool_output:
-            # 最坏情况：agent 因迭代/时间限制停止且无最终答案，把最后一次搜索结果摘要兜底给用户
-            yield (json.dumps({"answer": f"（模型未能生成最终答案，以下是已获取的搜索结果摘要，可据此作答）\n{callback.last_tool_output}"}) + "\n").encode('utf-8')
+        elif not final_answer and not emitted and callback.last_tool_output:
+            # 最坏情况：agent 因迭代/时间限制停止且无最终答案，把最后一次检索结果兜底给用户
+            yield (json.dumps({"answer": f"（模型没能给出最终答案，下面是已经检索到的内容，可以先参考）\n{callback.last_tool_output}"}) + "\n").encode('utf-8')
+        elif not emitted:
+            yield (json.dumps({"answer": "（这次没能生成回答，换个问法或检查一下 API Key / 模型配置再试）"}) + "\n").encode('utf-8')
 
 
     # NDJSON：每行一个 JSON 对象，前端按行解析

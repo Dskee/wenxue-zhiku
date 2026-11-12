@@ -1,5 +1,7 @@
 # 问学知库（WenXue ZhiKu）
 
+个人练手rag+agent项目
+
 一个基于 **RAG（检索增强生成）** 的本地知识库学习助手：上传自己的笔记/题库 → 自动向量化入库 →
 既能**多轮对话问答**（自动决定查本地知识库还是联网搜索），也能**自动出题**、把错题整理成笔记回存知识库。
 
@@ -20,12 +22,14 @@
 | 笔记自动归档 | 笔记导出时用 embedding 余弦相似度自动匹配已有知识库，匹配不到则按主题自动新建 |
 | 自动出题 / 错题本 | 基于库内容生成选择题/填空题/判断题/简答题，对完答案后把错题勾选保存为「错题」笔记，同名自动追加 |
 | Anki 卡片导出 | 把库内笔记整理成可背诵的卡片（基础问答 / 填空 / 选择题），先预览挑选、再导出 `.apkg`，用 Anki 打开即可复习；重复导入是更新而非新增 |
+| 独立 Web 前端 | `web/` 是一套**零 npm 依赖**的前端（原生 Node.js），侧边栏七页覆盖全部功能，聊天逐字流式；同时保留 Gradio 界面，两者可任选 |
 
 ---
 
 ## 🏗 技术栈
 
-- **Web 框架**：FastAPI 0.141 + Uvicorn；前端 Gradio 6.26
+- **Web 框架**：FastAPI 0.141 + Uvicorn；前端两套可选——Gradio 6.26，或 `web/`（原生 Node.js 18+，无任何 npm 依赖）
+- **前端反代**：`server.js` 把 `/api/**` 流式转发到 FastAPI，前后端同源，不需要额外改 CORS
 - **大模型 / Agent**：LangChain 1.4（`langchain-classic` 的 ReAct Agent）+ OpenAI 兼容接口（SiliconFlow）
 - **向量检索**：FAISS（`faiss-cpu`）+ BM25（`rank-bm25`，中文用 jieba 分词）→ `EnsembleRetriever` 混合召回
 - **重排序**：`sentence-transformers` + `bge-reranker-v2-m3`
@@ -73,6 +77,9 @@
 │   ├── corpus/唐诗三百首.md          # 公版语料，供 CI 复现
 │   └── run_ablation.py              # 三配置 × 40 题，出 results/YYYY-MM-DD.md
 ├── results/                         # 实跑生成的评测报告（Markdown + 原始 JSON）
+├── web/                              # 独立 Web 前端（Node.js 18+，零 npm 依赖）
+│   ├── server.js                     # 静态托管 + /api/** 流式反代到 FastAPI
+│   └── public/                       # index.html / style.css / app.js
 ├── data/                            # 知识库文档与笔记（运行时生成，已 gitignore）
 ├── knowledgebases/                  # FAISS 向量索引（运行时生成，已 gitignore）
 └── temp/                            # 对话上传的临时文件（已 gitignore）
@@ -153,11 +160,15 @@ modelscope download --repo-type model \
 # 终端 1：后端（默认 16055）
 uvicorn FastAPIRouter:app --host 0.0.0.0 --port 16055
 
-# 终端 2：前端（默认 7860）
-python knowledge_gradio.py
+# 终端 2：前端（默认 7860）—— 二选一
+python knowledge_gradio.py          # Gradio 界面
+# 或
+cd web && node server.js            # 独立 Web 前端（Node.js 18+，不用 npm install）
 ```
 
 打开 <http://127.0.0.1:7860> 即可使用；接口文档在 <http://127.0.0.1:16055/docs>。
+
+`web/` 前端的环境变量（都可省略）：`PORT`（默认 7860）、`HOST`（默认 0.0.0.0）、`API_BASE`（默认 `http://127.0.0.1:16055`）、`API_TOKEN`（后端开了鉴权才需要填，会自动加到 `X-API-Token` 头）。Gradio 和 `web/` 都监听 7860，所以**同时只能起一个**。
 
 ---
 
